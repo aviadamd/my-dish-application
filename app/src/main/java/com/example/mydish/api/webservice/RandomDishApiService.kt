@@ -2,8 +2,10 @@ package com.example.mydish.api.webservice
 
 import com.example.mydish.api.webservice.RandomDishApiService.EndPoint.*
 import com.example.mydish.utils.Constants
+import com.example.mydish.utils.Constants.NUMBER_CUISINES_VALUE
 import com.example.mydish.utils.Constants.NUMBER_MEAL_VALUE
 import com.example.mydish.utils.Constants.NUMBER_VEGETARIAN_VALUE
+import com.example.mydish.utils.Constants.TAGS_CUISINES_VALUE
 import com.example.mydish.utils.Constants.TAGS_MEAL_VALUE
 import com.example.mydish.utils.Constants.TAGS_VEGETARIAN_VALUE
 import io.reactivex.rxjava3.core.Single
@@ -60,7 +62,7 @@ class RandomDishApiService {
         val recipe : Single<RandomDish.Recipes> = when(endPoint) {
             MEAT -> api.getDishes(key, license, TAGS_MEAL_VALUE, NUMBER_MEAL_VALUE)
             RANDOM -> api.getDishes(key, license, TAGS_VEGETARIAN_VALUE, NUMBER_VEGETARIAN_VALUE)
-            BREAK_FAST -> api.getDishes(key, license, TAGS_VEGETARIAN_VALUE, NUMBER_VEGETARIAN_VALUE)
+            CUISINES -> api.getDishes(key, license, TAGS_CUISINES_VALUE, NUMBER_CUISINES_VALUE)
             VEGETARIAN_DESSERT -> api.getDishes(key, license, TAGS_VEGETARIAN_VALUE, NUMBER_VEGETARIAN_VALUE)
         }
 
@@ -70,7 +72,7 @@ class RandomDishApiService {
     enum class EndPoint {
         VEGETARIAN_DESSERT,
         MEAT,
-        BREAK_FAST,
+        CUISINES,
         RANDOM
     }
 }
