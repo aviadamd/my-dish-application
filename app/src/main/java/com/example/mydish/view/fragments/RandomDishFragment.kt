@@ -20,8 +20,8 @@ import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.Constants
 import com.example.mydish.utils.Tags.DISH_INFO
 import com.example.mydish.utils.extensions.setImageDrawable
-import com.example.mydish.utils.extensions.setPicture
 import com.example.mydish.utils.extensions.setShimmer
+import com.example.mydish.utils.setPicture
 import com.example.mydish.utils.toast
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
@@ -62,7 +62,7 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.VEGETARIAN_DESSERT)
+        mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
         randomDishViewModelObserver(false)
@@ -71,7 +71,7 @@ class RandomDishFragment : Fragment() {
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation.
              * calls setRefreshing(false) when it's finished.**/
-            mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.VEGETARIAN_DESSERT)
+            mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.DESSERT)
         }
     }
 
@@ -134,7 +134,7 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : RandomDish.Recipe) {
-        setPicture(recipe.image, mBinding!!.ivDishImage, mBinding!!.srlRandomDish, mBinding!!.tvTitle)
+        setPicture(this@RandomDishFragment,recipe.image, mBinding!!.ivDishImage, mBinding!!.srlRandomDish, mBinding!!.tvTitle)
 
         //Set the dish title
         setRecipeTitle(recipe.title)

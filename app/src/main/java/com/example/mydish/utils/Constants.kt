@@ -28,14 +28,14 @@ object Constants {
     const val LIMIT_LICENSE_VALUE : Boolean = true
 
     //can be diets, meal types, cuisines, or intolerances
-    const val TAGS_VEGETARIAN_VALUE : String = "vegetarian, dessert"
-    const val NUMBER_VEGETARIAN_VALUE : Int = 0
+    const val TAGS_DESSERT_VALUE : String = "dessert"
+    const val NUMBER_DESSERT_VALUE : Int = 0
 
-    const val TAGS_MEAL_VALUE : String = "meal, types"
+    const val TAGS_MEAL_VALUE : String = "meal"
     const val NUMBER_MEAL_VALUE : Int = 1
 
-    const val TAGS_CUISINES_VALUE : String = "meal, types"
-    const val NUMBER_CUISINES_VALUE : Int = 1
+    const val TAGS_CUISINES_VALUE : String = "cuisines"
+    const val NUMBER_CUISINES_VALUE : Int = 2
 
     //Notifications constants
     const val NOTIFICATION_ID = "MyDish_notification_id"

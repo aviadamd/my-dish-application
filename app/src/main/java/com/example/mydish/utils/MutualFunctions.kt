@@ -57,21 +57,21 @@ fun replaceFirstCharToLocalRoot(string: String): String {
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun setPicture(fragment: Fragment,image: String, imageView: ImageView, view: View?, textView: TextView?) {
     try {
-        Glide.with(fragment)
-            .load(image)
-            .centerCrop()
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(@Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(IMAGE_RESOURCE, "Error loading image", e)
-                    return false
-                }
+        fragment.let {
+            Glide.with(it).load(image).centerCrop()
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(@Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        Log.e(IMAGE_RESOURCE, "Error loading image", e)
+                        return false
+                    }
 
-                override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.i(IMAGE_RESOURCE, "Pass loading image")
-                    setPalette(view, resource, textView)
-                    return false
-                }
-            }).into(imageView)
+                    override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        Log.i(IMAGE_RESOURCE, "Pass loading image")
+                        setPalette(view, resource, textView)
+                        return false
+                    }
+                }).into(imageView)
+        }
     } catch (e: IOException) {
         e.printStackTrace()
     }
