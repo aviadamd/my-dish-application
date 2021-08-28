@@ -65,7 +65,7 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        randomDishViewModelObserver(false)
+        randomDishViewModelObserver()
 
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
         mBinding!!.srlRandomDish.setOnRefreshListener {
@@ -87,23 +87,14 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun randomDishViewModelObserver(
-        @Suppress("SameParameterValue") isIgnoreFullUiPresentation: Boolean) {
+    private fun randomDishViewModelObserver() {
         /*** Calling the dish data from service */
         mRandomDishViewModel.randomDishResponse.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
                 val randomRecipe = dishResponse.recipes.random()
                 Log.i(DISH_INFO,"$randomRecipe")
                 setRandomResponseInUi(randomRecipe)
-                if (isIgnoreFullUiPresentation) {
-                    repeat(listOf(
-                        mBinding!!.tvIngredientsLabel,
-                        mBinding!!.tvIngredients,
-                        mBinding!!.tvCookingDirectionLabel,
-                        mBinding!!.tvCookingDirection,
-                        mBinding!!.tvCookingTime
-                    ).size) { View.GONE }
-                }
+                setUi(false)
             }
         })
 
@@ -249,6 +240,17 @@ class RandomDishFragment : Fragment() {
             /*** recipe title + the dish_is_selected label will present toast message about new dish added to favorite dishes */
             val titleSelected = recipe.title +" "+ resources.getString(R.string.dish_is_selected)
             toast(requireActivity(), titleSelected).show()
+        }
+    }
+
+    private fun setUi(@Suppress("SameParameterValue") isIgnoreFullUiPresentation: Boolean) {
+        if (isIgnoreFullUiPresentation) {
+            repeat(listOf(
+                mBinding!!.tvIngredientsLabel,
+                mBinding!!.tvIngredients,
+                mBinding!!.tvCookingDirectionLabel,
+                mBinding!!.tvCookingDirection,
+                mBinding!!.tvCookingTime).size) { View.GONE }
         }
     }
 }

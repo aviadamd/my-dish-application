@@ -14,6 +14,12 @@ object Constants {
     const val ALL_ITEMS : String = "All"
     const val FILTER_SELECTION : String = "FilterSelection"
 
+    //Notifications constants
+    const val NOTIFICATION_ID = "MyDish_notification_id"
+    const val NOTIFICATION_NAME = "MyDish"
+    const val NOTIFICATION_CHANNEL = "MyDish_channel_01"
+
+
     //Api constants
     const val BASE_URL : String = "https://api.spoonacular.com/"
     const val API_ENDPOINT : String = "recipes/random"
@@ -32,13 +38,8 @@ object Constants {
     const val NUMBER_DESSERT_VALUE : Int = 0
 
     const val TAGS_MEAL_VALUE : String = "meal types"
-    const val NUMBER_MEAL_VALUE : Int = 1
+    const val NUMBER_MEAL_VALUE : Int = 0
 
     const val TAGS_CUISINES_VALUE : String = "cuisines"
-    const val NUMBER_CUISINES_VALUE : Int = 2
-
-    //Notifications constants
-    const val NOTIFICATION_ID = "MyDish_notification_id"
-    const val NOTIFICATION_NAME = "MyDish"
-    const val NOTIFICATION_CHANNEL = "MyDish_channel_01"
+    const val NUMBER_CUISINES_VALUE : Int = 0
 }

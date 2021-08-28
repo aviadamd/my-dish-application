@@ -2,12 +2,6 @@ package com.example.mydish.api.webservice
 
 import com.example.mydish.api.webservice.RandomDishApiService.EndPoint.*
 import com.example.mydish.utils.Constants
-import com.example.mydish.utils.Constants.NUMBER_CUISINES_VALUE
-import com.example.mydish.utils.Constants.NUMBER_DESSERT_VALUE
-import com.example.mydish.utils.Constants.NUMBER_MEAL_VALUE
-import com.example.mydish.utils.Constants.TAGS_CUISINES_VALUE
-import com.example.mydish.utils.Constants.TAGS_DESSERT_VALUE
-import com.example.mydish.utils.Constants.TAGS_MEAL_VALUE
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -69,8 +63,8 @@ class RandomDishApiService {
     }
 
     enum class EndPoint(val key: String, val value: Int) {
-        DESSERT(TAGS_DESSERT_VALUE, NUMBER_DESSERT_VALUE),
-        MEAL(TAGS_MEAL_VALUE, NUMBER_MEAL_VALUE),
-        CUISINES(TAGS_CUISINES_VALUE, NUMBER_CUISINES_VALUE),
+        DESSERT(Constants.TAGS_DESSERT_VALUE, Constants.NUMBER_DESSERT_VALUE),
+        MEAL(Constants.TAGS_MEAL_VALUE, Constants.NUMBER_MEAL_VALUE),
+        CUISINES(Constants.TAGS_CUISINES_VALUE, Constants.NUMBER_CUISINES_VALUE),
     }
 }
