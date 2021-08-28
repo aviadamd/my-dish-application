@@ -20,6 +20,7 @@ import com.example.mydish.viewmodel.MyDishViewModelFactory
 
 class FavoriteDishesFragment : Fragment() {
 
+
     /*** A global variable for FragmentFavoriteDishes View */
     private var mBinding : FragmentFavoriteDishesBinding? = null
 
