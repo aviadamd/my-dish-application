@@ -18,7 +18,7 @@ interface RandomDishApi {
      * it always either emits one value or an error notification.
      */
     @GET(Constants.API_ENDPOINT)
-    fun getRandomDishes(
+    fun getDishes(
         @Query(Constants.API_KEY) apiKey : String,
         @Query(Constants.LIMIT_LICENSE) limitLicense : Boolean,
         @Query(Constants.TAGS) tags : String,

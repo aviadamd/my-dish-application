@@ -20,7 +20,6 @@ import com.example.mydish.viewmodel.MyDishViewModelFactory
 
 class FavoriteDishesFragment : Fragment() {
 
-
     /*** A global variable for FragmentFavoriteDishes View */
     private var mBinding : FragmentFavoriteDishesBinding? = null
 
@@ -39,7 +38,7 @@ class FavoriteDishesFragment : Fragment() {
     /**
      * Set up the favoriteDishes list from the
      * mMyDishViewModel.favoriteDishes live data list of MyDishEntity to the ui
-     * call mMyDishViewModel to get the favorite dishes data
+     * call mMyDishViewModel to get the fa vorite dishes data
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

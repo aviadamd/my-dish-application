@@ -26,9 +26,13 @@ object Constants {
     //Api strings value params
     const val API_KEY_VALUE : String = "8d1a63a8ea1e4017a09ab9e8970d3d35"
     const val LIMIT_LICENSE_VALUE : Boolean = true
+
     //can be diets, meal types, cuisines, or intolerances
-    const val TAGS_VALUE : String = "vegetarian, dessert"
-    const val NUMBER_VALUE : Int = 0
+    const val TAGS_VEGETARIAN_VALUE : String = "vegetarian, dessert"
+    const val NUMBER_VEGETARIAN_VALUE : Int = 0
+
+    const val TAGS_MEAL_VALUE : String = "vegetarian, dessert"
+    const val NUMBER_MEAL_VALUE : Int = 0
 
     //Notifications constants
     const val NOTIFICATION_ID = "MyDish_notification_id"

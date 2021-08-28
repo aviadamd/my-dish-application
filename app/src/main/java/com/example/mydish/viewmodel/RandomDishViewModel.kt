@@ -59,7 +59,7 @@ class RandomDishViewModel : ViewModel() {
      * Subscribes a given SingleObserver (subclass) to this Single and returns the given
      * SingleObserver as is.
      */
-    fun getRandomDishFromRecipeAPI() {
+    fun getRandomDishFromRecipeAPI(endPoint: RandomDishApiService.EndPoint) {
         /*** define the value of the load random dish */
         loadRandomDish.value = true
 
@@ -68,7 +68,7 @@ class RandomDishViewModel : ViewModel() {
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
          * /*** Retro fit RandomDishService val , will be used in end point url */
          */
-        compositeDisposable.add(randomRecipeApiService.getDish(RandomDishApiService.EndPoint.VEGETARIAN_DESSERT)
+        compositeDisposable.add(randomRecipeApiService.getDish(endPoint)
             /*** asynchronously subscribes SingleObserver to this Single on the specified Scheduler. */
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())

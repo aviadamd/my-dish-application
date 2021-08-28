@@ -1,6 +1,11 @@
 package com.example.mydish.api.webservice
 
+import com.example.mydish.api.webservice.RandomDishApiService.EndPoint.*
 import com.example.mydish.utils.Constants
+import com.example.mydish.utils.Constants.NUMBER_MEAL_VALUE
+import com.example.mydish.utils.Constants.NUMBER_VEGETARIAN_VALUE
+import com.example.mydish.utils.Constants.TAGS_MEAL_VALUE
+import com.example.mydish.utils.Constants.TAGS_VEGETARIAN_VALUE
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -48,24 +53,15 @@ class RandomDishApiService {
      *  Constants.TAGS_VALUE : String = "vegetarian, dessert"
      *  Constants.NUMBER_VALUE : Int = 0
      */
-    fun getRandomDishWithDessertAsVegetarian(): Single<RandomDish.Recipes> {
-        return api.getRandomDishes(
-            Constants.API_KEY_VALUE,
-            Constants.LIMIT_LICENSE_VALUE,
-            Constants.TAGS_VALUE,
-            Constants.NUMBER_VALUE
-        )
-    }
-
     fun getDish(endPoint: EndPoint): Single<RandomDish.Recipes> {
         val key = Constants.API_KEY_VALUE
         val license = Constants.LIMIT_LICENSE_VALUE
 
         val recipe : Single<RandomDish.Recipes> = when(endPoint) {
-            EndPoint.MEAT -> api.getRandomDishes(key, license, Constants.TAGS_VALUE, Constants.NUMBER_VALUE)
-            EndPoint.RANDOM -> api.getRandomDishes(key, license, Constants.TAGS_VALUE, Constants.NUMBER_VALUE)
-            EndPoint.BREAK_FAST -> api.getRandomDishes(key, license, Constants.TAGS_VALUE, Constants.NUMBER_VALUE)
-            EndPoint.VEGETARIAN_DESSERT -> api.getRandomDishes(key, license, Constants.TAGS_VALUE, Constants.NUMBER_VALUE)
+            MEAT -> api.getDishes(key, license, TAGS_MEAL_VALUE, NUMBER_MEAL_VALUE)
+            RANDOM -> api.getDishes(key, license, TAGS_VEGETARIAN_VALUE, NUMBER_VEGETARIAN_VALUE)
+            BREAK_FAST -> api.getDishes(key, license, TAGS_VEGETARIAN_VALUE, NUMBER_VEGETARIAN_VALUE)
+            VEGETARIAN_DESSERT -> api.getDishes(key, license, TAGS_VEGETARIAN_VALUE, NUMBER_VEGETARIAN_VALUE)
         }
 
         return recipe

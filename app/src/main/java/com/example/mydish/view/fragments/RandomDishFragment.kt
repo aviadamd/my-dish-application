@@ -15,6 +15,7 @@ import com.example.mydish.R
 import com.example.mydish.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
 import com.example.mydish.api.webservice.RandomDish
+import com.example.mydish.api.webservice.RandomDishApiService
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.Constants
 import com.example.mydish.utils.Tags.DISH_INFO
@@ -61,7 +62,7 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomDishFromRecipeAPI()
+        mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.VEGETARIAN_DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
         randomDishViewModelObserver(false)
@@ -70,7 +71,7 @@ class RandomDishFragment : Fragment() {
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation.
              * calls setRefreshing(false) when it's finished.**/
-            mRandomDishViewModel.getRandomDishFromRecipeAPI()
+            mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.VEGETARIAN_DESSERT)
         }
     }
 
