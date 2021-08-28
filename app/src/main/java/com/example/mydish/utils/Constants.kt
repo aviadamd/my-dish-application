@@ -31,7 +31,7 @@ object Constants {
     const val TAGS_DESSERT_VALUE : String = "dessert"
     const val NUMBER_DESSERT_VALUE : Int = 0
 
-    const val TAGS_MEAL_VALUE : String = "meal"
+    const val TAGS_MEAL_VALUE : String = "meal types"
     const val NUMBER_MEAL_VALUE : Int = 1
 
     const val TAGS_CUISINES_VALUE : String = "cuisines"

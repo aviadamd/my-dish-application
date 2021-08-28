@@ -60,17 +60,17 @@ class RandomDishApiService {
         val license = Constants.LIMIT_LICENSE_VALUE
 
         val recipe : Single<RandomDish.Recipes> = when(endPoint) {
-            MEAT -> api.getDishes(key, license, TAGS_MEAL_VALUE, NUMBER_MEAL_VALUE)
-            CUISINES -> api.getDishes(key, license, TAGS_CUISINES_VALUE, NUMBER_CUISINES_VALUE)
-            DESSERT -> api.getDishes(key, license, TAGS_DESSERT_VALUE, NUMBER_DESSERT_VALUE)
+            MEAL -> api.getDishes(key, license, MEAL.key, MEAL.value)
+            CUISINES -> api.getDishes(key, license, CUISINES.key, CUISINES.value)
+            DESSERT -> api.getDishes(key, license, DESSERT.key, CUISINES.value)
         }
 
         return recipe
     }
 
-    enum class EndPoint {
-        DESSERT,
-        MEAT,
-        CUISINES
+    enum class EndPoint(val key: String, val value: Int) {
+        DESSERT(TAGS_DESSERT_VALUE, NUMBER_DESSERT_VALUE),
+        MEAL(TAGS_MEAL_VALUE, NUMBER_MEAL_VALUE),
+        CUISINES(TAGS_CUISINES_VALUE, NUMBER_CUISINES_VALUE),
     }
 }
