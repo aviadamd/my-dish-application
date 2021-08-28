@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">MyDish</string>
+
+    <string name="title_all_dishes">All Dishes</string>
+    <string name="title_favorite_dishes">Favorite Dish </string>
+    <string name="title_random_dish">Random Dish</string>
+    <string name="splash_screen_title">My Dish</string>
+    <string name="action_add_dish">Add Dish</string>
+
+    <string name="image_contentDescription">image</string>
+    <string name="lbl_title">Title</string>
+    <string name="lbl_type">Type</string>
+    <string name="lbl_category">Category</string>
+    <string name="lbl_ingredients">Notes</string>
+    <string name="lbl_cooking_time_in_minutes">Cooking Time In Minutes</string>
+    <string name="lbl_direction_to_cook">Direction To Cook</string>
+    <string name="lbl_add_dish">ADD DISH</string>
+
+    <string name="title_select_image_action">Select Image Action</string>
+    <string name="lbl_camera">Camera</string>
+    <string name="lbl_gallery">Gallery</string>
+
+    <string name="error_on_permissions_off">It looks likes you have turned off permissions required
+                 for this feature. it can be enabled under Application Settings</string>
+
+    <string name="camera_permissions_on">You have the Camera permission now to capture image.</string>
+    <string name="storage_off">You have denied the storage permission to select image.</string>
+    <string name="settings_dialog_error">Un able to show settings dialog</string>
+
+    <string name="title_select_dish_type">SELECT DISH TYPE</string>
+    <string name="title_select_dish_category">SELECT DISH CATEGORY</string>
+    <string name="title_select_dish_cooking_time">SELECT COOKING TIME IN MINUTES</string>
+
+    <string name="err_msg_select_dish_image">Select dish image.</string>
+    <string name="err_msg_enter_dish_title">Enter dish title.</string>
+    <string name="err_msg_select_dish_type">Select dish type.</string>
+    <string name="err_msg_select_dish_category">Select dish category.</string>
+    <string name="err_msg_enter_dish_ingredients">Enter dish ingredients.</string>
+    <string name="err_msg_select_dish_cooking_time">Select dish cooking time.</string>
+    <string name="err_msg_enter_dish_cooking_instructions">Enter dish cooking instructions.</string>
+
+    <string name="label_no_dishes_added_yet">Add your dish</string>
+    <string name="title_dish_details">Dish details</string>
+    <string name="lbl_estimate_cooking_time">The approx time required to cook the dish is %1$s minutes.</string>
+
+    <string name="dish_is_selected">dish is selected to favorites dish</string>
+    <string name="dish_is_un_selected">dish is un selected from favorites dish</string>
+
+    <string name="add_your_favorite_dish_here">Add your favorite dish here</string>
+
+    <string name="edit_dish">EDIT DISH</string>
+    <string name="delete_dish">DELETE DISH</string>
+
+    <string name="title_add_dish">Add Dish</string>
+    <string name="title_edit_dish">Edit Dish</string>
+    <string name="label_update_dish">UPDATE DISH</string>
+
+    <string name="title_delete_dish">Delete Dish</string>
+    <string name="msg_delete_dish_dialog">Are you sure you wants to delete %1$s.</string>
+    <string name="delete_dish_label_yes">Yes</string>
+    <string name="delete_dish_label_no">No</string>
+
+    <string name="action_filter_dish">Filter Dishes</string>
+    <string name="title_select_item_to_filter">FILTER YOUR DISH</string>
+
+    <string name="dish_not_exists_label">Add %1$s to your dish list</string>
+
+    <string name="other_dish">Other</string>
+    <string name="message_already_added_to_favorites">This dish added already to your favorites.</string>
+    <string name="please_wait">Please Wait</string>
+    <string name="action_share_dish">Share Dish</string>
+</resources>

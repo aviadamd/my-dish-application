@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/_2sdp"
+    app:cardElevation="@dimen/_5sdp"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/dish_view"
+        android:background="@color/white_grey"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_170sdp"
+                android:layout_margin="@dimen/_2sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
+                <include layout="@layout/shimmer_layout" />
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
+            <ImageView
+                android:id="@+id/iv_dish_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_170sdp"
+                android:layout_margin="@dimen/_2sdp"
+                android:visibility="gone"
+                android:contentDescription="@string/image_contentDescription"
+                android:scaleType="fitXY"
+                tools:src="@mipmap/ic_launcher"/>
+
+            <ImageButton
+                android:id="@+id/ib_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/image_contentDescription"
+                android:foreground="?attr/selectableItemBackground"
+                android:src="@drawable/ic_more"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_dish_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:textColor="@color/grey_900"
+            android:textSize="@dimen/_16sdp"
+            android:textStyle="bold"
+            tools:text="Dish Title" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmer_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:gravity="center_vertical" >
+
+            <include
+                layout="@layout/shimmer_layout"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_width="match_parent" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
