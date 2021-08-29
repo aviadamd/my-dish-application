@@ -88,7 +88,7 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
     private fun randomDishViewModelObserver() {
-        val observer = mRandomDishViewModel.randomViewModelLiveDataHolder
+        val observer = mRandomDishViewModel.randomViewModelLiveDataObserver
 
         /*** Calling the dish data from service */
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
