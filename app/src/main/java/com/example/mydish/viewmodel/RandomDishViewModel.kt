@@ -37,11 +37,13 @@ class RandomDishViewModel : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
 
     /** Create MutableLiveData with no value assigned to it **/
-    val loadRandomDish = MutableLiveData<Boolean>()
     /** Call randomDishResponse from this class and from the RandomDishFragment **/
-    val randomDishResponse = MutableLiveData<RandomDish.Recipes>()
     /** Call randomDishError from this class and from the RandomDishFragment **/
-    val randomDishLoadingError = MutableLiveData<Boolean>()
+    val randomDishLiveDataHolder = Triple(
+        MutableLiveData<Boolean>(),
+        MutableLiveData<RandomDish.Recipes>(),
+        MutableLiveData<Boolean>()
+    )
 
     /**
      * .subscribeOn(Schedulers.newThread())
@@ -61,7 +63,7 @@ class RandomDishViewModel : ViewModel() {
      */
     fun getRandomDishFromRecipeAPI(endPoint: RandomDishApiService.EndPoint) {
         /*** define the value of the load random dish */
-        loadRandomDish.value = true
+        randomDishLiveDataHolder.first.value = true
 
         /**
          * Disposable להיפטר
@@ -75,23 +77,38 @@ class RandomDishViewModel : ViewModel() {
             .subscribeWith(object : DisposableSingleObserver<RandomDish.Recipes>() {
                 override fun onSuccess(value: RandomDish.Recipes) {
                     /*** update the values with response in the success method. */
-                    loadRandomDish.value = false
-                    randomDishResponse.value = value
-                    randomDishLoadingError.value = true
+                    randomDishLiveDataHolder.first.value = true
+                    randomDishLiveDataHolder.second.value = value
+                    randomDishLiveDataHolder.third.value = true
                 }
 
                 override fun onError(e: Throwable) {
                     /*** update the values in the response in the error methods . */
-                    loadRandomDish.value = false
-                    randomDishLoadingError.value = true
-
-                    e.message.toString().let {
-                        if (it.contains("402")) {
-                            Log.e("ERROR", "Ran out from services calls free retries")
-                        } else e.printStackTrace()
-                    }
+                    randomDishLiveDataHolder.first.value = false
+                    randomDishLiveDataHolder.third.value = true
+                    printServiceErrors(e)
                 }
             })
         )
+    }
+
+    private fun printServiceErrors(e: Throwable) {
+        e.message.toString().let {
+            when(it) {
+                BLOCKED -> Log.e(BLOCK_TAG, "BLOCKED out from services calls free retries")
+                NOT_FOUND -> Log.e(BLOCK_TAG, "NOT_FOUND service resource")
+                FORBIDDEN -> Log.e(BLOCK_TAG, "FORBIDDEN call request to service")
+                UNAUTHORIZED -> Log.e(BLOCK_TAG, "UNAUTHORIZED to call service")
+                else -> Log.e(BLOCK_TAG, "Unknown error" + e.stackTrace)
+            }
+        }
+    }
+
+    companion object {
+        const val BLOCK_TAG: String = "BLOCK"
+        const val BLOCKED: String = "402"
+        const val NOT_FOUND: String = "404"
+        const val FORBIDDEN: String = "403"
+        const val UNAUTHORIZED: String = "401"
     }
 }

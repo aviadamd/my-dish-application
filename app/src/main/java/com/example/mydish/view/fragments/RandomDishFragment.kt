@@ -88,8 +88,10 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
     private fun randomDishViewModelObserver() {
+        val randomDishObservable = mRandomDishViewModel.randomDishLiveDataHolder
+
         /*** Calling the dish data from service */
-        mRandomDishViewModel.randomDishResponse.observe(viewLifecycleOwner, { dishResponse ->
+        randomDishObservable.second.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
                 val randomRecipe = dishResponse.recipes.random()
                 Log.i(DISH_INFO,"$randomRecipe")
@@ -99,7 +101,7 @@ class RandomDishFragment : Fragment() {
         })
 
         /*** On error response from services */
-        mRandomDishViewModel.randomDishLoadingError.observe(viewLifecycleOwner, { errorResponse ->
+        randomDishObservable.third.observe(viewLifecycleOwner, { errorResponse ->
             errorResponse?.let {
                 Log.i(DISH_INFO,"$errorResponse")
                 mBinding!!.srlRandomDish.isRefreshing.let {
@@ -109,7 +111,7 @@ class RandomDishFragment : Fragment() {
         })
 
         /** This is the custom dialog presentation on load data **/
-        mRandomDishViewModel.loadRandomDish.observe(viewLifecycleOwner, { loadRandomDish ->
+        randomDishObservable.first.observe(viewLifecycleOwner, { loadRandomDish ->
             loadRandomDish?.let {
                 Log.i(DISH_INFO,"$loadRandomDish")
                 if (loadRandomDish) {
