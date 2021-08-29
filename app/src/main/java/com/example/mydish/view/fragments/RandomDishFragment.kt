@@ -15,7 +15,7 @@ import com.example.mydish.R
 import com.example.mydish.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
 import com.example.mydish.api.webservice.RandomDish
-import com.example.mydish.api.webservice.RandomDishApiService
+import com.example.mydish.api.webservice.RandomDishApiService.EndPoint
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.Constants
 import com.example.mydish.utils.Tags.DISH_INFO
@@ -62,7 +62,7 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.DESSERT)
+        mRandomDishViewModel.getRandomDishFromRecipeAPI(EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
         randomDishViewModelObserver()
@@ -71,7 +71,7 @@ class RandomDishFragment : Fragment() {
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation.
              * calls setRefreshing(false) when it's finished.**/
-            mRandomDishViewModel.getRandomDishFromRecipeAPI(RandomDishApiService.EndPoint.DESSERT)
+            mRandomDishViewModel.getRandomDishFromRecipeAPI(EndPoint.DESSERT)
         }
     }
 
@@ -88,30 +88,31 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
     private fun randomDishViewModelObserver() {
-        val randomDishObservable = mRandomDishViewModel.randomDishLiveDataHolder
+        val observer = mRandomDishViewModel.randomViewModelLiveDataHolder
 
         /*** Calling the dish data from service */
-        randomDishObservable.second.observe(viewLifecycleOwner, { dishResponse ->
+        observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
-                val randomRecipe = dishResponse.recipes.random()
+                val randomRecipe = dishResponse.recipes[0]
                 Log.i(DISH_INFO,"$randomRecipe")
                 setRandomResponseInUi(randomRecipe)
-                setUi(false)
+                setMinimumUiPresentation(false)
             }
         })
 
         /*** On error response from services */
-        randomDishObservable.third.observe(viewLifecycleOwner, { errorResponse ->
+        observer.errors.observe(viewLifecycleOwner, { errorResponse ->
             errorResponse?.let {
                 Log.i(DISH_INFO,"$errorResponse")
                 mBinding!!.srlRandomDish.isRefreshing.let {
                     mBinding!!.srlRandomDish.isRefreshing = false
                 }
+                toast(requireActivity(), "dish loading error").show()
             }
         })
 
         /** This is the custom dialog presentation on load data **/
-        randomDishObservable.first.observe(viewLifecycleOwner, { loadRandomDish ->
+        observer.loadData.observe(viewLifecycleOwner, { loadRandomDish ->
             loadRandomDish?.let {
                 Log.i(DISH_INFO,"$loadRandomDish")
                 if (loadRandomDish) {
@@ -245,7 +246,7 @@ class RandomDishFragment : Fragment() {
         }
     }
 
-    private fun setUi(@Suppress("SameParameterValue") isIgnoreFullUiPresentation: Boolean) {
+    private fun setMinimumUiPresentation(@Suppress("SameParameterValue") isIgnoreFullUiPresentation: Boolean) {
         if (isIgnoreFullUiPresentation) {
             repeat(listOf(
                 mBinding!!.tvIngredientsLabel,

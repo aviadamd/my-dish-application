@@ -39,11 +39,10 @@ class RandomDishViewModel : ViewModel() {
     /** Create MutableLiveData with no value assigned to it **/
     /** Call randomDishResponse from this class and from the RandomDishFragment **/
     /** Call randomDishError from this class and from the RandomDishFragment **/
-    val randomDishLiveDataHolder = Triple(
+    var randomViewModelLiveDataHolder = RandomViewModelLiveDataHolder(
         MutableLiveData<Boolean>(),
         MutableLiveData<RandomDish.Recipes>(),
-        MutableLiveData<Boolean>()
-    )
+        MutableLiveData<Boolean>())
 
     /**
      * .subscribeOn(Schedulers.newThread())
@@ -63,8 +62,7 @@ class RandomDishViewModel : ViewModel() {
      */
     fun getRandomDishFromRecipeAPI(endPoint: RandomDishApiService.EndPoint) {
         /*** define the value of the load random dish */
-        randomDishLiveDataHolder.first.value = true
-
+        randomViewModelLiveDataHolder.loadData.value = true
         /**
          * Disposable להיפטר
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
@@ -75,17 +73,17 @@ class RandomDishViewModel : ViewModel() {
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableSingleObserver<RandomDish.Recipes>() {
-                override fun onSuccess(value: RandomDish.Recipes) {
+                override fun onSuccess(dishResponce: RandomDish.Recipes) {
                     /*** update the values with response in the success method. */
-                    randomDishLiveDataHolder.first.value = true
-                    randomDishLiveDataHolder.second.value = value
-                    randomDishLiveDataHolder.third.value = true
+                    randomViewModelLiveDataHolder.loadData.value = false
+                    randomViewModelLiveDataHolder.recipesData.value = dishResponce
+                    randomViewModelLiveDataHolder.errors.value = false
                 }
 
                 override fun onError(e: Throwable) {
                     /*** update the values in the response in the error methods . */
-                    randomDishLiveDataHolder.first.value = false
-                    randomDishLiveDataHolder.third.value = true
+                    randomViewModelLiveDataHolder.loadData.value = false
+                    randomViewModelLiveDataHolder.errors.value = true
                     printServiceErrors(e)
                 }
             })
