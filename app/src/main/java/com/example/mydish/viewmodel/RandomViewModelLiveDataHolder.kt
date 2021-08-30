@@ -1,7 +1,7 @@
 package com.example.mydish.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.example.mydish.api.webservice.RandomDish
+import com.example.mydish.model.api.webservice.RandomDish
 
 /** Create MutableLiveData with no value assigned to it **/
 /** Call randomDishResponse from this class and from the RandomDishFragment **/

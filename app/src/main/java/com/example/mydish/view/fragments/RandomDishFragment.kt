@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mydish.R
 import com.example.mydish.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
-import com.example.mydish.api.webservice.RandomDish
-import com.example.mydish.api.webservice.RandomDishApiService.EndPoint
+import com.example.mydish.model.api.webservice.EndPoint
+import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.Constants
 import com.example.mydish.utils.Tags.DISH_INFO
@@ -62,7 +62,7 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomDishFromRecipeAPI(EndPoint.DESSERT)
+        mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
         randomDishViewModelObserver()
@@ -71,7 +71,7 @@ class RandomDishFragment : Fragment() {
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation.
              * calls setRefreshing(false) when it's finished.**/
-            mRandomDishViewModel.getRandomDishFromRecipeAPI(EndPoint.DESSERT)
+            mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
         }
     }
 
@@ -107,7 +107,6 @@ class RandomDishFragment : Fragment() {
                 mBinding!!.srlRandomDish.isRefreshing.let {
                     mBinding!!.srlRandomDish.isRefreshing = false
                 }
-                toast(requireActivity(), "dish loading error").show()
             }
         })
 

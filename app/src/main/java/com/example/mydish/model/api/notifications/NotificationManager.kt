@@ -1,4 +1,4 @@
-package com.example.mydish.api.notifications
+package com.example.mydish.model.api.notifications
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
