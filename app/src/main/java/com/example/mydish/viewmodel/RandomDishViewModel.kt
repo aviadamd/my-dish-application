@@ -7,6 +7,10 @@ import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
 import com.example.mydish.utils.Tags.DISH_INFO
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.observers.DisposableSingleObserver
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 
 /**
@@ -71,6 +75,7 @@ class RandomDishViewModel : ViewModel() {
                 }
             }
         }
+
         job?.isCompleted.let {
             Log.i(DISH_INFO,"dish loading job finish")
         }
@@ -79,5 +84,58 @@ class RandomDishViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
+    }
+
+    /**
+     * A disposable/one time container that can hold onto multiple other Disposables and
+     * offers time complexity for add(Disposable), remove(Disposable) and delete(Disposable)
+     * operations. -> RxJava
+     */
+    private val compositeDisposable = CompositeDisposable()
+
+    /**
+     * .subscribeOn(Schedulers.newThread())
+     * Static factory methods for returning standard Scheduler instances.
+     * The initial and runtime values of the various scheduler types can be overridden via the
+     * {RxJavaPlugins.setInit(scheduler name)SchedulerHandler()} and
+     * {RxJavaPlugins.set(scheduler name)SchedulerHandler()} respectively.
+     *
+     * .subscribeOn(Schedulers.newThread())
+     * Signals the success item or the terminal signals of the current Single on the specified Scheduler,
+     * asynchronously.
+     * A Scheduler which executes actions on the Android main thread.
+     *
+     * .observeOn(AndroidSchedulers.mainThread())
+     * Subscribes a given SingleObserver (subclass) to this Single and returns the given
+     * SingleObserver as is.
+     */
+    fun getRandomDishesFromRecipeAPIRx(endPoint: EndPoint) {
+        /*** define the value of the load random dish */
+        randomViewModelLiveDataObserver.loadData.value = true
+        /**
+         * Disposable להיפטר
+         * Adds a Disposable time to this container or disposes it if the container has been disposed.
+         * /*** Retro fit RandomDishService val , will be used in end point url */
+         */
+        compositeDisposable.add(randomRecipeApiService.getDishesRx(endPoint)
+            /*** asynchronously subscribes SingleObserver to this Single on the specified Scheduler. */
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableSingleObserver<RandomDish.Recipes>() {
+                override fun onSuccess(dishResponce: RandomDish.Recipes) {
+                    /*** update the values with response in the success method. */
+                    randomViewModelLiveDataObserver.loadData.value = false
+                    randomViewModelLiveDataObserver.recipesData.value = dishResponce
+                    randomViewModelLiveDataObserver.errors.value = false
+                }
+
+                override fun onError(e: Throwable) {
+                    /*** update the values in the response in the error methods . */
+                    randomViewModelLiveDataObserver.loadData.value = false
+                    randomViewModelLiveDataObserver.errors.value = true
+                    e.printStackTrace()
+                }
+            })
+        )
     }
 }

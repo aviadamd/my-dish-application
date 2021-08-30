@@ -63,9 +63,8 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        runBlocking {
-            mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
-        }
+        mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
+        //mRandomDishViewModel.getRandomDishesFromRecipeAPIRx(EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
         randomDishViewModelObserver()
@@ -74,10 +73,9 @@ class RandomDishFragment : Fragment() {
         mBinding!!.srlRandomDish.let {
             it.setOnRefreshListener {
                 /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
-                runBlocking {
-                    /** Present the recipe on the view with random dish **/
-                    mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
-                }
+                /** Present the recipe on the view with random dish **/
+                mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
+                //mRandomDishViewModel.getRandomDishesFromRecipeAPIRx(EndPoint.DESSERT)
             }
             if (it.isRefreshing) it.isRefreshing = false
         }
