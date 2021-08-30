@@ -58,26 +58,28 @@ class RandomDishViewModel : ViewModel() {
         /*** define the value of the load random dish */
         randomViewModelLiveDataObserver.loadData.value = true
 
-        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
-        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            val dishes = randomRecipeApiService.getDishes(endPoint)
-            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
-            withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful) {
-                    randomViewModelLiveDataObserver.loadData.value = false
-                    randomViewModelLiveDataObserver.recipesData.value = dishes.body()
-                    randomViewModelLiveDataObserver.errors.value = false
-                    Log.i(DISH_INFO,"dish loading successes")
-                } else {
-                    randomViewModelLiveDataObserver.loadData.value = false
-                    randomViewModelLiveDataObserver.errors.value = true
-                    Log.i(DISH_INFO,"dish loading fails")
+        runBlocking {
+            /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
+            job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+                val dishes = randomRecipeApiService.getDishes(endPoint)
+                /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
+                withContext(Dispatchers.Main) {
+                    if (dishes.isSuccessful) {
+                        randomViewModelLiveDataObserver.loadData.value = false
+                        randomViewModelLiveDataObserver.recipesData.value = dishes.body()
+                        randomViewModelLiveDataObserver.errors.value = false
+                        Log.i(DISH_INFO, "dish loading successes")
+                    } else {
+                        randomViewModelLiveDataObserver.loadData.value = false
+                        randomViewModelLiveDataObserver.errors.value = true
+                        Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
+                    }
+                }
+            }.also {
+                it.isCompleted.let {
+                    Log.i(DISH_INFO,"dish loading job finish")
                 }
             }
-        }
-
-        job?.isCompleted.let {
-            Log.i(DISH_INFO,"dish loading job finish")
         }
     }
 
