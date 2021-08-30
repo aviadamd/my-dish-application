@@ -71,6 +71,9 @@ class RandomDishViewModel : ViewModel() {
                 }
             }
         }
+        job?.isCompleted.let {
+            Log.i(DISH_INFO,"dish loading job finish")
+        }
     }
 
     override fun onCleared() {
