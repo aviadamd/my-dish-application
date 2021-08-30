@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 /*** in the future will have more calls on different category dishes */
-class RandomDishesApiService : RandomDishService {
+class  RandomDishesApiService : RandomDishService {
 
     /**
      * Retrofit adapts a Java interface to HTTP calls by using annotations on the declared methods to
