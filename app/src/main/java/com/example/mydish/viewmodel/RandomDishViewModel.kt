@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
+import com.example.mydish.utils.Tags.DISH_INFO
 import kotlinx.coroutines.*
 
 /**
@@ -32,7 +33,7 @@ class RandomDishViewModel : ViewModel() {
 
     /*** exception handler for coroutine scope */
     private val exceptionHandler = CoroutineExceptionHandler{ _, throwable ->
-        Log.e("DishData","Exception:  ${throwable.localizedMessage}")
+        Log.e(DISH_INFO,"Exception:  ${throwable.localizedMessage}")
     }
 
     /**
@@ -62,9 +63,11 @@ class RandomDishViewModel : ViewModel() {
                     randomViewModelLiveDataObserver.loadData.value = false
                     randomViewModelLiveDataObserver.recipesData.value = dishes.body()
                     randomViewModelLiveDataObserver.errors.value = false
+                    Log.i(DISH_INFO,"dish loading successes")
                 } else {
                     randomViewModelLiveDataObserver.loadData.value = false
                     randomViewModelLiveDataObserver.errors.value = true
+                    Log.i(DISH_INFO,"dish loading fails")
                 }
             }
         }

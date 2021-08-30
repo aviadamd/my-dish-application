@@ -81,6 +81,7 @@ class RandomDishFragment : Fragment() {
         mBinding = null
     }
 
+
     /**
      * Service call method to dish data then
      * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
@@ -93,8 +94,8 @@ class RandomDishFragment : Fragment() {
         /*** Calling the dish data from service */
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
-                val randomRecipe = dishResponse.recipes[0]
-                Log.i(DISH_INFO,"$randomRecipe")
+                val randomRecipe = dishResponse.recipes.random()
+                Log.i(DISH_INFO, "$randomRecipe")
                 setRandomResponseInUi(randomRecipe)
                 setMinimumUiPresentation(false)
             }
