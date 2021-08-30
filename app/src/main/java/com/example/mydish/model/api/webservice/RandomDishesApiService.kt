@@ -1,10 +1,11 @@
 package com.example.mydish.model.api.webservice
 
+import android.util.Log
 import com.example.mydish.model.api.webservice.EndPoint.*
 import com.example.mydish.utils.Constants
+import com.example.mydish.utils.Tags
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -44,13 +45,11 @@ class  RandomDishesApiService : RandomDishService {
         val key = Constants.API_KEY_VALUE
         val license = Constants.LIMIT_LICENSE_VALUE
 
-        val apiCall = api
         val recipe : Response<RandomDish.Recipes> = when(endPoint) {
-            MEAL -> apiCall.getTheDishes(key, license, MEAL.key, MEAL.value)
-            CUISINES -> apiCall.getTheDishes(key, license, CUISINES.key, CUISINES.value)
-            DESSERT -> apiCall.getTheDishes(key, license, DESSERT.key, CUISINES.value)
+            MEAL -> api.getTheDishes(key, license, MEAL.key, MEAL.value)
+            CUISINES -> api.getTheDishes(key, license, CUISINES.key, CUISINES.value)
+            DESSERT -> api.getTheDishes(key, license, DESSERT.key, CUISINES.value)
         }
-
         return recipe
     }
 

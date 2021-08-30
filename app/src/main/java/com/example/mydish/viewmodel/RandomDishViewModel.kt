@@ -76,8 +76,8 @@ class RandomDishViewModel : ViewModel() {
                     }
                 }
             }.also {
-                it.isCompleted.let {
-                    Log.i(DISH_INFO,"dish loading job finish")
+                it.isCompleted.let { value ->
+                    Log.i(DISH_INFO,"dish loading job finish as $value")
                 }
             }
         }
