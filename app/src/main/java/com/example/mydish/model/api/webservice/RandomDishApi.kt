@@ -2,6 +2,7 @@ package com.example.mydish.model.api.webservice
 
 import com.example.mydish.utils.Constants
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -37,4 +38,14 @@ interface RandomDishApi {
         @Query(Constants.TAGS) tags : String,
         @Query(Constants.NUMBER) number : Int,
     ): Single<RandomDish.Recipes>
+
+
+    @GET(Constants.API_ENDPOINT)
+    suspend fun gettingTheDishes(
+        @Query(Constants.API_KEY) apiKey : String,
+        @Query(Constants.LIMIT_LICENSE) limitLicense : Boolean,
+        @Query(Constants.TAGS) tags : String,
+        @Query(Constants.NUMBER) number : Int
+    ): Flow<RandomDish.Recipes>
+
 }

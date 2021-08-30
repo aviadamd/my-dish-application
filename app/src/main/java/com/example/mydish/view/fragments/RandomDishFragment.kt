@@ -26,7 +26,6 @@ import com.example.mydish.utils.toast
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
-import kotlinx.coroutines.runBlocking
 
 /**
  * This class hold the random dish presentation
@@ -64,10 +63,9 @@ class RandomDishFragment : Fragment() {
 
         /** Present the recipe on the view with random dish **/
         mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
-        //mRandomDishViewModel.getRandomDishesFromRecipeAPIRx(EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        randomDishViewModelObserver()
+        initRandomDishViewModelObserver()
 
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
         mBinding!!.srlRandomDish.let {
@@ -75,7 +73,6 @@ class RandomDishFragment : Fragment() {
                 /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
                 /** Present the recipe on the view with random dish **/
                 mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
-                //mRandomDishViewModel.getRandomDishesFromRecipeAPIRx(EndPoint.DESSERT)
             }
             if (it.isRefreshing) it.isRefreshing = false
         }
@@ -93,7 +90,7 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun randomDishViewModelObserver() {
+    private fun initRandomDishViewModelObserver() {
         val observer = mRandomDishViewModel.randomViewModelLiveDataObserver
 
         /*** Calling the dish data from service */

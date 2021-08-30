@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
+import com.example.mydish.model.api.webservicedemo.RandomDishesApiServiceRxJava
 import com.example.mydish.utils.Tags.DISH_INFO
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -35,6 +36,9 @@ class RandomDishViewModel : ViewModel() {
     /*** Retro fit RandomDishService val , will be used in end point url */
      private val randomRecipeApiService = RandomDishesApiService()
 
+    /*** Retro fit RandomDishService val , will be used in end point url */
+    private val randomRecipeApiServiceRx = RandomDishesApiServiceRxJava()
+
     /*** exception handler for coroutine scope */
     private val exceptionHandler = CoroutineExceptionHandler{ _, throwable ->
         Log.e(DISH_INFO,"Exception:  ${throwable.localizedMessage}")
@@ -58,28 +62,24 @@ class RandomDishViewModel : ViewModel() {
         /*** define the value of the load random dish */
         randomViewModelLiveDataObserver.loadData.value = true
 
-        runBlocking {
-            /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
-            job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-                val dishes = randomRecipeApiService.getDishes(endPoint)
-                /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
-                withContext(Dispatchers.Main) {
-                    if (dishes.isSuccessful) {
-                        randomViewModelLiveDataObserver.loadData.value = false
-                        randomViewModelLiveDataObserver.recipesData.value = dishes.body()
-                        randomViewModelLiveDataObserver.errors.value = false
-                        Log.i(DISH_INFO, "dish loading successes")
-                    } else {
-                        randomViewModelLiveDataObserver.loadData.value = false
-                        randomViewModelLiveDataObserver.errors.value = true
-                        Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
-                    }
-                }
-            }.also {
-                it.isCompleted.let { value ->
-                    Log.i(DISH_INFO,"dish loading job finish as $value")
+        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
+        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            val dishes = randomRecipeApiService.getDishes(endPoint)
+            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
+            withContext(Dispatchers.Main) {
+                if (dishes.isSuccessful) {
+                    randomViewModelLiveDataObserver.loadData.value = false
+                    randomViewModelLiveDataObserver.recipesData.value = dishes.body()
+                    randomViewModelLiveDataObserver.errors.value = false
+                    Log.i(DISH_INFO, "dish loading successes")
+                } else {
+                    randomViewModelLiveDataObserver.loadData.value = false
+                    randomViewModelLiveDataObserver.errors.value = true
+                    Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
+        }.also {
+            it.isCompleted.let { value -> Log.i(DISH_INFO,"dish loading job finish as $value") }
         }
     }
 
@@ -119,7 +119,7 @@ class RandomDishViewModel : ViewModel() {
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
          * /*** Retro fit RandomDishService val , will be used in end point url */
          */
-        compositeDisposable.add(randomRecipeApiService.getDishesRx(endPoint)
+        compositeDisposable.add(randomRecipeApiServiceRx.getDishesRx(endPoint)
             /*** asynchronously subscribes SingleObserver to this Single on the specified Scheduler. */
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())

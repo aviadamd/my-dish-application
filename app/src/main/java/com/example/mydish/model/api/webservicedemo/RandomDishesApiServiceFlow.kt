@@ -1,13 +1,17 @@
-package com.example.mydish.model.api.webservice
+package com.example.mydish.model.api.webservicedemo
 
-import com.example.mydish.model.api.webservice.EndPoint.*
+import com.example.mydish.model.api.webservice.EndPoint
+import com.example.mydish.model.api.webservice.RandomDish
+import com.example.mydish.model.api.webservice.RandomDishApi
 import com.example.mydish.utils.Constants
-import retrofit2.Response
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.single
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-/*** in the future will have more calls on different category dishes */
-class  RandomDishesApiService : RandomDishService {
+class RandomDishesApiServiceFlow {
 
     /**
      * Retrofit adapts a Java interface to HTTP calls by using annotations on the declared methods to
@@ -35,16 +39,18 @@ class  RandomDishesApiService : RandomDishService {
         .build()
         .create(RandomDishApi::class.java)
 
-    override suspend fun getDishes(endPoint: EndPoint): Response<RandomDish.Recipes> {
+    fun getDishFlow(endPoint: EndPoint): Flow<RandomDish.Recipes> {
         val key = Constants.API_KEY_VALUE
         val license = Constants.LIMIT_LICENSE_VALUE
 
-        val recipe : Response<RandomDish.Recipes> = when(endPoint) {
-            MEAL -> api.getTheDishes(key, license, MEAL.key, MEAL.value)
-            CUISINES -> api.getTheDishes(key, license, CUISINES.key, CUISINES.value)
-            DESSERT -> api.getTheDishes(key, license, DESSERT.key, CUISINES.value)
+        return flow {
+            val recipe : Flow<RandomDish.Recipes> = when(endPoint) {
+                EndPoint.MEAL -> api.gettingTheDishes(key, license, EndPoint.MEAL.key, EndPoint.MEAL.value)
+                EndPoint.CUISINES -> api.gettingTheDishes(key, license, EndPoint.CUISINES.key, EndPoint.CUISINES.value)
+                EndPoint.DESSERT -> api.gettingTheDishes(key, license, EndPoint.DESSERT.key, EndPoint.CUISINES.value)
+            }
+            emit(recipe.single())
+            delay(2000L)
         }
-
-        return recipe
     }
 }
