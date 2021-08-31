@@ -58,7 +58,10 @@ fun replaceFirstCharToLocalRoot(string: String): String {
 fun setPicture(fragment: Fragment,image: String, imageView: ImageView, view: View?, textView: TextView?) {
     try {
         fragment.let {
-            Glide.with(it).load(image).centerCrop()
+            Glide.with(it)
+                .load(image)
+                .timeout(1000)
+                .centerCrop()
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(@Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                         Log.e(IMAGE_RESOURCE, "Error loading image", e)
