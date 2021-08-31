@@ -97,7 +97,7 @@ class RandomDishFragment : Fragment() {
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
                 val randomRecipe = dishResponse.recipes.random()
-                Log.i(DISH_INFO, "$randomRecipe")
+                Log.i(DISH_INFO, "random recipe response: $randomRecipe")
                 setRandomResponseInUi(randomRecipe)
                 setMinimumUiPresentation(false)
             }
@@ -106,7 +106,7 @@ class RandomDishFragment : Fragment() {
         /*** On error response from services */
         observer.errors.observe(viewLifecycleOwner, { errorResponse ->
             errorResponse?.let {
-                Log.i(DISH_INFO,"$errorResponse")
+                Log.i(DISH_INFO,"has random dish response error: $errorResponse")
                 mBinding!!.srlRandomDish.isRefreshing.let {
                     mBinding!!.srlRandomDish.isRefreshing = false
                 }
@@ -116,7 +116,7 @@ class RandomDishFragment : Fragment() {
         /** This is the custom dialog presentation on load data **/
         observer.loadData.observe(viewLifecycleOwner, { loadRandomDish ->
             loadRandomDish?.let {
-                Log.i(DISH_INFO,"$loadRandomDish")
+                Log.i(DISH_INFO,"has loading random dish response: $loadRandomDish")
                 if (loadRandomDish) {
                     setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
                 }

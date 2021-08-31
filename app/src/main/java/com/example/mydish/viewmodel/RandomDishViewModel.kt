@@ -34,7 +34,7 @@ class RandomDishViewModel : ViewModel() {
     private var job: Job? = null
 
     /*** Retro fit RandomDishService val , will be used in end point url */
-     private val randomRecipeApiService = RandomDishesApiService()
+    private val randomRecipeApiService = RandomDishesApiService()
 
     /*** Retro fit RandomDishService val , will be used in end point url */
     private val randomRecipeApiServiceRx = RandomDishesApiServiceRxJava()
@@ -59,8 +59,9 @@ class RandomDishViewModel : ViewModel() {
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
      */
     fun getRandomDishesFromRecipeAPI(endPoint: EndPoint) {
+        val observer = randomViewModelLiveDataObserver
         /*** define the value of the load random dish */
-        randomViewModelLiveDataObserver.loadData.value = true
+        observer.loadData.value = true
 
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
@@ -68,13 +69,13 @@ class RandomDishViewModel : ViewModel() {
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (dishes.isSuccessful) {
-                    randomViewModelLiveDataObserver.loadData.value = false
-                    randomViewModelLiveDataObserver.recipesData.value = dishes.body()
-                    randomViewModelLiveDataObserver.errors.value = false
+                    observer.loadData.value = false
+                    observer.recipesData.value = dishes.body()
+                    observer.errors.value = false
                     Log.i(DISH_INFO, "dish loading successes")
                 } else {
-                    randomViewModelLiveDataObserver.loadData.value = false
-                    randomViewModelLiveDataObserver.errors.value = true
+                    observer.loadData.value = false
+                    observer.errors.value = true
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
