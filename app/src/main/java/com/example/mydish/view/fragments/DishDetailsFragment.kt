@@ -80,15 +80,7 @@ class DishDetailsFragment : Fragment() {
 
         /*** on click the ivFavoriteDish button */
         mBinding!!.ivFavoriteDish.setOnClickListener {
-            args.let {
-                val data = it.dishDetails
-                /*** update the flag entity, from true to false or the opposite */
-                data.favoriteDish = !data.favoriteDish
-                /*** update the args with old values from dishDetails screen args with view model */
-                mMyDishViewModel.update(it.dishDetails)
-                /*** if the dish market as favorite dish */
-                setDishStatusAfterUserChose(data.title, data.favoriteDish)
-            }
+            setOnFavoriteDishSelected(args)
         }
     }
 
@@ -135,7 +127,8 @@ class DishDetailsFragment : Fragment() {
 
                     /*** preparing the message format */
                     extraText = messageFormat(
-                        image, it.title, it.type, it.category, it.ingredients, cockingInstruction, it.cooking_time)
+                        image, it.title, it.type, it.category, it.ingredients, cockingInstruction, it.cooking_time
+                    )
                 }
 
                 /*** send the share message */
@@ -157,7 +150,7 @@ class DishDetailsFragment : Fragment() {
     }
 
     /*** Set texts data on TextViews */
-    private fun setTextWithDishData(title: String,type: String,category: String,ingredients: String) {
+    private fun setTextWithDishData(title: String, type: String, category: String, ingredients: String) {
         mBinding!!.tvTitle.text = title
         mBinding!!.tvType.text = type.replaceFirstChar {
             if (it.isLowerCase()) {
@@ -205,7 +198,26 @@ class DishDetailsFragment : Fragment() {
         else Pair(R.drawable.ic_favorite_unselected, resources.getString(R.string.dish_is_un_selected))
 
         setImageDrawable(mBinding!!.ivFavoriteDish, setData.first)
-        toast(requireActivity(),title + " " + setData.second)
+        toast(requireActivity(),title + " " + setData.second).show()
+    }
+
+
+    /**
+     * pass DishDetailsFragmentArgs arg
+     * set the dish detail from the fragment
+     * active dishViewModel delete operation
+     * set status drawable as unselected
+     */
+    private fun setOnFavoriteDishSelected(args: DishDetailsFragmentArgs) {
+        args.let {
+            val data = it.dishDetails
+            /*** update the flag entity, from true to false or the opposite */
+            data.favoriteDish = !data.favoriteDish
+            /*** update the args with old values from dishDetails screen args with view model */
+            mMyDishViewModel.update(it.dishDetails)
+            /*** if the dish market as favorite dish */
+            setDishStatusAfterUserChose(data.title, data.favoriteDish)
+        }
     }
 
     /*** message format for the share dish data with other 3Party application */

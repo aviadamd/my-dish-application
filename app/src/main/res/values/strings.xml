@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">MyDish</string>
 
+    <string name="preference_file_key">com.example.mydish</string>
+
     <string name="title_all_dishes">All Dishes</string>
     <string name="title_favorite_dishes">Favorite Dish </string>
     <string name="title_random_dish">Random Dish</string>
