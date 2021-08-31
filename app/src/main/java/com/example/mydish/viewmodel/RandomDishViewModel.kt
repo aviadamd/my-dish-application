@@ -7,7 +7,7 @@ import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
 import com.example.mydish.model.api.webservicedemo.RandomDishesApiServiceRxJava
-import com.example.mydish.utils.Tags.DISH_INFO
+import com.example.mydish.utils.data.Tags.DISH_INFO
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver

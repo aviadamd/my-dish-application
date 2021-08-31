@@ -20,8 +20,8 @@ import androidx.work.ListenableWorker.Result.success
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.mydish.R
-import com.example.mydish.utils.Constants
-import com.example.mydish.utils.Tags.NOTIFICATIONS
+import com.example.mydish.utils.data.Constants
+import com.example.mydish.utils.data.Tags.NOTIFICATIONS
 import com.example.mydish.view.activities.MainActivity
 
 /**

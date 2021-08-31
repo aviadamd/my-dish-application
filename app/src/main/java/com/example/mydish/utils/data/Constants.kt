@@ -1,4 +1,4 @@
-package com.example.mydish.utils
+package com.example.mydish.utils.data
 
 object Constants {
 

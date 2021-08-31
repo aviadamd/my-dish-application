@@ -1,6 +1,6 @@
 package com.example.mydish.model.api.webservice
 
-import com.example.mydish.utils.Constants
+import com.example.mydish.utils.data.Constants
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.flow.Flow
 import retrofit2.Response

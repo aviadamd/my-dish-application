@@ -12,7 +12,7 @@ import com.example.mydish.R
 import com.example.mydish.application.MyDishApplication
 import com.example.mydish.databinding.FragmentAllDishesBinding
 import com.example.mydish.model.entities.MyDishEntity
-import com.example.mydish.utils.Constants
+import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.extensions.onNavigateBackToFragment
 import com.example.mydish.utils.extensions.onResumeToFragment
 import com.example.mydish.view.activities.AddUpdateDishActivity
@@ -190,7 +190,6 @@ class AllDishesFragment : Fragment() {
     }
 
     companion object {
-
         /**
          * Method is used to show the Alert Dialog while deleting the dish details.
          * This method get dish entity as param, and call from MyDishAdapter

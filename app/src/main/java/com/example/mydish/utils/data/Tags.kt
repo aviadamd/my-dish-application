@@ -1,4 +1,4 @@
-package com.example.mydish.utils
+package com.example.mydish.utils.data
 
 object Tags {
     const val NOTIFICATIONS: String = "Notifications"

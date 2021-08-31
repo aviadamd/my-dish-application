@@ -13,11 +13,11 @@ import com.example.mydish.R
 import com.example.mydish.application.MyDishApplication
 import com.example.mydish.databinding.FragmentDishDetailsBinding
 import com.example.mydish.model.entities.MyDishEntity
-import com.example.mydish.utils.Constants
+import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.extensions.setImageDrawable
 import com.example.mydish.utils.extensions.setPicture
-import com.example.mydish.utils.replaceFirstCharToLocalRoot
-import com.example.mydish.utils.toast
+import com.example.mydish.utils.extensions.replaceFirstCharToLocalRoot
+import com.example.mydish.utils.extensions.toast
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import java.util.*

@@ -1,6 +1,5 @@
 package com.example.mydish.view.activities
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -10,7 +9,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.example.mydish.R
 import com.example.mydish.databinding.ActivitySplashBinding
-import com.example.mydish.utils.Tags.ANIMATION
+import com.example.mydish.utils.data.Tags.ANIMATION
 import com.example.mydish.utils.extensions.hidingStatusBar
 import com.example.mydish.utils.extensions.startAnActivity
 

@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mydish.R
 import com.example.mydish.databinding.ItemDishLayoutBinding
 import com.example.mydish.model.entities.MyDishEntity
-import com.example.mydish.utils.Constants
-import com.example.mydish.utils.setPicture
+import com.example.mydish.utils.data.Constants
+import com.example.mydish.utils.extensions.setPicture
 import com.example.mydish.view.activities.AddUpdateDishActivity
 import com.example.mydish.view.fragments.AllDishesFragment
 import com.example.mydish.view.fragments.FavoriteDishesFragment
@@ -84,7 +84,10 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
     /*** Gets the number of items in the list */
     override fun getItemCount(): Int { return dishes.size }
 
-    /** Hold dishes entity data then notify data as changed **/
+    /**
+     * Hold dishes entity data then notify data as changed
+     * AllDishesFragment,FavoriteDishesFragment
+     **/
     @SuppressLint("NotifyDataSetChanged")
     fun dishesList(list: List<MyDishEntity>) {
         dishes = list

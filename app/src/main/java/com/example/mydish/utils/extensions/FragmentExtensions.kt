@@ -15,8 +15,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.example.mydish.utils.Tags
-import com.example.mydish.utils.setPalette
+import com.example.mydish.utils.data.Tags
 import com.facebook.shimmer.ShimmerFrameLayout
 import java.io.IOException
 

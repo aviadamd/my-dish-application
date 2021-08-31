@@ -3,7 +3,7 @@ package com.example.mydish.model.api.webservicedemo
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishApi
-import com.example.mydish.utils.Constants
+import com.example.mydish.utils.data.Constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

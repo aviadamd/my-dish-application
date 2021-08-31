@@ -17,12 +17,12 @@ import com.example.mydish.databinding.FragmentRandomDishBinding
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.entities.MyDishEntity
-import com.example.mydish.utils.Constants
-import com.example.mydish.utils.Tags.DISH_INFO
+import com.example.mydish.utils.data.Constants
+import com.example.mydish.utils.data.Tags.DISH_INFO
 import com.example.mydish.utils.extensions.setImageDrawable
 import com.example.mydish.utils.extensions.setShimmer
-import com.example.mydish.utils.setPicture
-import com.example.mydish.utils.toast
+import com.example.mydish.utils.extensions.setPicture
+import com.example.mydish.utils.extensions.toast
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel

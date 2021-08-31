@@ -3,7 +3,7 @@ package com.example.mydish.model.api.webservicedemo
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishApi
-import com.example.mydish.utils.Constants
+import com.example.mydish.utils.data.Constants
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory

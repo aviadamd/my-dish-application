@@ -20,8 +20,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.R
-import com.example.mydish.utils.Tags
-import com.example.mydish.utils.setPalette
+import com.example.mydish.utils.data.Tags
 import java.io.IOException
 
 /*** hide the upper phone status bar */
