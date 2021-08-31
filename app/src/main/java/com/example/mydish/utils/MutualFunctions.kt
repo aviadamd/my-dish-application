@@ -102,7 +102,9 @@ fun setPicture(activity: Activity, image: String, imageView: ImageView, view: Vi
 
 fun setPalette(view: View?, resource: Drawable, textView: TextView?) {
     view?.let {
-        Palette.from(resource.toBitmap()).generate { p -> it.setBackgroundColor(p?.lightMutedSwatch?.rgb ?: 0) }
+        Palette.from(resource.toBitmap()).generate {
+                p -> it.setBackgroundColor(p?.lightVibrantSwatch?.rgb ?: 0)
+        }
     }
     textView?.let { textView.setTextColor(Color.BLACK) }
 }

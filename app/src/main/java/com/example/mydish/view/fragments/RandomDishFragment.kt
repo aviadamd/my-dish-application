@@ -130,8 +130,7 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : RandomDish.Recipe) {
-        setPicture(this@RandomDishFragment,recipe.image, mBinding!!.ivDishImage, mBinding!!.srlRandomDish, mBinding!!.tvTitle)
-
+        setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, mBinding!!.srlRandomDish, mBinding!!.tvTitle)
         //Set the dish title
         setRecipeTitle(recipe.title)
         //Default Dish Type
@@ -171,6 +170,7 @@ class RandomDishFragment : Fragment() {
     /*** There is not category params present in the response so we will define it as Other. */
     private fun setDishCategory(dishCategory: String) {
         mBinding!!.tvCategory.text = dishCategory
+        mBinding!!.tvCategory.setTextColor(Color.BLACK)
     }
 
     /**
