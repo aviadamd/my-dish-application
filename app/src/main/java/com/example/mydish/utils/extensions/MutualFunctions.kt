@@ -14,11 +14,17 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.util.*
 
@@ -36,53 +42,38 @@ fun replaceFirstCharToLocalRoot(string: String): String {
     }
 }
 
+private val requestManager = RequestOptions().timeout(300).centerCrop()
+
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
-fun setPicture(fragment: Fragment,image: String, imageView: ImageView, view: View?, textView: TextView?) {
-    try {
-        fragment.let {
-            Glide.with(it)
+fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: View?, textView: TextView?) {
+    runBlocking{
+        val shimmerJob: Job = this.launch {
+            Glide.with(fragment)
                 .load(image)
-                .timeout(500)
-                .centerCrop()
+                .apply(requestManager)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(@Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        Log.e(IMAGE_RESOURCE, "Error loading image", e)
+                    override fun onLoadFailed(
+                        @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        Log.e(IMAGE_RESOURCE, "error loading image", e)
                         return false
                     }
 
-                    override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        Log.i(IMAGE_RESOURCE, "Pass loading image")
+                    override fun onResourceReady(
+                        resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        Log.i(IMAGE_RESOURCE, "pass loading image")
                         setPalette(view, resource, textView)
                         return false
                     }
                 }).into(imageView)
+
         }
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-}
 
-/** Implement the listeners to get the bitmap. Load the dish image in the image view **/
-fun setPicture(activity: Activity, image: String, imageView: ImageView, view: View?, textView: TextView?) {
-    try {
-        Glide.with(activity)
-            .load(image)
-            .timeout(500)
-            .centerCrop()
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(@Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(IMAGE_RESOURCE, "Error loading image", e)
-                    return false
-                }
-
-                override fun onResourceReady(resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.i(IMAGE_RESOURCE, "Pass loading image")
-                    setPalette(view, resource, textView)
-                    return false
-                }
-            }).into(imageView)
-    } catch (e: IOException) {
-        e.printStackTrace()
+        shimmerJob.let { job ->
+            job.invokeOnCompletion {
+                Log.i(IMAGE_RESOURCE, "shimmer finished successes ${job.isCompleted}")
+            }
+        }
     }
 }
 
