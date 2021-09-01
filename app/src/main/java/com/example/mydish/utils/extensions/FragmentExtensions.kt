@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -42,14 +43,12 @@ fun Fragment.setImageDrawable(imageView: ImageView, drawableId: Int) {
     imageView.setImageDrawable(ContextCompat.getDrawable(this.requireActivity(), drawableId))
 }
 
-private val requestManager = RequestOptions().timeout(300).centerCrop()
-
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textView: TextView?) {
     Glide.with(this)
         .load(image)
-        .apply(requestManager)
-        .transition(DrawableTransitionOptions.withCrossFade())
+        .apply(requestOptions)
+        .transition(withCrossFade())
         .listener(object : RequestListener<Drawable> {
             override fun onLoadFailed(
                 @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {

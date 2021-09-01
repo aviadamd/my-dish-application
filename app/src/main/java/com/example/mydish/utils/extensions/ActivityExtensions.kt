@@ -61,14 +61,12 @@ fun Context.startAnActivity(clazz: Class<*>, extras: Bundle?) {
     startActivity(intent)
 }
 
-private val requestManager = RequestOptions().timeout(300).centerCrop()
-
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textView: TextView?) {
     try {
         Glide.with(this)
             .load(image)
-            .apply(requestManager)
+            .apply(requestOptions)
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(

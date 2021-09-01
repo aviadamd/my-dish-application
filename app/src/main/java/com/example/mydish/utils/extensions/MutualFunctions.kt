@@ -1,6 +1,5 @@
 package com.example.mydish.utils.extensions
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -14,7 +13,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -25,8 +23,9 @@ import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.io.IOException
 import java.util.*
+
+val requestOptions = RequestOptions().timeout(300).centerCrop()
 
 /*** Writing short cut for the toast message */
 fun toast(context: Context, print: String) : Toast {
@@ -42,15 +41,13 @@ fun replaceFirstCharToLocalRoot(string: String): String {
     }
 }
 
-private val requestManager = RequestOptions().timeout(300).centerCrop()
-
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: View?, textView: TextView?) {
     runBlocking{
         val shimmerJob: Job = this.launch {
             Glide.with(fragment)
                 .load(image)
-                .apply(requestManager)
+                .apply(requestOptions)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
