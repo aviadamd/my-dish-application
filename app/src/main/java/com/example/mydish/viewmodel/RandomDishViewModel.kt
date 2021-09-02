@@ -7,6 +7,7 @@ import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
 import com.example.mydish.model.api.webservicedemo.RandomDishesApiServiceRxJava
+import com.example.mydish.utils.data.Tags
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -79,8 +80,12 @@ class RandomDishViewModel : ViewModel() {
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
-        }.also {
-            it.isCompleted.let { value -> Log.i(DISH_INFO,"dish loading job finish as $value") }
+        }
+
+        job?.let { job ->
+            job.invokeOnCompletion {
+                Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
+            }
         }
     }
 

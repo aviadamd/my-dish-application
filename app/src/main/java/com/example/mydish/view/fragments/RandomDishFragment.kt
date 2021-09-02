@@ -58,7 +58,7 @@ class RandomDishFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /** Initialize the ViewModel variable. **/
+        /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
         mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
