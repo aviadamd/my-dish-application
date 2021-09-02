@@ -65,7 +65,8 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
 
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        initRandomDishViewModelObserver()
+        initRandomDishViewModelObserverNew()
+        //initRandomDishViewModelObserver()
 
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
         mBinding!!.srlRandomDish.let {
