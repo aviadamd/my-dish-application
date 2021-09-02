@@ -7,8 +7,7 @@ import com.example.mydish.model.api.webservice.RandomDish
 /** Call randomDishResponse from this class and from the RandomDishFragment **/
 /** Call randomDishError from this class and from the RandomDishFragment **/
 data class RandomViewModelLiveDataHolder(
-    val loadData: MutableLiveData<Boolean>,
-    val recipesData: MutableLiveData<RandomDish.Recipes>,
-    val errors: MutableLiveData<Boolean>)
+    val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
+    val recipesData: MutableLiveData<RandomDish.Recipes>)
 
 

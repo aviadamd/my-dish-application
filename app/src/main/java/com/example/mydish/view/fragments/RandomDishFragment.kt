@@ -92,7 +92,6 @@ class RandomDishFragment : Fragment() {
      */
     private fun initRandomDishViewModelObserver() {
         val observer = mRandomDishViewModel.randomViewModelLiveDataObserver
-
         /*** Calling the dish data from service */
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
@@ -104,9 +103,9 @@ class RandomDishFragment : Fragment() {
         })
 
         /*** On error response from services */
-        observer.errors.observe(viewLifecycleOwner, { errorResponse ->
-            errorResponse?.let {
-                Log.i(DISH_INFO,"has random dish response error: $errorResponse")
+        observer.loadData.observe(viewLifecycleOwner, { errorResponse ->
+            errorResponse.first.let {
+                Log.i(DISH_INFO,"has random dish response error: $it")
                 mBinding!!.srlRandomDish.isRefreshing.let {
                     mBinding!!.srlRandomDish.isRefreshing = false
                 }
@@ -115,10 +114,43 @@ class RandomDishFragment : Fragment() {
 
         /** This is the custom dialog presentation on load data **/
         observer.loadData.observe(viewLifecycleOwner, { loadRandomDish ->
-            loadRandomDish?.let {
-                Log.i(DISH_INFO,"has loading random dish response: $loadRandomDish")
-                if (loadRandomDish) {
-                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+            loadRandomDish.second.let {
+                Log.i(DISH_INFO,"has loading random dish response: $it")
+                if(it) setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+            }
+        })
+    }
+
+    /**
+     * Service call method to dish data then
+     * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
+     * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
+     * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
+     */
+    private fun initRandomDishViewModelObserverNew() {
+        mRandomDishViewModel.getRandomDishLiveData.observe(viewLifecycleOwner,{ state ->
+
+            when(state) {
+                is RandomDishViewModel.RandomDishState.Success -> {
+                    state.let {
+                        val randomRecipe = it.data.recipes.random()
+                        Log.i(DISH_INFO, "random recipe response: $randomRecipe")
+                        setRandomResponseInUi(randomRecipe)
+                        setMinimumUiPresentation(false)
+                    }
+                }
+                is RandomDishViewModel.RandomDishState.Error -> {
+                    state.let {
+                        mBinding!!.srlRandomDish.isRefreshing.let {
+                            mBinding!!.srlRandomDish.isRefreshing = false
+                        }
+                    }
+                }
+                is RandomDishViewModel.RandomDishState.Loading -> {
+                    state.let {
+                        Log.i(DISH_INFO,"has loading random dish response: $state")
+                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+                    }
                 }
             }
         })
