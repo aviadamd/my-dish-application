@@ -23,7 +23,7 @@ class RandomDishRxViewModel: ViewModel() {
      */
     private val compositeDisposable = CompositeDisposable()
 
-    private var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
+    var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
         MutableLiveData(Pair(first = false, second = false)),
         MutableLiveData<RandomDish.Recipes>()
     )
