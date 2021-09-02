@@ -9,6 +9,7 @@ import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 
 /**
  *
@@ -50,6 +51,9 @@ class RandomDishViewModel : ViewModel() {
         MutableLiveData<RandomDish.Recipes>()
     )
 
+    val randomViewModelLiveDataObserverChannel = Channel<RandomViewModelLiveDataHolder>()
+
+
     /**
      * Using CoroutineScope(Dispatchers.IO + exceptionHandler) handle the rest calls from back thread
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
@@ -58,6 +62,7 @@ class RandomDishViewModel : ViewModel() {
         val observer = randomViewModelLiveDataObserver
         /*** define the value of the load random dish */
         observer.loadData.value = Pair(first = false, second = false)
+
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
@@ -72,6 +77,7 @@ class RandomDishViewModel : ViewModel() {
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
+            randomViewModelLiveDataObserverChannel.send(observer)
         }
 
         job?.let { job ->
