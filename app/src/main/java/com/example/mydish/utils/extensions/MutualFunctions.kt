@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
-val requestOptions = RequestOptions().timeout(300).centerCrop()
+val mRequestOptions = RequestOptions().timeout(300).centerCrop()
 
 /*** Writing short cut for the toast message */
 fun toast(context: Context, print: String) : Toast {
@@ -47,7 +47,7 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: Vi
         val shimmerJob: Job = this.launch {
             Glide.with(fragment)
                 .load(image)
-                .apply(requestOptions)
+                .apply(mRequestOptions)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(

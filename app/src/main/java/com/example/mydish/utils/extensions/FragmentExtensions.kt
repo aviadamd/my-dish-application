@@ -47,7 +47,7 @@ fun Fragment.setImageDrawable(imageView: ImageView, drawableId: Int) {
 fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textView: TextView?) {
     Glide.with(this)
         .load(image)
-        .apply(requestOptions)
+        .apply(mRequestOptions)
         .transition(withCrossFade())
         .listener(object : RequestListener<Drawable> {
             override fun onLoadFailed(

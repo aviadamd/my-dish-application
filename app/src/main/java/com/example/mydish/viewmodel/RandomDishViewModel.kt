@@ -42,10 +42,7 @@ class RandomDishViewModel : ViewModel() {
      * Create MutableLiveData with no value assigned to it
      * Call randomDishLoading,randomDishResponse,randomDishError
      * from this class and from the RandomDishFragment
-     * **/
-    private var _randomDishLiveData = MutableLiveData<RandomDishState>()
-    val getRandomDishLiveData: LiveData<RandomDishState> = _randomDishLiveData
-
+     **/
     var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
         MutableLiveData(Pair(first = false, second = false)),
         MutableLiveData<RandomDish.Recipes>()
@@ -85,36 +82,6 @@ class RandomDishViewModel : ViewModel() {
                 Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
             }
         }
-    }
-
-    fun getRandomDishesFromRecipeAPINewWay(endPoint: EndPoint) {
-        _randomDishLiveData.value = RandomDishState.Loading
-        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
-        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            val dishes = randomRecipeApiService.getDishes(endPoint)
-            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
-            withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful) {
-                    _randomDishLiveData.value = dishes.body()?.let { RandomDishState.Success(it) }
-                    Log.i(DISH_INFO, "dish loading successes")
-                } else {
-                    _randomDishLiveData.value = RandomDishState.Error
-                    Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
-                }
-            }
-        }
-
-        job?.let { job ->
-            job.invokeOnCompletion {
-                Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
-            }
-        }
-    }
-
-    sealed class RandomDishState {
-        object Error: RandomDishState()
-        object Loading: RandomDishState()
-        data class Success(var data:RandomDish.Recipes): RandomDishState()
     }
 
     override fun onCleared() {

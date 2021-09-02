@@ -66,7 +66,7 @@ fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textVi
     try {
         Glide.with(this)
             .load(image)
-            .apply(requestOptions)
+            .apply(mRequestOptions)
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
