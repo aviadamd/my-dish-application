@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservicedemo.RandomDishesApiServiceRxJava
-import com.example.mydish.viewmodel.RandomViewModelLiveDataHolder
+import com.example.mydish.viewmodel.RandomDishViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
@@ -23,10 +23,15 @@ class RandomDishRxViewModel: ViewModel() {
      */
     private val compositeDisposable = CompositeDisposable()
 
-    var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
+    private var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
         MutableLiveData(Pair(first = false, second = false)),
         MutableLiveData<RandomDish.Recipes>()
     )
+
+    data class RandomViewModelLiveDataHolder(
+        val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
+        val recipesData: MutableLiveData<RandomDish.Recipes>)
+
 
     /**
      * .subscribeOn(Schedulers.newThread())
@@ -73,4 +78,5 @@ class RandomDishRxViewModel: ViewModel() {
             })
         )
     }
+
 }

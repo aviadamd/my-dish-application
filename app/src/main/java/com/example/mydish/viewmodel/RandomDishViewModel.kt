@@ -1,7 +1,6 @@
 package com.example.mydish.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mydish.model.api.webservice.EndPoint
@@ -38,18 +37,10 @@ class RandomDishViewModel : ViewModel() {
         Log.e(DISH_INFO,"Exception:  ${throwable.localizedMessage}")
     }
 
-    /**
-     * Create MutableLiveData with no value assigned to it
-     * Call randomDishLoading,randomDishResponse,randomDishError
-     * from this class and from the RandomDishFragment
-     **/
     var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
         MutableLiveData(Pair(first = false, second = false)),
         MutableLiveData<RandomDish.Recipes>()
     )
-
-    val randomViewModelLiveDataObserverChannel = Channel<RandomViewModelLiveDataHolder>()
-
 
     /**
      * Using CoroutineScope(Dispatchers.IO + exceptionHandler) handle the rest calls from back thread
@@ -68,13 +59,12 @@ class RandomDishViewModel : ViewModel() {
                 if (dishes.isSuccessful) {
                     observer.loadData.value = Pair(first = false, second = true)
                     observer.recipesData.value = dishes.body()
-                    Log.i(DISH_INFO, "dish loading successes")
+                    Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
                 } else {
                     observer.loadData.value = Pair(first = true, second = false)
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
-            randomViewModelLiveDataObserverChannel.send(observer)
         }
 
         job?.let { job ->
@@ -82,6 +72,55 @@ class RandomDishViewModel : ViewModel() {
                 Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
             }
         }
+    }
+
+    /**
+     * Create MutableLiveData with no value assigned to it
+     * Call randomDishLoading,randomDishResponse,randomDishError
+     * from this class and from the RandomDishFragment
+     * **/
+    private var _randomDishLiveData = MutableLiveData<RandomDishState>()
+    val getRandomDishLiveData: MutableLiveData<RandomDishState> = _randomDishLiveData
+
+    /** Create MutableLiveData with no value assigned to it **/
+    /** Call randomDishResponse from this class and from the RandomDishFragment **/
+    /** Call randomDishError from this class and from the RandomDishFragment **/
+    data class RandomViewModelLiveDataHolder(
+        val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
+        val recipesData: MutableLiveData<RandomDish.Recipes>)
+
+    val randomViewModelLiveDataObserverChannel = Channel<RandomDishState>()
+
+    fun getRandomDishesFromRecipeAPINewWay(endPoint: EndPoint) {
+        val observer = _randomDishLiveData
+
+        observer.value = RandomDishState.Loading
+        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
+        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+            val dishes = randomRecipeApiService.getDishes(endPoint)
+            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
+            withContext(Dispatchers.Main) {
+                if (dishes.isSuccessful) {
+                    observer.value = dishes.body()?.let { RandomDishState.Success(it) }
+                    Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
+                } else {
+                    observer.value = RandomDishState.Error
+                    Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
+                }
+            }
+        }
+
+        job?.let { job ->
+            job.invokeOnCompletion {
+                Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
+            }
+        }
+    }
+
+    sealed class RandomDishState {
+        object Error: RandomDishState()
+        object Loading: RandomDishState()
+        data class Success(var data:RandomDish.Recipes): RandomDishState()
     }
 
     override fun onCleared() {
