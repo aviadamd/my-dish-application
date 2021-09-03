@@ -42,10 +42,6 @@ class RandomDishViewModel : ViewModel() {
         MutableLiveData<RandomDish.Recipes>()
     )
 
-    fun getRandomViewModelLiveDataObserver(): RandomViewModelLiveDataHolder {
-        return setRandomViewModelLiveDataObserver
-    }
-
     /**
      * Using CoroutineScope(Dispatchers.IO + exceptionHandler) handle the rest calls from back thread
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
@@ -76,6 +72,10 @@ class RandomDishViewModel : ViewModel() {
                 Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
             }
         }
+    }
+
+    fun getRandomViewModelLiveDataObserver(): RandomViewModelLiveDataHolder {
+        return setRandomViewModelLiveDataObserver
     }
 
     /**
