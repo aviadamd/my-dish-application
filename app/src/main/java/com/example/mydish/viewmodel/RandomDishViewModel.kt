@@ -37,17 +37,21 @@ class RandomDishViewModel : ViewModel() {
         Log.e(DISH_INFO,"Exception:  ${throwable.localizedMessage}")
     }
 
-    var randomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
+    private var setRandomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
         MutableLiveData(Pair(first = false, second = false)),
         MutableLiveData<RandomDish.Recipes>()
     )
+
+    fun getRandomViewModelLiveDataObserver(): RandomViewModelLiveDataHolder {
+        return setRandomViewModelLiveDataObserver
+    }
 
     /**
      * Using CoroutineScope(Dispatchers.IO + exceptionHandler) handle the rest calls from back thread
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
      */
     fun getRandomDishesFromRecipeAPI(endPoint: EndPoint) {
-        val observer = randomViewModelLiveDataObserver
+        val observer = setRandomViewModelLiveDataObserver
         /*** define the value of the load random dish */
         observer.loadData.value = Pair(first = false, second = false)
 

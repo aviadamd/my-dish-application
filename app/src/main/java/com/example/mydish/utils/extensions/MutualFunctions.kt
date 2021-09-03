@@ -44,7 +44,7 @@ fun replaceFirstCharToLocalRoot(string: String): String {
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: View?, textView: TextView?) {
     runBlocking{
-        val shimmerJob: Job = this.launch {
+        val imageLoadingJob: Job = this.launch {
             Glide.with(fragment)
                 .load(image)
                 .apply(mRequestOptions)
@@ -63,10 +63,9 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: Vi
                         return false
                     }
                 }).into(imageView)
-
         }
 
-        shimmerJob.let { job ->
+        imageLoadingJob.let { job ->
             job.invokeOnCompletion {
                 Log.i(IMAGE_RESOURCE, "shimmer finished successes ${job.isCompleted}")
             }
