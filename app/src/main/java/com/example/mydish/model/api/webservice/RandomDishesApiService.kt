@@ -9,6 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 /*** in the future will have more calls on different category dishes */
 class  RandomDishesApiService : RandomDishService {
 
+    /*** implement method to get dishes api call */
     override suspend fun getDishes(endPoint: EndPoint): Response<RandomDish.Recipes> {
         val key = Constants.API_KEY_VALUE
         val license = Constants.LIMIT_LICENSE_VALUE
