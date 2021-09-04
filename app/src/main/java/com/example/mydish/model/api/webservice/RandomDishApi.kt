@@ -39,9 +39,12 @@ interface RandomDishApi {
         @Query(Constants.NUMBER) number : Int,
     ): Single<RandomDish.Recipes>
 
-
+    /**
+     * Make a GET request. pass the endpoint of the URL that is defined in the Constants.
+     * Values are the key of the header the value is called from RandomDishApiService
+     */
     @GET(Constants.API_ENDPOINT)
-    suspend fun gettingTheDishes(
+    suspend fun getTheDishesFlow(
         @Query(Constants.API_KEY) apiKey : String,
         @Query(Constants.LIMIT_LICENSE) limitLicense : Boolean,
         @Query(Constants.TAGS) tags : String,

@@ -38,7 +38,7 @@ class FavoriteDishesFragment : Fragment() {
     /**
      * Set up the favoriteDishes list from the
      * mMyDishViewModel.favoriteDishes live data list of MyDishEntity to the ui
-     * call mMyDishViewModel to get the fa vorite dishes data
+     * call mMyDishViewModel to get the fa favorite dishes data
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

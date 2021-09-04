@@ -45,9 +45,9 @@ class RandomDishesApiServiceFlow {
 
         return flow {
             val recipe : Flow<RandomDish.Recipes> = when(endPoint) {
-                EndPoint.MEAL -> api.gettingTheDishes(key, license, EndPoint.MEAL.key, EndPoint.MEAL.value)
-                EndPoint.CUISINES -> api.gettingTheDishes(key, license, EndPoint.CUISINES.key, EndPoint.CUISINES.value)
-                EndPoint.DESSERT -> api.gettingTheDishes(key, license, EndPoint.DESSERT.key, EndPoint.CUISINES.value)
+                EndPoint.MEAL -> api.getTheDishesFlow(key, license, EndPoint.MEAL.key, EndPoint.MEAL.value)
+                EndPoint.CUISINES -> api.getTheDishesFlow(key, license, EndPoint.CUISINES.key, EndPoint.CUISINES.value)
+                EndPoint.DESSERT -> api.getTheDishesFlow(key, license, EndPoint.DESSERT.key, EndPoint.CUISINES.value)
             }
             emit(recipe.single())
             delay(2000L)

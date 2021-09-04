@@ -28,18 +28,14 @@ class  RandomDishesApiService : RandomDishService {
          * Retrofit adapts a Java interface to HTTP calls by using annotations on the declared methods to
          * define how requests are made. Create instances using {@linkplain Builder the builder} and pass
          * your interface to {create} to generate an implementation.
-         *
          * .addConverterFactory
          * A Converter.Factory converter which uses Gson for JSON.
          * Add converter factory for serialization and deserialization of objects.
          * Because Gson is so flexible in the types it supports, this converter assumes that it can handle all types.
-         *
          * .addConverterFactory(GsonConverterFactory.create())
          * Add a call adapter factory for supporting service method return types other than.
-         *
          * .build()
          * Create retro fit instance using configured values
-         *
          * .create(RandomDishApi::class.java)
          * Create an implementation of the API endpoints
          * defined by the service interface in our case it is RandomDishAPI.

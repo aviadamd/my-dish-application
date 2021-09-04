@@ -8,7 +8,6 @@ import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
 
 /**
  *
@@ -49,6 +48,8 @@ class RandomDishViewModel : ViewModel() {
     fun getRandomDishesFromRecipeAPI(endPoint: EndPoint) {
         val observer = setRandomViewModelLiveDataObserver
         /*** define the value of the load random dish */
+
+        /*** delegate the object MyDishViewModel with repository data base MyDishDao */
         observer.loadData.value = Pair(first = false, second = false)
 
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
@@ -57,6 +58,7 @@ class RandomDishViewModel : ViewModel() {
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (dishes.isSuccessful) {
+                    Log.i(DISH_INFO, "dish message ${dishes.raw()}")
                     observer.loadData.value = Pair(first = false, second = true)
                     observer.recipesData.value = dishes.body()
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
@@ -92,8 +94,6 @@ class RandomDishViewModel : ViewModel() {
     data class RandomViewModelLiveDataHolder(
         val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
         val recipesData: MutableLiveData<RandomDish.Recipes>)
-
-    val randomViewModelLiveDataObserverChannel = Channel<RandomDishState>()
 
     fun getRandomDishesFromRecipeAPINewWay(endPoint: EndPoint) {
         val observer = _randomDishLiveData
