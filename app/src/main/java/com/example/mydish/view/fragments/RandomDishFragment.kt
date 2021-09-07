@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.example.mydish.R
-import com.example.mydish.application.MyDishApplication
+import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
@@ -75,7 +75,6 @@ class RandomDishFragment : Fragment() {
                 mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
             }
             if (it.isRefreshing) it.isRefreshing = false
-
         }
     }
 
@@ -103,13 +102,20 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun initRandomDishViewModelObserver() {
+    private fun initRandomDishViewModelObserver(): Boolean {
         val observer = mRandomDishViewModel.getRandomViewModelLiveDataObserver()
+        var isDishExists = false
+        val recipes = getExistsDishesFromMyDishEntity()
 
         /*** Calling the dish data from service */
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
                 val randomRecipe = dishResponse.recipes.random()
+                if (recipes.contains(randomRecipe.title)) {
+                    Log.i("DATA_RESPONSE",
+                        "dish ${randomRecipe.title} is all ready exists in data base")
+                    isDishExists = true
+                }
                 setRandomResponseInUi(randomRecipe)
                 setMinimumUiPresentation(false)
             }
@@ -132,6 +138,8 @@ class RandomDishFragment : Fragment() {
                 setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
             }
         })
+
+        return isDishExists
     }
 
     /**

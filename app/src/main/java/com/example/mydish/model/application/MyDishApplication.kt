@@ -1,4 +1,4 @@
-package com.example.mydish.application
+package com.example.mydish.model.application
 
 import android.app.Application
 import com.example.mydish.model.repository.MyDishRepository

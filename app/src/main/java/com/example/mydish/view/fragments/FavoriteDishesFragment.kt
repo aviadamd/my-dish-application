@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mydish.application.MyDishApplication
+import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentFavoriteDishesBinding
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.view.adapters.MyDishAdapter

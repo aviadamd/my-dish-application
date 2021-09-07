@@ -35,11 +35,11 @@ object Constants {
 
     //can be diets, meal types, cuisines, or intolerances
     const val TAGS_DESSERT_VALUE : String = "dessert"
-    const val NUMBER_DESSERT_VALUE : Int = 0
+    const val NUMBER_DESSERT_VALUE : Int = 1
 
     const val TAGS_MEAL_VALUE : String = "meal types"
-    const val NUMBER_MEAL_VALUE : Int = 0
+    const val NUMBER_MEAL_VALUE : Int = 1
 
     const val TAGS_CUISINES_VALUE : String = "cuisines"
-    const val NUMBER_CUISINES_VALUE : Int = 0
+    const val NUMBER_CUISINES_VALUE : Int = 1
 }

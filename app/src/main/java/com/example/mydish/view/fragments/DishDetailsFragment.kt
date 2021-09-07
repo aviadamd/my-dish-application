@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.mydish.R
-import com.example.mydish.application.MyDishApplication
+import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentDishDetailsBinding
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.data.Constants

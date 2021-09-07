@@ -13,7 +13,8 @@ import com.example.mydish.utils.data.Tags.ANIMATION
 import com.example.mydish.utils.extensions.hidingStatusBar
 import com.example.mydish.utils.extensions.startAnActivity
 
-class SplashActivity : AppCompatActivity() {
+class
+SplashActivity : AppCompatActivity() {
 
     /*** Present splash screen with the animation of the tvAppName with application name */
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +39,8 @@ class SplashActivity : AppCompatActivity() {
         splashAnimation.let {
             it.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
-                    //?
+                    Log.i(ANIMATION, "animation start")
+                    animation?.start()
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {
@@ -50,7 +52,7 @@ class SplashActivity : AppCompatActivity() {
                 }
 
                 override fun onAnimationRepeat(animation: Animation?) {
-                    //?
+                    Log.i(ANIMATION, "animation repeat")
                 }
             })
         }

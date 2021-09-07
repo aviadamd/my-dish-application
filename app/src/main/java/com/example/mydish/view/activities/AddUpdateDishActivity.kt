@@ -30,7 +30,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.R
-import com.example.mydish.application.MyDishApplication
+import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.ActivityAddUpdatedDishBinding
 import com.example.mydish.databinding.DialodCustomListBinding
 import com.example.mydish.databinding.DialogCustomImageSelectionBinding
@@ -103,7 +103,6 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         setUpActionBar()
         /*** If the entity is not empty and the dish id is populated then init the image presentation with the dish data */
         presentDataDishInTheUi()
-
         /*** on click logic on each click event in the page */
         mBinding.ivAddDishImage.setOnClickListener(this)
         mBinding.etType.setOnClickListener(this)

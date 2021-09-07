@@ -19,7 +19,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.R
 import com.example.mydish.utils.data.Tags
@@ -27,12 +26,14 @@ import java.io.IOException
 
 /*** hide the upper phone status bar */
 fun Activity.hidingStatusBar() {
-    window.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            it.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            @Suppress("DEPRECATION")
-            it.setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN)
+    this.let{ activity ->
+        activity.window.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                it.insetsController?.hide(WindowInsets.Type.statusBars())
+            } else {
+                @Suppress("DEPRECATION")
+                it.setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN)
+            }
         }
     }
 }

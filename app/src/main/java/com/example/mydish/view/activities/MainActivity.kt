@@ -56,13 +56,11 @@ class MainActivity : AppCompatActivity() {
         mNavController = findNavController(R.id.nav_host_fragment)
 
         /** create the menu app bar lower navigation **/
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_all_dishes,
-                R.id.navigation_favorite_dishes,
-                R.id.navigation_random_dish
-            )
-        )
+        val appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.navigation_all_dishes,
+            R.id.navigation_favorite_dishes,
+            R.id.navigation_random_dish
+        ))
 
         /** set up the navigation controller **/
         setupActionBarWithNavController(mNavController, appBarConfiguration)

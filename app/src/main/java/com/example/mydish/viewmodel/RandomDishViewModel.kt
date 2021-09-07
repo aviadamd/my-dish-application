@@ -22,6 +22,8 @@ import kotlinx.coroutines.*
  * Classes as activities/fragment in use that call to MyDishViewModel
  * This class connect with the service area and not with the Repository
  * RandomDishFragment
+ *
+ * This class is the observable of the observer
  */
 class RandomDishViewModel : ViewModel() {
 
@@ -58,7 +60,6 @@ class RandomDishViewModel : ViewModel() {
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (dishes.isSuccessful) {
-                    Log.i(DISH_INFO, "dish message ${dishes.raw()}")
                     observer.loadData.value = Pair(first = false, second = true)
                     observer.recipesData.value = dishes.body()
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
