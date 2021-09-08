@@ -44,7 +44,7 @@ class FavoriteDishesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mBinding!!.rvFavoriteDishesLists.layoutManager = LinearLayoutManager(requireActivity())
-        val myDishAdapter = MyDishAdapter(this)
+        val myDishAdapter = MyDishAdapter(this@FavoriteDishesFragment)
         mBinding!!.rvFavoriteDishesLists.adapter = myDishAdapter
 
         mMyDishViewModel.favoriteDishes.observe(viewLifecycleOwner) {

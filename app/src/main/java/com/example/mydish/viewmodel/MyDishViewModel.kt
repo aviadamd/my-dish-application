@@ -23,6 +23,9 @@ import java.lang.IllegalArgumentException
  * DishDetailsFragment
  * FavoriteDishFragment
  * RandomDishFragment
+ *
+ * allDishesList/favoriteDishes/filteredListDishes wrapped as live data
+ * insert/update/delete wrapped as coroutine launched scooped
  */
 /*** @param myDishRepository - The repository class */
 class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewModel() {
@@ -36,23 +39,21 @@ class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewMod
     val favoriteDishes : LiveData<List<MyDishEntity>> = myDishRepository.favoriteDishes.asLiveData()
 
     /*** Use live data to observe the cashing data from filter favorite dishes list */
-    fun filteredListDishes(value : String) : LiveData<List<MyDishEntity>> = myDishRepository.filteredListDishes(value).asLiveData()
+    fun filteredListDishes(value : String) : LiveData<List<MyDishEntity>> =
+        myDishRepository.filteredListDishes(value).asLiveData()
 
     /*** Launching a new coroutine to insert the data in a non-blocking way. */
     fun insert(myDishEntity : MyDishEntity) = viewModelScope.launch {
-        // Call the repository function and pass the details.
         myDishRepository.insertMyDishData(myDishEntity)
     }
 
     /*** Launching a new coroutine to update the data in a non-blocking way. */
     fun update(myDishEntity: MyDishEntity) = viewModelScope.launch {
-        // Call the repository function and pass the details.
         myDishRepository.updateMyDishData(myDishEntity)
     }
 
     /*** Launching a new coroutine to delete the data in a non-blocking way. */
     fun delete(myDishEntity: MyDishEntity) = viewModelScope.launch {
-        // Call the repository function and pass the details.
         myDishRepository.deleteMyDishData(myDishEntity)
     }
 }

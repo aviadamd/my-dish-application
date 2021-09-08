@@ -33,9 +33,17 @@ class RandomDishViewModel : ViewModel() {
     /*** Retro fit RandomDishService val , will be used in end point url */
     private val randomRecipeApiService = RandomDishesApiService()
 
-    /*** exception handler for coroutine scope */
-    private val exceptionHandler = CoroutineExceptionHandler{ _, throwable ->
-        Log.e(DISH_INFO,"Exception:  ${throwable.localizedMessage}")
+    /*** coroutine scope with exception handler for error coroutine scope */
+    private val coroutineErrorScope = CoroutineExceptionHandler{ job, throwable ->
+        Log.e(DISH_INFO,"Error: ${throwable.localizedMessage} Job: ${job.isActive}")
+    }
+
+    /*** coroutine scope with exception handler for coroutine scope */
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + coroutineErrorScope)
+
+    /*** the getter for the populated random dish life data observer */
+    fun getRandomViewModelLiveDataObserver(): RandomViewModelLiveDataHolder {
+        return setRandomViewModelLiveDataObserver
     }
 
     private var setRandomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
@@ -55,11 +63,11 @@ class RandomDishViewModel : ViewModel() {
         observer.loadData.value = Pair(first = false, second = false)
 
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
-        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
+        job = coroutineScope.launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful) {
+                if (this.isActive && dishes.isSuccessful) {
                     observer.loadData.value = Pair(first = false, second = true)
                     observer.recipesData.value = dishes.body()
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
@@ -77,59 +85,17 @@ class RandomDishViewModel : ViewModel() {
         }
     }
 
-    fun getRandomViewModelLiveDataObserver(): RandomViewModelLiveDataHolder {
-        return setRandomViewModelLiveDataObserver
-    }
-
-    /**
-     * Create MutableLiveData with no value assigned to it
-     * Call randomDishLoading,randomDishResponse,randomDishError
-     * from this class and from the RandomDishFragment
-     * **/
-    private var _randomDishLiveData = MutableLiveData<RandomDishState>()
-    val getRandomDishLiveData: MutableLiveData<RandomDishState> = _randomDishLiveData
-
-    /** Create MutableLiveData with no value assigned to it **/
-    /** Call randomDishResponse from this class and from the RandomDishFragment **/
-    /** Call randomDishError from this class and from the RandomDishFragment **/
-    data class RandomViewModelLiveDataHolder(
-        val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
-        val recipesData: MutableLiveData<RandomDish.Recipes>)
-
-    fun getRandomDishesFromRecipeAPINewWay(endPoint: EndPoint) {
-        val observer = _randomDishLiveData
-
-        observer.value = RandomDishState.Loading
-        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
-        job = CoroutineScope(Dispatchers.IO + exceptionHandler).launch {
-            val dishes = randomRecipeApiService.getDishes(endPoint)
-            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
-            withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful) {
-                    observer.value = dishes.body()?.let { RandomDishState.Success(it) }
-                    Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
-                } else {
-                    observer.value = RandomDishState.Error
-                    Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
-                }
-            }
-        }
-
-        job?.let { job ->
-            job.invokeOnCompletion {
-                Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
-            }
-        }
-    }
-
-    sealed class RandomDishState {
-        object Error: RandomDishState()
-        object Loading: RandomDishState()
-        data class Success(var data:RandomDish.Recipes): RandomDishState()
-    }
-
+    /*** on each time that the view model life cycle in clean the job will be cancel */
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
     }
+
+    /**
+     * val loadData: MutableLiveData<Pair<Boolean,Boolean>> hold the network call state
+     * val recipesData: MutableLiveData<RandomDish.Recipes>) hold the network data
+     */
+    data class RandomViewModelLiveDataHolder(
+        val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
+        val recipesData: MutableLiveData<RandomDish.Recipes>)
 }

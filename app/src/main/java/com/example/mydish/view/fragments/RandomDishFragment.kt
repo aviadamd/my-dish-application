@@ -26,7 +26,6 @@ import com.example.mydish.utils.extensions.toast
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
-import com.example.mydish.viewmodel.RandomDishViewModel.RandomDishState
 
 /**
  * This class hold the random dish presentation
@@ -140,43 +139,6 @@ class RandomDishFragment : Fragment() {
         })
 
         return isDishExists
-    }
-
-    /**
-     * Service call method to dish data then
-     * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
-     * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
-     * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
-     */
-    private fun initRandomDishViewModelObserverNew() {
-        mRandomDishViewModel.getRandomDishLiveData.observe(viewLifecycleOwner,{ state ->
-
-            when(state) {
-                is RandomDishState.Success -> {
-                    state.let {
-                        val randomRecipe = it.data.recipes.random()
-                        Log.i(DISH_INFO, "random recipe response: $randomRecipe")
-                        setRandomResponseInUi(randomRecipe)
-                        setMinimumUiPresentation(false)
-                    }
-                }
-
-                is RandomDishState.Error -> {
-                    state.let {
-                        mBinding!!.srlRandomDish.isRefreshing.let {
-                            mBinding!!.srlRandomDish.isRefreshing = false
-                        }
-                    }
-                }
-
-                is RandomDishState.Loading -> {
-                    state.let {
-                        Log.i(DISH_INFO,"has loading random dish response: $state")
-                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
-                    }
-                }
-            }
-        })
     }
 
     /**

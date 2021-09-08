@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import com.example.mydish.view.fragments.AllDishesFragment
 import com.example.mydish.view.fragments.FavoriteDishesFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 
+/*** will inflate theirs view wit this adapter */
 class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDishAdapter.ViewHolder>() {
 
     /** create list instance from MyDishEntity **/
@@ -53,10 +55,11 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
         //Load the dish image in the ImageView with glide
 
         setShimmer(listOf(holder.shimmerImage, holder.shimmerTitle), listOf(holder.ivDishImage, holder.tvTitle),500)
-        setPicture(fragment,dish.image,holder. ivDishImage, null,null)
+        setPicture(fragment, dish.image,holder. ivDishImage, null,null)
         holder.tvTitle.text = dish.title
 
         //Navigation component section
+
         holder.itemView.setOnClickListener {
             //Navigation to all dishes fragment
             when(fragment) {

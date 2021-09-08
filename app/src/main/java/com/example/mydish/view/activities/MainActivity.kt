@@ -13,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.work.*
 import com.example.mydish.R
 import com.example.mydish.databinding.ActivityMainBinding
-import com.example.mydish.model.api.notifications.NotificationManager
+import com.example.mydish.model.api.notifications.NotificationWorker
 import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DURATION
 import com.example.mydish.utils.data.Tags
@@ -67,9 +67,9 @@ class MainActivity : AppCompatActivity() {
         mBinding.navView.setupWithNavController(mNavController)
 
         /*** pass the notification id as intent extra to handle the code when user is navigate in the app with notification. */
-        passNotificationToNavigationComponent()
+        notificationNavigationComponentToRandomDishFragment()
         /*** check that the activity has Constants.NOTIFICATION_ID on every 1 hour the application will send new recipe with notification */
-        startWorkManager(NOTIFICATION_TIME_OUT, TimeUnit.HOURS)
+        startWorkingManager()
     }
 
     /**
@@ -87,40 +87,32 @@ class MainActivity : AppCompatActivity() {
      * Means that if this work already exists, it will be kept
      * if the value is ExistingPeriodicWorkPolicy.REPLACE, then the work will be replaced
      * After click the notification element the notification will lead to random dish fragment
-     */
-    @Suppress("SameParameterValue")
-    private fun startWorkManager(onEvery : Long, unit: TimeUnit) {
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "My Dish notification work",
-            ExistingPeriodicWorkPolicy.KEEP,
-            createWorkRequest(onEvery, unit)
-        )
-    }
-
-    /**
+     *
      * You can use any of the work request builder that are available to use.
      * PeriodicWorkRequestBuilder to execute the code periodically.
      *
      * The minimum time can set is 15 minutes.
      * Can also set the TimeUnit as . for example SECONDS, MINUTES, or HOURS.
-     */
-    private fun createWorkRequest(onEvery : Long, unit: TimeUnit) =
-        PeriodicWorkRequestBuilder<NotificationManager>(onEvery, unit)
-            .setConstraints(createConstraints())
-            .build()
-
-    /**
+     *
      * Constraints ensure that work is delay/deferred until optimal conditions are met.
      * A specification of the requirements that need to be met before a WorkRequest can run.
      * By default, WorkRequests do not have any requirements and can run immediately.
      * By adding requirements, you can make sure that work only runs in certain situations
      * for example, when you have an un metered network and are charging.
      */
-    private fun createConstraints() = Constraints.Builder()
-        .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-        .setRequiresCharging(false)
-        .setRequiresBatteryNotLow(true)
-        .build()
+    private fun startWorkingManager() {
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "My Dish notification work",
+            ExistingPeriodicWorkPolicy.KEEP,
+            PeriodicWorkRequestBuilder<NotificationWorker>(NOTIFICATION_TIME_OUT, TimeUnit.HOURS)
+                .setConstraints(Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                    .setRequiresCharging(false)
+                    .setRequiresBatteryNotLow(true)
+                    .build()
+                ).build()
+        )
+    }
 
     /***  Create a function to hide the BottomNavigationView with animation. */
     fun hideBottomNavigationView() {
@@ -140,7 +132,7 @@ class MainActivity : AppCompatActivity() {
      * Pass the notification id as intent extra to handle the code when user is navigate in the app with notification.
      * Set the navigation to random dish page mBinding.navView.selectedItemId = R.id.navigation_random_dish
      */
-    private fun passNotificationToNavigationComponent() {
+    private fun notificationNavigationComponentToRandomDishFragment() {
         if (intent.hasExtra(Constants.NOTIFICATION_ID)) {
             val notificationId = intent.getIntExtra(Constants.NOTIFICATION_ID, 0)
             Log.i(Tags.NOTIFICATIONS, "$notificationId")
