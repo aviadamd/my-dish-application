@@ -249,7 +249,9 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
     /*** if all edit text are full, update or insert new data*/
     private fun enterDishDataToRoom(
-        title: String, type: String, category: String, ingredients: String, cookingTimeInMinutes: String, cookingDirection: String) {
+        title: String, type: String, category: String,
+        ingredients: String, cookingTimeInMinutes: String,
+        cookingDirection: String) {
 
         var dishID = 0
         var imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL
@@ -282,14 +284,24 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         //if has new entry, when the dish id is == 0
         //else create update for exist data
         if(dishID == 0) {
+            /** create list instance from MyDishEntity **/
             mMyDishViewModel.insert(dishEntity)
-        } else mMyDishViewModel.update(dishEntity)
+            toast(this@AddUpdateDishActivity, "${dishEntity.title} is added to yours dishes").show()
+        } else {
+            mMyDishEntity?.let {
+                if(it.title == title && it.type == type && it.category == category && it.cooking_time == cookingTimeInMinutes) {
+                    toast(this@AddUpdateDishActivity, "${it.title} didn't have changes").show()
+                } else {
+                    mMyDishViewModel.update(dishEntity)
+                    toast(this@AddUpdateDishActivity, "${dishEntity.title} updated successfully").show()
+                }
+            }
+        }
     }
 
-    /*** verify if the activity as extra carry string data from MyDishAdapter */
+    /*** verify if the activity as extra carry string data from MyDishAdapter this will navigate to edit dish */
     private fun getExtraDishDetails() {
         if (intent.hasExtra(Constants.EXTRA_DISH_DETAILS)) {
-            //Update the my dish data model
             mMyDishEntity = intent.getParcelableExtra(Constants.EXTRA_DISH_DETAILS)
         }
     }
@@ -299,7 +311,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         mMyDishEntity?.let { it ->
             if (it.id != 0) {
                 mImagePath = it.image
-                setPicture(mImagePath,mBinding.ivDishImage,null,null)
+                setPicture(mImagePath,mBinding.ivDishImage,mBinding.flSelectImage,null)
                 //Set the dish presentation data to page
                 listOf(
                     Pair(mBinding.etTitle, it.title),
@@ -517,7 +529,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         // Set the LayoutManager that this RecyclerView will use.
         binding.rvList.layoutManager = LinearLayoutManager(this@AddUpdateDishActivity)
         // Adapter class is initialized and list is passed in the param.
-        val adapter = CustomListItemAdapter(this@AddUpdateDishActivity,null, itemsList, selection)
+        val adapter = CustomListItemAdapter(this@AddUpdateDishActivity, itemsList, selection)
         // Adapter instance is set to the recyclerview to inflate the items.
         binding.rvList.adapter = adapter
         //Start the dialog and display it on screen.

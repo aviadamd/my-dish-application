@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +58,6 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
         holder.tvTitle.text = dish.title
 
         //Navigation component section
-
         holder.itemView.setOnClickListener {
             //Navigation to all dishes fragment
             when(fragment) {
@@ -69,8 +67,10 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
         }
 
         //When need to change dish details or delete
-        holder.ibMore.setOnClickListener {
-            setPopUpPresentation(holder, dish)
+        if (fragment is AllDishesFragment) {
+            holder.ibMore.setOnClickListener {
+                setPopUpPresentation(holder, dish)
+            }
         }
 
         //Set AllDishesFragment the ibMore - EDIT DISH/DELETE DISH option to visible

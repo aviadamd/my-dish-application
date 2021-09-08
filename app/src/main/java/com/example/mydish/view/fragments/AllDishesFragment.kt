@@ -85,7 +85,7 @@ class AllDishesFragment : Fragment() {
         /*** set/init the rvDishesCategory layoutManager to Linear view as horizontal view */
         mBinding.rvDishesCategory.layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
         /*** set/init the adapter to mBinding.rvDishesCategory.adapter */
-        val adapter = CustomHorizontalListItemAdapter(requireActivity(), this@AllDishesFragment, resources.getStringArray(R.array.dishTypes), Constants.FILTER_SELECTION)
+        val adapter = CustomHorizontalListItemAdapter(requireActivity(), this@AllDishesFragment, resources.getStringArray(R.array.dishTypes))
         mBinding.rvDishesCategory.adapter = adapter
 
         /*** observer on the LiveData returned by getAllDishesList.

@@ -10,7 +10,6 @@ import com.example.mydish.view.activities.AddUpdateDishActivity
 
 class CustomListItemAdapter (
     private val activity: Activity,
-    private val fragment: Fragment?,
     private val listItems: List<String>,
     private val selection: String)
     : RecyclerView.Adapter<CustomListItemAdapter.ViewHolder>() {
