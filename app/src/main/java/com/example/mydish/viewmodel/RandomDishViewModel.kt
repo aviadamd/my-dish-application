@@ -3,6 +3,7 @@ package com.example.mydish.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
@@ -12,6 +13,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.onEach
 
 /**
  *
@@ -142,6 +144,7 @@ class RandomDishViewModel : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
+        compositeDisposable.clear()
     }
 
     /**
