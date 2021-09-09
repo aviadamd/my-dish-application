@@ -3,7 +3,6 @@ package com.example.mydish.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
 import com.example.mydish.model.api.webservice.EndPoint
 import com.example.mydish.model.api.webservice.RandomDish
 import com.example.mydish.model.api.webservice.RandomDishesApiService
@@ -13,7 +12,6 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.onEach
 
 /**
  *
@@ -65,11 +63,7 @@ class RandomDishViewModel : ViewModel() {
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
      */
     fun getRandomDishesFromRecipeAPI(endPoint: EndPoint) {
-        val observer = setRandomViewModelLiveDataObserver
-        /*** define the value of the load random dish */
-
-        /*** delegate the object MyDishViewModel with repository data base MyDishDao */
-        observer.loadData.value = Pair(first = false, second = false)
+        setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = false)
 
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
@@ -77,11 +71,11 @@ class RandomDishViewModel : ViewModel() {
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (this.isActive && dishes.isSuccessful) {
-                    observer.loadData.value = Pair(first = false, second = true)
-                    observer.recipesData.value = dishes.body()
+                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = true)
+                    setRandomViewModelLiveDataObserver.recipesData.value = dishes.body()
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
                 } else {
-                    observer.loadData.value = Pair(first = true, second = false)
+                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = true, second = false)
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
@@ -111,10 +105,7 @@ class RandomDishViewModel : ViewModel() {
     * SingleObserver as is.
     */
     fun getRandomDishesFromRecipeAPIRx(endPoint: EndPoint) {
-        /*** define the value of the load random dish */
-        val observer = setRandomViewModelLiveDataObserver
-        /*** define the value of the load random dish */
-        observer.loadData.value = Pair(first = false, second = true)
+        setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = true)
         /**
          * Disposable להיפטר
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
@@ -127,17 +118,22 @@ class RandomDishViewModel : ViewModel() {
             .subscribeWith(object : DisposableSingleObserver<RandomDish.Recipes>() {
                 override fun onSuccess(dishResponce: RandomDish.Recipes) {
                     /*** update the values with response in the success method. */
-                    observer.loadData.value = Pair(first = false, second = true)
-                    observer.recipesData.value = dishResponce
+                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = true)
+                    setRandomViewModelLiveDataObserver.recipesData.value = dishResponce
                 }
 
                 override fun onError(e: Throwable) {
                     /*** update the values in the response in the error methods . */
-                    observer.loadData.value = Pair(first = true, second = false)
+                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = true, second = false)
                     e.printStackTrace()
                 }
             })
         )
+    }
+
+    fun refresh() {
+        setRandomViewModelLiveDataObserver.recipesData.value = null
+        setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = false)
     }
 
     /*** on each time that the view model life cycle in clean the job will be cancel */

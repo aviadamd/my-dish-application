@@ -83,38 +83,19 @@ class RandomDishFragment : Fragment() {
         mBinding = null
     }
 
-    private fun getExistsDishesFromMyDishEntity(): List<String> {
-        val listOfTitles = arrayListOf<String>()
-        myDishViewModel.allDishesList.observe(viewLifecycleOwner) {
-            it.let {
-                for (i in it.indices) {
-                    listOfTitles.add(it[i].title)
-                }
-            }
-        }
-        return listOfTitles
-    }
-
     /**
      * Service call method to dish data then
      * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun initRandomDishViewModelObserver(): Boolean {
+    private fun initRandomDishViewModelObserver() {
         val observer = mRandomDishViewModel.getRandomViewModelLiveDataObserver()
-        var isDishExists = false
-        val recipes = getExistsDishesFromMyDishEntity()
 
         /*** Calling the dish data from service */
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
                 val randomRecipe = dishResponse.recipes.random()
-                if (recipes.contains(randomRecipe.title)) {
-                    Log.i("DATA_RESPONSE",
-                        "dish ${randomRecipe.title} is all ready exists in data base")
-                    isDishExists = true
-                }
                 setRandomResponseInUi(randomRecipe)
                 setMinimumUiPresentation(false)
             }
@@ -137,8 +118,6 @@ class RandomDishFragment : Fragment() {
                 setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
             }
         })
-
-        return isDishExists
     }
 
     /**
@@ -211,15 +190,15 @@ class RandomDishFragment : Fragment() {
      */
     @Suppress("DEPRECATION")
     private fun setDishCookingDirection(recipe: RandomDish.Recipe) {
+        val downLine = "\\.\n"
+        val dot = "\\.\\s?".toRegex()
         val instructions = recipe.instructions
+        val setCookDirection = mBinding!!.tvCookingDirection
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            mBinding!!.tvCookingDirection.text = Html
-                .fromHtml(instructions, Html.FROM_HTML_MODE_COMPACT)
-                .replace("\\.\\s?".toRegex(), "\\.\n")
+            setCookDirection.text = Html.fromHtml(instructions, Html.FROM_HTML_MODE_COMPACT).replace(dot, downLine)
         } else {
-            mBinding!!.tvCookingDirection.text = Html
-                .fromHtml(instructions)
-                .replace("\\.\\s?".toRegex(), "\\.\n")
+            setCookDirection.text = Html.fromHtml(instructions).replace(dot, downLine)
         }
     }
 
@@ -253,26 +232,42 @@ class RandomDishFragment : Fragment() {
                 true
             )
 
-            /*** insert the new randomDishDetails MyDishEntity object to room data base */
-            myDishViewModel.insert(randomDishDetails)
+            var isNewDish = true
+            myDishViewModel.allDishesList.observe(viewLifecycleOwner) {
+                it.forEach { item ->
+                    if (item.title == recipe.title) {
+                        isNewDish = false
+                    }
+                }
+            }
 
-            /*** present the drawable image with selected favorite dish */
-            setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_selected)
-
-            /*** recipe title + the dish_is_selected label will present toast message about new dish added to favorite dishes */
-            val titleSelected = recipe.title +" "+ resources.getString(R.string.dish_is_selected)
-            toast(requireActivity(), titleSelected).show()
+            if (isNewDish) {
+                /*** insert the new randomDishDetails MyDishEntity object to room data base */
+                myDishViewModel.insert(randomDishDetails)
+                /*** present the drawable image with selected favorite dish */
+                setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_selected)
+                /*** recipe title + the dish_is_selected label will present toast message about new dish added to favorite dishes */
+                toast(requireActivity(),recipe.title+" "+resources.getString(R.string.dish_is_selected)).show()
+            } else {
+                /*** present the drawable image with un selected favorite dish */
+                setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_unselected)
+                /*** recipe title + the dish all ready label exists in the favorite dishes */
+                toast(requireActivity(),"${recipe.title} dish that set in your favorite dishes").show()
+            }
         }
     }
 
-    private fun setMinimumUiPresentation(@Suppress("SameParameterValue") isIgnoreFullUiPresentation: Boolean) {
+    @Suppress("SameParameterValue")
+    private fun setMinimumUiPresentation(isIgnoreFullUiPresentation: Boolean) {
         if (isIgnoreFullUiPresentation) {
             repeat(listOf(
                 mBinding!!.tvIngredientsLabel,
                 mBinding!!.tvIngredients,
                 mBinding!!.tvCookingDirectionLabel,
                 mBinding!!.tvCookingDirection,
-                mBinding!!.tvCookingTime).size) { View.GONE }
+                mBinding!!.tvCookingTime).size) {
+                View.GONE
+            }
         }
     }
 }

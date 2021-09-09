@@ -299,7 +299,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    /*** verify if the activity as extra carry string data from MyDishAdapter this will navigate to edit dish */
+    /*** verify if the activity as extra carry string data that will also init the mMyDishEntity */
     private fun getExtraDishDetails() {
         if (intent.hasExtra(Constants.EXTRA_DISH_DETAILS)) {
             mMyDishEntity = intent.getParcelableExtra(Constants.EXTRA_DISH_DETAILS)
