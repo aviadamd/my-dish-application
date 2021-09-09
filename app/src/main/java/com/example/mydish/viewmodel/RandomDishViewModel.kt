@@ -3,9 +3,9 @@ package com.example.mydish.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.mydish.model.api.webservice.EndPoint
-import com.example.mydish.model.api.webservice.RandomDish
-import com.example.mydish.model.api.webservice.RandomDishesApiService
+import com.example.mydish.model.service.webservice.EndPoint
+import com.example.mydish.model.service.webservice.RandomDish
+import com.example.mydish.model.service.webservice.RandomDishesApiService
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -129,11 +129,6 @@ class RandomDishViewModel : ViewModel() {
                 }
             })
         )
-    }
-
-    fun refresh() {
-        setRandomViewModelLiveDataObserver.recipesData.value = null
-        setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = false)
     }
 
     /*** on each time that the view model life cycle in clean the job will be cancel */

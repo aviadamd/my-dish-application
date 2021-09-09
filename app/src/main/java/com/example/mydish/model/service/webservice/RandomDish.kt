@@ -1,4 +1,4 @@
-package com.example.mydish.model.api.webservice
+package com.example.mydish.model.service.webservice
 
 /*** this object class use as data class structures of the api service */
 object RandomDish {

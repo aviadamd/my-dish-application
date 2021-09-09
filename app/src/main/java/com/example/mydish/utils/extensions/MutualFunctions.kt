@@ -20,12 +20,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.util.*
 
-val mRequestOptions = RequestOptions().timeout(300).centerCrop()
+val mRequestOptions = RequestOptions().timeout(1000).centerCrop()
 
 /*** Writing short cut for the toast message */
 fun toast(context: Context, print: String) : Toast {
@@ -67,7 +65,7 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: Vi
 
         imageLoadingJob.let { job ->
             job.invokeOnCompletion {
-                Log.i(IMAGE_RESOURCE, "shimmer finished successes ${job.isCompleted}")
+                Log.i(IMAGE_RESOURCE, "load image finished successes ${job.isCompleted}")
             }
         }
     }

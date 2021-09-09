@@ -1,4 +1,4 @@
-package com.example.mydish.model.api.webservice
+package com.example.mydish.model.service.webservice
 
 import com.example.mydish.utils.data.Constants
 import io.reactivex.rxjava3.core.Single

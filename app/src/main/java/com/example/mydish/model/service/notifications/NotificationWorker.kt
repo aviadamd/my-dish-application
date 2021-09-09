@@ -1,4 +1,4 @@
-package com.example.mydish.model.api.notifications
+package com.example.mydish.model.service.notifications
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -18,7 +18,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker.Result.success
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.mydish.R
 import com.example.mydish.utils.data.Constants

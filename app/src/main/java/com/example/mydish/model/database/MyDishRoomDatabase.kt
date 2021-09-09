@@ -11,7 +11,7 @@ import com.example.mydish.model.entities.MyDishEntity
  * The fact that this has very few comments emphasizes its coolness.
  * If need more then one Dao then this class is the place for it
  */
-@Database(entities = [MyDishEntity::class], version = 1)
+@Database(entities = [MyDishEntity::class], version = 2)
 abstract class MyDishRoomDatabase : RoomDatabase() {
 
     /**

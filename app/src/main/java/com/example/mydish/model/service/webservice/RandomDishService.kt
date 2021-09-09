@@ -1,8 +1,6 @@
-package com.example.mydish.model.api.webservice
+package com.example.mydish.model.service.webservice
 
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.flow.Flow
-import retrofit2.Call
 import retrofit2.Response
 
 interface RandomDishService {

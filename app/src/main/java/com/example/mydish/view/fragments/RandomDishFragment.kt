@@ -10,12 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.example.mydish.R
 import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
-import com.example.mydish.model.api.webservice.EndPoint
-import com.example.mydish.model.api.webservice.RandomDish
+import com.example.mydish.model.service.webservice.EndPoint
+import com.example.mydish.model.service.webservice.RandomDish
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Tags.DISH_INFO
@@ -40,7 +39,10 @@ class RandomDishFragment : Fragment() {
     private var mBinding : FragmentRandomDishBinding? = null
 
     /** global variable for Random dish ViewModel class **/
-    private lateinit var mRandomDishViewModel : RandomDishViewModel
+    //private lateinit var mRandomDishViewModel : RandomDishViewModel
+
+    /** global variable for Random dish ViewModel class **/
+    private val mRandomDishViewModel : RandomDishViewModel by viewModels()
 
     /*** delegate the object MyDishViewModel with repository data base MyDishDao */
     private val myDishViewModel: MyDishViewModel by viewModels {
@@ -59,7 +61,7 @@ class RandomDishFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
-        mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
+        //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
         mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
@@ -67,13 +69,10 @@ class RandomDishFragment : Fragment() {
         initRandomDishViewModelObserver()
 
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
-        mBinding!!.srlRandomDish.let {
-            it.setOnRefreshListener {
-                /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
-                /** Present the recipe on the view with random dish **/
-                mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
-            }
-            if (it.isRefreshing) it.isRefreshing = false
+        mBinding!!.srlRandomDish.setOnRefreshListener {
+            /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
+            /** Present the recipe on the view with random dish **/
+            mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
         }
     }
 
@@ -95,6 +94,9 @@ class RandomDishFragment : Fragment() {
         /*** Calling the dish data from service */
         observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
+                if (mBinding!!.srlRandomDish.isRefreshing) {
+                    mBinding!!.srlRandomDish.isRefreshing = false
+                }
                 val randomRecipe = dishResponse.recipes.random()
                 setRandomResponseInUi(randomRecipe)
                 setMinimumUiPresentation(false)
@@ -105,7 +107,7 @@ class RandomDishFragment : Fragment() {
         observer.loadData.observe(viewLifecycleOwner, { error ->
             error.first.let {
                 Log.i(DISH_INFO,"has random dish response error: $it")
-                mBinding!!.srlRandomDish.isRefreshing.let {
+                if (mBinding!!.srlRandomDish.isRefreshing) {
                     mBinding!!.srlRandomDish.isRefreshing = false
                 }
             }
@@ -114,8 +116,10 @@ class RandomDishFragment : Fragment() {
         /** This is the loading process on load data **/
         observer.loadData.observe(viewLifecycleOwner, { loadDish ->
             loadDish.second.let {
-                Log.i(DISH_INFO, "has loading random dish response: $it")
-                setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+                if (!mBinding!!.srlRandomDish.isRefreshing) {
+                    Log.i(DISH_INFO, "has loading random dish response: $it")
+                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+                }
             }
         })
     }
@@ -218,7 +222,6 @@ class RandomDishFragment : Fragment() {
      */
     private fun setNewDishInsertDataToDataBase(recipe: RandomDish.Recipe, dishType: String, ingredients: String) {
         mBinding!!.ivFavoriteDish.setOnClickListener {
-
             /*** create the new randomDishDetails MyDishEntity */
             val randomDishDetails = MyDishEntity(
                 recipe.image,
@@ -249,10 +252,8 @@ class RandomDishFragment : Fragment() {
                 /*** recipe title + the dish_is_selected label will present toast message about new dish added to favorite dishes */
                 toast(requireActivity(),recipe.title+" "+resources.getString(R.string.dish_is_selected)).show()
             } else {
-                /*** present the drawable image with un selected favorite dish */
-                setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_unselected)
                 /*** recipe title + the dish all ready label exists in the favorite dishes */
-                toast(requireActivity(),"${recipe.title} dish that set in your favorite dishes").show()
+                toast(requireActivity(),"${recipe.title} dish is all ready in your favorite dishes").show()
             }
         }
     }

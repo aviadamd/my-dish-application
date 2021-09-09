@@ -1,6 +1,6 @@
-package com.example.mydish.model.api.webservice
+package com.example.mydish.model.service.webservice
 
-import com.example.mydish.model.api.webservice.EndPoint.*
+import com.example.mydish.model.service.webservice.EndPoint.*
 import com.example.mydish.utils.data.Constants
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Response

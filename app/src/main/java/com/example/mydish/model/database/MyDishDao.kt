@@ -52,6 +52,11 @@ interface MyDishDao {
     @Query("SELECT * FROM MY_DISH_TABLE ORDER BY ID")
     fun getAllDishesList(): Flow<List<MyDishEntity>>
 
+    //SELECT * FROM MY_DISH_TABLE ORDER BY ID
+    //SELECT DISTINCT * FROM MY_DISH_TABLE ORDER BY ID
+    //SELECT * FROM MY_DISH_TABLE WHERE favoriteDish = 1
+    //SELECT DISTINCT * FROM MY_DISH_TABLE WHERE favoriteDish = 1
+
     @Query("SELECT * FROM MY_DISH_TABLE WHERE favoriteDish = 1")
     fun getFavoriteDishesList(): Flow<List<MyDishEntity>>
 

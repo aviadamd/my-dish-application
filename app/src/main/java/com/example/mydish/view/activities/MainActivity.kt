@@ -13,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.work.*
 import com.example.mydish.R
 import com.example.mydish.databinding.ActivityMainBinding
-import com.example.mydish.model.api.notifications.NotificationWorker
+import com.example.mydish.model.service.notifications.NotificationWorker
 import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DURATION
 import com.example.mydish.utils.data.Tags
