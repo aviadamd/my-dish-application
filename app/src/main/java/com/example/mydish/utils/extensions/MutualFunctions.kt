@@ -44,7 +44,7 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(IMAGE_RESOURCE, "error loading image", e)
+                    Log.e(IMAGE_RESOURCE, "Error loading image", e)
                     return false
                 }
 

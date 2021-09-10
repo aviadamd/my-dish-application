@@ -19,6 +19,9 @@ import android.provider.Settings
 import android.text.TextUtils.isEmpty
 import android.util.Log
 import android.view.View
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.graphics.drawable.toBitmap
@@ -189,54 +192,50 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        var isLoadingImage = false
         if (resultCode == Activity.RESULT_OK) {
             when(requestCode) {
-
                 CAMERA -> {
                     data?.extras?.let {
-                        val thumbnail: Bitmap = data.extras!!.get("data") as Bitmap
-                        //Set to the image view with glide
-                        mImagePath = saveImageToInternalStorage(thumbnail)
-                        Glide.with(this).load(thumbnail).centerCrop().into(mBinding.ivDishImage)
-                        // Replace the add icon with edit icon once the image is selected.
-                        mBinding.ivAddDishImage.setImageDrawable(getDrawable(
-                            this@AddUpdateDishActivity, R.drawable.ic_vector_edit
-                        ))
+                        mImagePath = saveImageToInternalStorage(it.get("data") as Bitmap)
+                        Glide.with(this)
+                            .load(mImagePath)
+                            .centerCrop()
+                            .into(mBinding.ivDishImage)
+                        isLoadingImage = true
                     }
                 }
-
                 GALLERY -> {
                     data?.let {
-                        //Set to the image view with glide /data.data == get the select image URI.
                         Glide.with(this)
-                            .load(data.data)
+                            .load(it.data)
                             .centerCrop()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .listener(object : RequestListener<Drawable> {
-
                                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                                    Log.e(Tags.IMAGE_RESOURCE,"Error loading image", e)
+                                    Log.e(Tags.IMAGE_RESOURCE,"Error loading image from gallery task", e)
                                     return false
                                 }
 
-                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                                    resource?.let {
-                                        val bitmap : Bitmap = resource.toBitmap()
-                                        mImagePath = saveImageToInternalStorage(bitmap)
+                                override fun onResourceReady(
+                                    resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                                    resource?.let { drawable ->
+                                        mImagePath = saveImageToInternalStorage(drawable.toBitmap())
                                     }
                                     return false
                                 }
-                            })
-                            .into(mBinding.ivDishImage)
-                        // Replace the add icon with edit icon once the image is selected.
-                        mBinding.ivAddDishImage.setImageDrawable(getDrawable(
-                            this@AddUpdateDishActivity, R.drawable.ic_vector_edit
-                        ))
+                            }).into(mBinding.ivDishImage)
+                        isLoadingImage = true
                     }
                 }
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Log.e("Cancelled","Cancelled")
+        }
+
+        // Replace the add icon with edit icon once the image is selected.
+        if (isLoadingImage) {
+            mBinding.ivAddDishImage.setImageDrawable(getDrawable(this, R.drawable.ic_vector_edit))
         }
     }
 
@@ -414,15 +413,16 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     @Suppress("DEPRECATION")
     private fun setPermissionsDialogCamera() {
         Dexter.withContext(this)
-            .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-            .withListener(object : MultiplePermissionsListener {
+            .withPermissions(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA
+            ).withListener(object : MultiplePermissionsListener {
             //Handle the camera permission
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                 report?.areAllPermissionsGranted().let {
-                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    startActivityForResult(intent, CAMERA)
-                    val text = resources.getString(R.string.camera_permissions_on)
-                    toast(this@AddUpdateDishActivity, text).show()
+                    startActivityForResult(Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE), CAMERA)
+                    toast(this@AddUpdateDishActivity, resources.getString(R.string.camera_permissions_on)).show()
                 }
             }
 
@@ -449,8 +449,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
 
                 //start activity on the phone gallery
                 override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                    val galleryIntent = Intent(Intent.ACTION_PICK, Media.EXTERNAL_CONTENT_URI)
-                    startActivityForResult(galleryIntent, GALLERY)
+                    startActivityForResult(Intent(Intent.ACTION_PICK, Media.EXTERNAL_CONTENT_URI), GALLERY)
                 }
 
                 //show the toast message on denied storage permission
@@ -477,7 +476,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
      */
     private fun saveImageToInternalStorage(bitmap: Bitmap) : String {
         // Get the context wrapper instance
-        val wrapper = ContextWrapper(applicationContext)
+        val wrapper = ContextWrapper(this.applicationContext)
         var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
