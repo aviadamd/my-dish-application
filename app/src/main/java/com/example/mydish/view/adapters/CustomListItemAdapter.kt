@@ -3,7 +3,6 @@ package com.example.mydish.view.adapters
 import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mydish.databinding.ItemCustomListBinding
 import com.example.mydish.view.activities.AddUpdateDishActivity

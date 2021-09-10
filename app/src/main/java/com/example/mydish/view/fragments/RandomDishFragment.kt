@@ -61,7 +61,6 @@ class RandomDishFragment : Fragment() {
 
         /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
-
         /** Present the recipe on the view with random dish **/
         mRandomDishViewModel.getRandomRecipeApiCall(true, EndPoint.DESSERT)
         /** Observe data after the getRandomDishFromRecipeAPI activate **/

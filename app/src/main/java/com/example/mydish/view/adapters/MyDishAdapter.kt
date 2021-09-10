@@ -53,7 +53,7 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
         val dish = dishes[position]
         //Load the dish image in the ImageView with glide
 
-        setShimmer(listOf(holder.shimmerImage, holder.shimmerTitle), listOf(holder.ivDishImage, holder.tvTitle),500)
+        setShimmer(listOf(holder.shimmerImage, holder.shimmerTitle), listOf(holder.ivDishImage, holder.tvTitle),800)
         setPicture(fragment, dish.image,holder. ivDishImage, false,null)
         holder.tvTitle.text = dish.title
 

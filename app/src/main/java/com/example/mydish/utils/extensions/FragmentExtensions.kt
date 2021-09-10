@@ -47,8 +47,6 @@ fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textVi
     try {
         Glide.with(this)
             .load(image)
-            .centerCrop()
-            .transition(withCrossFade())
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -64,7 +62,10 @@ fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textVi
                     }
                     return false
                 }
-            }).into(imageView)
+            })
+            .centerCrop()
+            .transition(withCrossFade())
+           .into(imageView)
     } catch (e : IOException) {
         Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
     }

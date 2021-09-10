@@ -39,6 +39,7 @@ import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DISH_CATEGORY
 import com.example.mydish.utils.data.Constants.DISH_COOKING_TIME
 import com.example.mydish.utils.data.Constants.DISH_TYPE
+import com.example.mydish.utils.data.Tags
 import com.example.mydish.view.adapters.CustomListItemAdapter
 import com.example.mydish.utils.extensions.hidingStatusBar
 import com.example.mydish.utils.extensions.setPicture
@@ -213,20 +214,12 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .listener(object : RequestListener<Drawable> {
 
-                                override fun onLoadFailed(
-                                    e: GlideException?, model: Any?,
-                                    target: Target<Drawable>?,
-                                    isFirstResource: Boolean): Boolean {
-                                    Log.e("TAG","Error loading image", e)
+                                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                                    Log.e(Tags.IMAGE_RESOURCE,"Error loading image", e)
                                     return false
                                 }
 
-                                override fun onResourceReady(
-                                    resource: Drawable?, model: Any?,
-                                    target: Target<Drawable>?,
-                                    dataSource: DataSource?,
-                                    isFirstResource: Boolean): Boolean {
-
+                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                                     resource?.let {
                                         val bitmap : Bitmap = resource.toBitmap()
                                         mImagePath = saveImageToInternalStorage(bitmap)
@@ -400,7 +393,6 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         AlertDialog.Builder(this)
             .setMessage(R.string.error_on_permissions_off)
             .setPositiveButton("GO TO SETTINGS") { _,_ ->
-
                 try {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     intent.data = Uri.fromParts("package", packageName, null)
@@ -408,7 +400,6 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                 } catch (e : ActivityNotFoundException) {
                     toast(this@AddUpdateDishActivity, resources.getString(R.string.settings_dialog_error)).show()
                 }
-
             }.setNegativeButton("Cancel") { dialog,_ ->
                 dialog.dismiss()
             }.show()
@@ -423,11 +414,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     @Suppress("DEPRECATION")
     private fun setPermissionsDialogCamera() {
         Dexter.withContext(this)
-            .withPermissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA
-            ).withListener(object : MultiplePermissionsListener {
-
+            .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+            .withListener(object : MultiplePermissionsListener {
             //Handle the camera permission
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                 report?.areAllPermissionsGranted().let {
@@ -482,17 +470,14 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     /**
      * A function to save a copy of an image to internal storage for FavDishApp to use.
      * @param bitmap
+     * The Mode Private here is
+     * File creation mode: the default mode, where the created file can only
+     * be accessed by the calling application (or all applications sharing the
+     * same user ID).
      */
     private fun saveImageToInternalStorage(bitmap: Bitmap) : String {
         // Get the context wrapper instance
         val wrapper = ContextWrapper(applicationContext)
-
-        /**
-         * The Mode Private here is
-         * File creation mode: the default mode, where the created file can only
-         * be accessed by the calling application (or all applications sharing the
-         * same user ID).
-         */
         var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE)
         file = File(file,"${UUID.randomUUID()}.jpg")
 
@@ -505,8 +490,9 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             stream.flush()
             // Close stream
             stream.close()
+            Log.i(Tags.IMAGE_RESOURCE,"save ${file.name} to storage")
         } catch (e : IOException) {
-            e.printStackTrace()
+            Log.e(Tags.IMAGE_RESOURCE,"error save image to storage ${e.message}")
         }
         // Return the saved image absolute path
         return file.absolutePath
