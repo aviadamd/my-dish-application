@@ -17,13 +17,10 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
-import kotlinx.coroutines.*
+import java.io.IOException
 import java.util.*
-
-val mRequestOptions = RequestOptions().timeout(1000).centerCrop()
 
 /*** Writing short cut for the toast message */
 fun toast(context: Context, print: String) : Toast {
@@ -40,42 +37,38 @@ fun replaceFirstCharToLocalRoot(string: String): String {
 }
 
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
-fun setPicture(fragment: Fragment, image: String, imageView: ImageView, view: View?, textView: TextView?) {
-    runBlocking{
-        val imageLoadingJob: Job = this.launch {
-            Glide.with(fragment)
-                .load(image)
-                .apply(mRequestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        Log.e(IMAGE_RESOURCE, "error loading image", e)
-                        return false
-                    }
+fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: Boolean, textView: TextView) {
+    try {
+        Glide.with(fragment)
+            .load(image)
+            .centerCrop()
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    Log.e(IMAGE_RESOURCE, "error loading image", e)
+                    return false
+                }
 
-                    override fun onResourceReady(
-                        resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        Log.i(IMAGE_RESOURCE, "pass loading image")
-                        setPalette(view, resource, textView)
-                        return false
+                override fun onResourceReady(
+                    resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    Log.i(IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
+                    if (platte) {
+                        setPalette(fragment.view, resource, textView)
                     }
-                }).into(imageView)
-        }
-
-        imageLoadingJob.let { job ->
-            job.invokeOnCompletion {
-                Log.i(IMAGE_RESOURCE, "load image finished successes ${job.isCompleted}")
-            }
-        }
+                    return false
+                }
+            }).into(imageView)
+    } catch (e : IOException) {
+        Log.e(IMAGE_RESOURCE,"error loading image ${e.message}")
     }
 }
 
 fun setPalette(view: View?, resource: Drawable, textView: TextView?) {
-    view?.let {
-        Palette.from(resource.toBitmap()).generate {
-                p -> it.setBackgroundColor(p?.lightVibrantSwatch?.rgb ?: 0)
+    if (view != null) {
+        Palette.from(resource.toBitmap()).generate { p ->
+            view.setBackgroundColor(p?.lightVibrantSwatch?.rgb ?: 0)
         }
     }
-    textView?.let { textView.setTextColor(Color.BLACK) }
+    textView?.setTextColor(Color.BLACK)
 }

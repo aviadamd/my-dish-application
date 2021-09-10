@@ -67,7 +67,7 @@ fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textVi
     try {
         Glide.with(this)
             .load(image)
-            .apply(mRequestOptions)
+            .centerCrop()
             .transition(DrawableTransitionOptions.withCrossFade())
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -78,12 +78,14 @@ fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textVi
 
                 override fun onResourceReady(
                     resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.i(Tags.IMAGE_RESOURCE, "Pass loading image")
-                    setPalette(view, resource, textView)
+                    Log.i(Tags.IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
+                    if (view != null) {
+                        setPalette(view, resource, textView)
+                    }
                     return false
                 }
             }).into(imageView)
     } catch (e: IOException) {
-        e.printStackTrace()
+        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
     }
 }

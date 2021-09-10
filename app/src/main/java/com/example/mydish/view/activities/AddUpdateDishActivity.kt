@@ -311,7 +311,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         mMyDishEntity?.let { it ->
             if (it.id != 0) {
                 mImagePath = it.image
-                setPicture(mImagePath,mBinding.ivDishImage,mBinding.flSelectImage,null)
+                setPicture(mImagePath,mBinding.ivDishImage, mBinding.flSelectImage,null)
                 //Set the dish presentation data to page
                 listOf(
                     Pair(mBinding.etTitle, it.title),

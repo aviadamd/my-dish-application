@@ -13,13 +13,12 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.utils.data.Tags
 import com.facebook.shimmer.ShimmerFrameLayout
+import java.io.IOException
 
 /*** Set shimmer animation */
 fun Fragment.setShimmer(shimmer: List<ShimmerFrameLayout>, viewToBeVisible: List<View>, delay : Long) {
@@ -45,22 +44,28 @@ fun Fragment.setImageDrawable(imageView: ImageView, drawableId: Int) {
 
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textView: TextView?) {
-    Glide.with(this)
-        .load(image)
-        .apply(mRequestOptions)
-        .transition(withCrossFade())
-        .listener(object : RequestListener<Drawable> {
-            override fun onLoadFailed(
-                @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                Log.e(Tags.IMAGE_RESOURCE, "Error loading image", e)
-                return false
-            }
+    try {
+        Glide.with(this)
+            .load(image)
+            .centerCrop()
+            .transition(withCrossFade())
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    Log.e(Tags.IMAGE_RESOURCE, "Error loading image", e)
+                    return false
+                }
 
-            override fun onResourceReady(
-                resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                Log.i(Tags.IMAGE_RESOURCE, "Pass loading image")
-                setPalette(view, resource, textView)
-                return false
-            }
-        }).into(imageView)
+                override fun onResourceReady(
+                    resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    Log.i(Tags.IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
+                    if (view != null) {
+                        setPalette(view, resource, textView)
+                    }
+                    return false
+                }
+            }).into(imageView)
+    } catch (e : IOException) {
+        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
+    }
 }

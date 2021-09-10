@@ -3,6 +3,8 @@ package com.example.mydish.view.fragments
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,13 +20,11 @@ import com.example.mydish.model.service.webservice.RandomDish
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Tags.DISH_INFO
-import com.example.mydish.utils.extensions.setImageDrawable
-import com.example.mydish.utils.extensions.setShimmer
-import com.example.mydish.utils.extensions.setPicture
-import com.example.mydish.utils.extensions.toast
+import com.example.mydish.utils.extensions.*
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * This class hold the random dish presentation
@@ -64,7 +64,7 @@ class RandomDishFragment : Fragment() {
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
+        mRandomDishViewModel.getRandomRecipeApiCall(true, EndPoint.DESSERT)
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
         initRandomDishViewModelObserver()
 
@@ -72,14 +72,15 @@ class RandomDishFragment : Fragment() {
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
             /** Present the recipe on the view with random dish **/
-            mRandomDishViewModel.getRandomDishesFromRecipeAPI(EndPoint.DESSERT)
+            mRandomDishViewModel.getRandomRecipeApiCall(true, EndPoint.DESSERT)
         }
     }
 
-    /*** return the view instance to null */
+    /*** return the view instance to null and refresh the view model */
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null
+        mRandomDishViewModel.refresh()
     }
 
     /**
@@ -89,37 +90,28 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
     private fun initRandomDishViewModelObserver() {
-        val observer = mRandomDishViewModel.getRandomViewModelLiveDataObserver()
-
         /*** Calling the dish data from service */
-        observer.recipesData.observe(viewLifecycleOwner, { dishResponse ->
+        mRandomDishViewModel.randomDishResponse.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
-                if (mBinding!!.srlRandomDish.isRefreshing) {
-                    mBinding!!.srlRandomDish.isRefreshing = false
-                }
-                val randomRecipe = dishResponse.recipes.random()
-                setRandomResponseInUi(randomRecipe)
+                setRandomResponseInUi(dishResponse.recipes.random())
                 setMinimumUiPresentation(false)
             }
         })
 
         /*** On error response from services */
-        observer.loadData.observe(viewLifecycleOwner, { error ->
-            error.first.let {
+        mRandomDishViewModel.randomDishLoadingError.observe(viewLifecycleOwner, { error ->
+            error.let {
                 Log.i(DISH_INFO,"has random dish response error: $it")
-                if (mBinding!!.srlRandomDish.isRefreshing) {
-                    mBinding!!.srlRandomDish.isRefreshing = false
-                }
             }
         })
 
         /** This is the loading process on load data **/
-        observer.loadData.observe(viewLifecycleOwner, { loadDish ->
-            loadDish.second.let {
-                if (!mBinding!!.srlRandomDish.isRefreshing) {
-                    Log.i(DISH_INFO, "has loading random dish response: $it")
-                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
-                }
+        mRandomDishViewModel.randomDishLoading.observe(viewLifecycleOwner, { loadDish ->
+            loadDish.let {
+                Log.i(DISH_INFO, "has finish loading random dish response: $it")
+                refreshingHandler(500)
+                val timeOut : Long = if (loadDish) 500 else 1000
+                setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), timeOut)
             }
         })
     }
@@ -130,7 +122,7 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : RandomDish.Recipe) {
-        setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, mBinding!!.srlRandomDish, mBinding!!.tvTitle)
+        setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
         //Set the dish title
         setRecipeTitle(recipe.title)
         //Default Dish Type
@@ -270,5 +262,14 @@ class RandomDishFragment : Fragment() {
                 View.GONE
             }
         }
+    }
+
+    @Suppress("SameParameterValue")
+    private fun refreshingHandler(timeOut: Long) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (mBinding!!.srlRandomDish.isRefreshing) {
+                mBinding!!.srlRandomDish.isRefreshing = false
+            }
+        }, timeOut)
     }
 }

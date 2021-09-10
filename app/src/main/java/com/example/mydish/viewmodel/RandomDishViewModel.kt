@@ -37,6 +37,13 @@ class RandomDishViewModel : ViewModel() {
     /*** Retro fit RandomDishService val , will be used in end point url */
     private val randomRecipeApiService = RandomDishesApiService()
 
+    /*** holding the state of loading dish processes */
+    val randomDishLoading = MutableLiveData<Boolean>()
+    /*** holding the date of dish recipes data */
+    val randomDishResponse = MutableLiveData<RandomDish.Recipes>()
+    /*** holding the state of error dish processes */
+    val randomDishLoadingError = MutableLiveData<Boolean>()
+
     /**
      * A disposable/one time container that can hold onto multiple other Disposables and
      * offers time complexity for add(Disposable), remove(Disposable) and delete(Disposable)
@@ -44,26 +51,24 @@ class RandomDishViewModel : ViewModel() {
      */
     private val compositeDisposable = CompositeDisposable()
 
-    /*** the getter for the populated random dish life data observer */
-    fun getRandomViewModelLiveDataObserver(): RandomViewModelLiveDataHolder {
-        return setRandomViewModelLiveDataObserver
-    }
-
-    private var setRandomViewModelLiveDataObserver = RandomViewModelLiveDataHolder(
-        MutableLiveData(Pair(first = false, second = false)),
-        MutableLiveData<RandomDish.Recipes>()
-    )
-
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
         Log.e(DISH_INFO,"Error info: ${throwable.localizedMessage} Job active: ${job.isActive}")
+    }
+
+    fun getRandomRecipeApiCall(isWithRxJava: Boolean, endPoint: EndPoint) {
+        if(isWithRxJava) {
+            getRandomDishesFromRecipeAPIRx(endPoint)
+        } else {
+            getRandomDishesFromRecipeAPI(endPoint)
+        }
     }
 
     /**
      * Using CoroutineScope(Dispatchers.IO + exceptionHandler) handle the rest calls from back thread
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
      */
-    fun getRandomDishesFromRecipeAPI(endPoint: EndPoint) {
-        setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = false)
+    private fun getRandomDishesFromRecipeAPI(endPoint: EndPoint) {
+        randomDishLoading.value = true
 
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
@@ -71,11 +76,11 @@ class RandomDishViewModel : ViewModel() {
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (this.isActive && dishes.isSuccessful) {
-                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = true)
-                    setRandomViewModelLiveDataObserver.recipesData.value = dishes.body()
+                    randomDishLoading.value = false
+                    randomDishResponse.value = dishes.body()
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
                 } else {
-                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = true, second = false)
+                    randomDishLoadingError.value = true
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
@@ -104,10 +109,10 @@ class RandomDishViewModel : ViewModel() {
     * Subscribes a given SingleObserver (subclass) to this Single and returns the given
     * SingleObserver as is.
     */
-    fun getRandomDishesFromRecipeAPIRx(endPoint: EndPoint) {
-        setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = true)
+    private fun getRandomDishesFromRecipeAPIRx(endPoint: EndPoint) {
+        randomDishLoading.value = true
         /**
-         * Disposable להיפטר
+         * Disposable == get reed of...
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
          * /*** Retro fit RandomDishService val , will be used in end point url */
          */
@@ -117,14 +122,14 @@ class RandomDishViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableSingleObserver<RandomDish.Recipes>() {
                 override fun onSuccess(dishResponce: RandomDish.Recipes) {
-                    /*** update the values with response in the success method. */
-                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = false, second = true)
-                    setRandomViewModelLiveDataObserver.recipesData.value = dishResponce
+                    randomDishLoading.value = false
+                    randomDishResponse.value = dishResponce
+                    Log.i(DISH_INFO, "dish response $dishResponce")
                 }
 
                 override fun onError(e: Throwable) {
-                    /*** update the values in the response in the error methods . */
-                    setRandomViewModelLiveDataObserver.loadData.value = Pair(first = true, second = false)
+                    randomDishLoadingError.value = true
+                    Log.i(DISH_INFO, "dish error response ${e.message}")
                     e.printStackTrace()
                 }
             })
@@ -138,11 +143,9 @@ class RandomDishViewModel : ViewModel() {
         compositeDisposable.clear()
     }
 
-    /**
-     * val loadData: MutableLiveData<Pair<Boolean,Boolean>> hold the network call state
-     * val recipesData: MutableLiveData<RandomDish.Recipes>) hold the network data
-     */
-    data class RandomViewModelLiveDataHolder(
-        val loadData: MutableLiveData<Pair<Boolean,Boolean>>,
-        val recipesData: MutableLiveData<RandomDish.Recipes>)
+    fun refresh() {
+        randomDishLoading.value = false
+        randomDishLoadingError.value = false
+        randomDishResponse.value = null
+    }
 }
