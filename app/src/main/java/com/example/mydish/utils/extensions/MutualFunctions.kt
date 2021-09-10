@@ -37,7 +37,7 @@ fun replaceFirstCharToLocalRoot(string: String): String {
 }
 
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
-fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: Boolean, textView: TextView) {
+fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: Boolean, textView: TextView?) {
     try {
         Glide.with(fragment)
             .load(image)

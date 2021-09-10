@@ -24,7 +24,6 @@ import com.example.mydish.utils.extensions.*
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
-import java.util.concurrent.atomic.AtomicLong
 
 /**
  * This class hold the random dish presentation
@@ -110,7 +109,7 @@ class RandomDishFragment : Fragment() {
             loadDish.let {
                 Log.i(DISH_INFO, "has finish loading random dish response: $it")
                 refreshingHandler(500)
-                val timeOut : Long = if (loadDish) 500 else 1000
+                val timeOut : Long = if (loadDish) 1000 else 1500
                 setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), timeOut)
             }
         })
