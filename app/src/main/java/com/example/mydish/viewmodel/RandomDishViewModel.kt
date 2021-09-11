@@ -42,17 +42,12 @@ class RandomDishViewModel : ViewModel() {
     /*** Retro fit RandomDishService val , will be used in end point url */
     private val randomRecipeApiService = RandomDishesApiService()
 
-    private var prefs = SharedPreferencesBackupHelper(AndroidViewModel(Application()).getApplication())
-
     /*** holding the state of loading dish processes */
     val randomDishLoading = MutableLiveData<Boolean>()
     /*** holding the date of dish recipes data */
     val randomDishResponse = MutableLiveData<Recipes>()
     /*** holding the state of error dish processes */
     val randomDishLoadingError = MutableLiveData<Boolean>()
-
-    private val _randomDishState = MutableStateFlow<RandomDishState>(RandomDishState.Empty)
-    fun getRandomDishState(): StateFlow<RandomDishState> { return _randomDishState }
 
     /**
      * A disposable/one time container that can hold onto multiple other Disposables and
@@ -61,6 +56,11 @@ class RandomDishViewModel : ViewModel() {
      */
     private val compositeDisposable = CompositeDisposable()
 
+    private var prefs = SharedPreferencesBackupHelper(AndroidViewModel(Application()).getApplication())
+
+    private val _randomDishState = MutableStateFlow<RandomDishState>(RandomDishState.Empty)
+    fun getRandomDishState(): StateFlow<RandomDishState> { return _randomDishState }
+
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
         Log.e(DISH_INFO,"Error info: ${throwable.localizedMessage} Job active: ${job.isActive}")
     }
@@ -68,8 +68,7 @@ class RandomDishViewModel : ViewModel() {
     fun getRandomRecipeApiCall(with: With, endPoint: EndPoint) {
         when(with) {
             With.RX -> getRandomDishesFromRecipeAPIRx(endPoint)
-            With.COROUTINE_OLD -> getRandomDishesFromRecipeAPIOld(endPoint)
-            With.COROUTINE_NEW -> getRandomDishesRecipeAPINew(endPoint)
+            With.COROUTINE -> getRandomDishesRecipeAPINew(endPoint)
         }
     }
 
@@ -90,35 +89,6 @@ class RandomDishViewModel : ViewModel() {
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
                 } else {
                     _randomDishState.value = RandomDishState.Errors(dishes.code().toString())
-                    Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
-                }
-            }
-        }
-
-        job?.let { job ->
-            job.invokeOnCompletion {
-                Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
-            }
-        }
-    }
-
-    /**
-     * Using CoroutineScope(Dispatchers.IO + exceptionHandler) handle the rest calls from back thread
-     * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
-     */
-    private fun getRandomDishesFromRecipeAPIOld(endPoint: EndPoint) {
-        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
-        job = CoroutineScope(dispatchersIO).launch {
-            randomDishLoading.value = true
-            val dishes = randomRecipeApiService.getDishes(endPoint)
-            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
-            withContext(Dispatchers.Main) {
-                if (this.isActive && dishes.isSuccessful) {
-                    randomDishLoading.value = false
-                    randomDishResponse.value = dishes.body()
-                    Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
-                } else {
-                    randomDishLoadingError.value = true
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
             }
@@ -181,12 +151,6 @@ class RandomDishViewModel : ViewModel() {
         compositeDisposable.clear()
     }
 
-    fun refresh() {
-        randomDishLoading.value = false
-        randomDishLoadingError.value = false
-        randomDishResponse.value = null
-    }
-
     sealed class RandomDishState {
         object Empty: RandomDishState()
         data class Load(var load: Boolean): RandomDishState()
@@ -195,8 +159,6 @@ class RandomDishViewModel : ViewModel() {
     }
 
     enum class With {
-        RX,
-        COROUTINE_OLD,
-        COROUTINE_NEW
+        RX, COROUTINE
     }
 }

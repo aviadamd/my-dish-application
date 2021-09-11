@@ -67,14 +67,14 @@ class RandomDishFragment : Fragment() {
         /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomRecipeApiCall(With.COROUTINE_NEW, EndPoint.DESSERT)
+        mRandomDishViewModel.getRandomRecipeApiCall(With.COROUTINE, EndPoint.DESSERT)
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        getRandomDishObserver(With.COROUTINE_NEW)
+        getRandomDishObserver(With.COROUTINE)
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
             /** Present the recipe on the view with random dish **/
-            mRandomDishViewModel.getRandomRecipeApiCall(With.COROUTINE_NEW, EndPoint.DESSERT)
+            mRandomDishViewModel.getRandomRecipeApiCall(With.COROUTINE, EndPoint.DESSERT)
         }
     }
 
@@ -82,13 +82,12 @@ class RandomDishFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null
-        mRandomDishViewModel.refresh()
     }
 
     private fun getRandomDishObserver(with: With) {
         when(with) {
-            With.COROUTINE_NEW -> initRandomDishesViewModelObserverOne()
-            With.COROUTINE_OLD, With.RX -> initRandomDishViewModelObserver()
+            With.COROUTINE -> initRandomDishesViewModelObserverOne()
+            With.RX -> { initRandomDishViewModelObserverThree() }
         }
     }
 
@@ -98,40 +97,6 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun initRandomDishViewModelObserver(): Boolean {
-        var successes = false
-        /*** Calling the dish data from service */
-        mRandomDishViewModel.randomDishResponse.observe(viewLifecycleOwner, { dishResponse ->
-            dishResponse?.let {
-                val response = it.recipes.random()
-                Log.i(DISH_INFO,"dish response: $response")
-                setRandomResponseInUi(response)
-                setMinimumUiPresentation(false)
-                successes = true
-            }
-        })
-
-        /*** On error response from services */
-        mRandomDishViewModel.randomDishLoadingError.observe(viewLifecycleOwner, { error ->
-            error.let {
-                Log.i(DISH_INFO,"Dish response error: $it")
-                toast(requireActivity(),"Unable to load dish, try later").show()
-                this.requireActivity().finish()
-            }
-        })
-
-        /** This is the loading process on load data **/
-        mRandomDishViewModel.randomDishLoading.observe(viewLifecycleOwner, { loadDish ->
-            loadDish.let {
-                Log.i(DISH_INFO, "Dish loading random dish response: $it")
-                refreshingHandler(500)
-                val timeOut : Long = if (loadDish) 1000 else 1500
-                setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), timeOut)
-            }
-        })
-        return successes
-    }
-
     private fun initRandomDishesViewModelObserverOne() : Boolean {
         /*** Calling the dish data from service */
         var successes = false
@@ -192,6 +157,46 @@ class RandomDishFragment : Fragment() {
                 else -> Unit
             }
         }
+        return successes
+    }
+
+    /**
+     * Service call method to dish data then
+     * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
+     * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
+     * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
+     */
+    private fun initRandomDishViewModelObserverThree(): Boolean {
+        var successes = false
+        /*** Calling the dish data from service */
+        mRandomDishViewModel.randomDishResponse.observe(viewLifecycleOwner, { dishResponse ->
+            dishResponse?.let {
+                val response = it.recipes.random()
+                Log.i(DISH_INFO,"dish response: $response")
+                setRandomResponseInUi(response)
+                setMinimumUiPresentation(false)
+                successes = true
+            }
+        })
+
+        /*** On error response from services */
+        mRandomDishViewModel.randomDishLoadingError.observe(viewLifecycleOwner, { error ->
+            error.let {
+                Log.i(DISH_INFO,"Dish response error: $it")
+                toast(requireActivity(),"Unable to load dish, try later").show()
+                this.requireActivity().finish()
+            }
+        })
+
+        /** This is the loading process on load data **/
+        mRandomDishViewModel.randomDishLoading.observe(viewLifecycleOwner, { loadDish ->
+            loadDish.let {
+                Log.i(DISH_INFO, "Dish loading random dish response: $it")
+                refreshingHandler(500)
+                val timeOut : Long = if (loadDish) 1000 else 1500
+                setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), timeOut)
+            }
+        })
         return successes
     }
 
