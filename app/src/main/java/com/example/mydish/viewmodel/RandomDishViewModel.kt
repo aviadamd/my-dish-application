@@ -79,7 +79,6 @@ class RandomDishViewModel : ViewModel() {
     private fun getRandomDishesRecipeAPINew(endPoint: EndPoint) {
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
-            _randomDishState.value = RandomDishState.Load(true)
             val dishes = randomRecipeApiService.getDishes(endPoint)
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
@@ -118,7 +117,6 @@ class RandomDishViewModel : ViewModel() {
     * SingleObserver as is.
     */
     private fun getRandomDishesFromRecipeAPIRx(endPoint: EndPoint) {
-        randomDishLoading.value = true
         /**
          * Disposable == get reed of...
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
@@ -149,6 +147,21 @@ class RandomDishViewModel : ViewModel() {
         super.onCleared()
         job?.cancel()
         compositeDisposable.clear()
+    }
+
+    fun refresh(with: With) {
+        when(with) {
+            With.RX -> {
+                randomDishLoading.value = false
+                randomDishLoadingError.value = false
+                randomDishResponse.value = null
+            }
+            With.COROUTINE -> {
+                _randomDishState.value = RandomDishState.Load(true)
+                _randomDishState.value = RandomDishState.Service(null)
+                _randomDishState.value = RandomDishState.Errors("")
+            }
+        }
     }
 
     sealed class RandomDishState {

@@ -39,6 +39,9 @@ import kotlinx.coroutines.flow.collect
  */
 class RandomDishFragment : Fragment() {
 
+    /*** set the call run with coroutine */
+    private val runWith = With.COROUTINE
+
     /** global variable for RandomDishDetails View **/
     private var mBinding : FragmentRandomDishBinding? = null
 
@@ -67,14 +70,14 @@ class RandomDishFragment : Fragment() {
         /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomRecipeApiCall(With.COROUTINE, EndPoint.DESSERT)
+        mRandomDishViewModel.getRandomRecipeApiCall(runWith, EndPoint.DESSERT)
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        getRandomDishObserver(With.COROUTINE)
+        getRandomDishObserver(runWith)
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
             /** Present the recipe on the view with random dish **/
-            mRandomDishViewModel.getRandomRecipeApiCall(With.COROUTINE, EndPoint.DESSERT)
+            mRandomDishViewModel.getRandomRecipeApiCall(runWith, EndPoint.DESSERT)
         }
     }
 
@@ -82,6 +85,7 @@ class RandomDishFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         mBinding = null
+        mRandomDishViewModel.refresh(runWith)
     }
 
     private fun getRandomDishObserver(with: With) {
