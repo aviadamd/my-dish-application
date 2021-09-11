@@ -1,7 +1,7 @@
 package com.example.mydish.model.service.webservice
 
 /*** this object class use as data class structures of the api service */
-object RandomDish {
+//object RandomDish {
 
     /*** class hold list off recipes @data class Recipe */
     data class Recipes(
@@ -121,4 +121,4 @@ object RandomDish {
         val unitLong: String,
         val unitShort: String
     )
-}
+//}

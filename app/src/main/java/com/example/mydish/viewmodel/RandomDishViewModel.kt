@@ -1,12 +1,14 @@
 package com.example.mydish.viewmodel
 
+import android.app.Application
+import android.app.backup.SharedPreferencesBackupHelper
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.mydish.model.service.webservice.EndPoint
-import com.example.mydish.model.service.webservice.RandomDish
 import com.example.mydish.model.service.webservice.RandomDishesApiService
+import com.example.mydish.model.service.webservice.Recipes
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -40,10 +42,12 @@ class RandomDishViewModel : ViewModel() {
     /*** Retro fit RandomDishService val , will be used in end point url */
     private val randomRecipeApiService = RandomDishesApiService()
 
+    private var prefs = SharedPreferencesBackupHelper(AndroidViewModel(Application()).getApplication())
+
     /*** holding the state of loading dish processes */
     val randomDishLoading = MutableLiveData<Boolean>()
     /*** holding the date of dish recipes data */
-    val randomDishResponse = MutableLiveData<RandomDish.Recipes>()
+    val randomDishResponse = MutableLiveData<Recipes>()
     /*** holding the state of error dish processes */
     val randomDishLoadingError = MutableLiveData<Boolean>()
 
@@ -154,8 +158,8 @@ class RandomDishViewModel : ViewModel() {
             /*** asynchronously subscribes SingleObserver to this Single on the specified Scheduler. */
             .subscribeOn(Schedulers.newThread())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<RandomDish.Recipes>() {
-                override fun onSuccess(dishResponce: RandomDish.Recipes) {
+            .subscribeWith(object : DisposableSingleObserver<Recipes>() {
+                override fun onSuccess(dishResponce: Recipes) {
                     randomDishLoading.value = false
                     randomDishResponse.value = dishResponce
                     Log.i(DISH_INFO, "dish response $dishResponce")
@@ -187,7 +191,7 @@ class RandomDishViewModel : ViewModel() {
         object Empty: RandomDishState()
         data class Load(var load: Boolean): RandomDishState()
         data class Errors(var error: String): RandomDishState()
-        data class Service(var randomDishApi: RandomDish.Recipes?): RandomDishState()
+        data class Service(var randomDishApi: Recipes?): RandomDishState()
     }
 
     enum class With {

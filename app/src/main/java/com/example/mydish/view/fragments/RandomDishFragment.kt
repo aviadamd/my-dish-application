@@ -13,12 +13,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import com.example.mydish.R
 import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
 import com.example.mydish.model.service.webservice.EndPoint
-import com.example.mydish.model.service.webservice.RandomDish
 import com.example.mydish.model.entities.MyDishEntity
+import com.example.mydish.model.service.webservice.Recipe
 import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import com.example.mydish.utils.extensions.*
@@ -27,6 +28,7 @@ import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
 import com.example.mydish.viewmodel.RandomDishViewModel.RandomDishState
 import com.example.mydish.viewmodel.RandomDishViewModel.With
+import kotlinx.coroutines.flow.collect
 
 /**
  * This class hold the random dish presentation
@@ -85,8 +87,8 @@ class RandomDishFragment : Fragment() {
 
     private fun getRandomDishObserver(with: With) {
         when(with) {
-            With.COROUTINE_NEW -> { initRandomDishesViewModelObserver() }
-            With.COROUTINE_OLD,With.RX -> { initRandomDishViewModelObserver() }
+            With.COROUTINE_NEW -> initRandomDishesViewModelObserverOne()
+            With.COROUTINE_OLD, With.RX -> initRandomDishViewModelObserver()
         }
     }
 
@@ -96,7 +98,8 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun initRandomDishViewModelObserver() {
+    private fun initRandomDishViewModelObserver(): Boolean {
+        var successes = false
         /*** Calling the dish data from service */
         mRandomDishViewModel.randomDishResponse.observe(viewLifecycleOwner, { dishResponse ->
             dishResponse?.let {
@@ -104,6 +107,7 @@ class RandomDishFragment : Fragment() {
                 Log.i(DISH_INFO,"dish response: $response")
                 setRandomResponseInUi(response)
                 setMinimumUiPresentation(false)
+                successes = true
             }
         })
 
@@ -125,34 +129,70 @@ class RandomDishFragment : Fragment() {
                 setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), timeOut)
             }
         })
+        return successes
     }
 
-    private fun initRandomDishesViewModelObserver() {
+    private fun initRandomDishesViewModelObserverOne() : Boolean {
+        /*** Calling the dish data from service */
+        var successes = false
+        lifecycleScope.launchWhenStarted {
+            mRandomDishViewModel.getRandomDishState().collect {
+                when (it) {
+                    is RandomDishState.Load -> {
+                        Log.i(DISH_INFO, "dish loading state: ${it.load}")
+                        refreshingHandler(500)
+                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1150)
+                    }
+                    is RandomDishState.Service -> {
+                        it.randomDishApi?.let { response ->
+                            response.recipes[0].apply {
+                                Log.i(DISH_INFO, "dish response: $this")
+                                setRandomResponseInUi(this)
+                                setMinimumUiPresentation(false)
+                                successes = true
+                            }
+                        }
+                    }
+                    is RandomDishState.Errors -> {
+                        Log.i(DISH_INFO, "dish error state: ${it.error}")
+                        toast(requireActivity(), "Unable to load dish, try later").show()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+        return successes
+    }
+
+    private fun initRandomDishesViewModelObserverTwo(): Boolean {
+        var successes = false
         /*** Calling the dish data from service */
         mRandomDishViewModel.getRandomDishState().asLiveData().observe(viewLifecycleOwner) {
-            when(it) {
+            when (it) {
                 is RandomDishState.Load -> {
-                    Log.i(DISH_INFO,"dish loading state: ${it.load}")
+                    Log.i(DISH_INFO, "dish loading state: ${it.load}")
                     refreshingHandler(500)
                     setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1150)
                 }
                 is RandomDishState.Service -> {
                     it.randomDishApi?.let { response ->
                         response.recipes[0].apply {
-                            Log.i(DISH_INFO,"dish response: $this")
+                            Log.i(DISH_INFO, "dish response: $this")
                             setRandomResponseInUi(this)
                             setMinimumUiPresentation(false)
+                            successes = true
                         }
                     }
                 }
                 is RandomDishState.Errors -> {
-                    Log.i(DISH_INFO,"dish error state: ${it.error}")
-                    toast(requireActivity(),"Unable to load dish, try later").show()
+                    Log.i(DISH_INFO, "dish error state: ${it.error}")
+                    toast(requireActivity(), "Unable to load dish, try later").show()
                     this.requireActivity().finish()
                 }
                 else -> Unit
             }
         }
+        return successes
     }
 
     /**
@@ -160,7 +200,8 @@ class RandomDishFragment : Fragment() {
      * using the RandomDish.Recipe to have bind with the ui presentation
      * finally set the dish to data base room storage
      */
-    private fun setRandomResponseInUi(recipe : RandomDish.Recipe) {
+    private fun setRandomResponseInUi(recipe : Recipe) {
+        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),1000)
         setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
         //Set the dish title
         setRecipeTitle(recipe.title)
@@ -189,7 +230,7 @@ class RandomDishFragment : Fragment() {
     }
 
     /*** Default Dish Type if the dish types are empty */
-    private fun setDishType(recipe: RandomDish.Recipe) : String {
+    private fun setDishType(recipe: Recipe) : String {
         var dishType = "empty"
         if (recipe.dishTypes.isNotEmpty()) {
             dishType = recipe.dishTypes[0]
@@ -208,7 +249,7 @@ class RandomDishFragment : Fragment() {
      * Separate the ingredients preparing to the presenter - mBinding!!.tvIngredients.text
      * Check if the ingredients as new line then create \n for each new line of the ingredients text
      */
-    private fun setDishIngredients(recipe: RandomDish.Recipe) : String {
+    private fun setDishIngredients(recipe: Recipe) : String {
         var ingredients = ""
         for (it in recipe.extendedIngredients) {
             ingredients = if (ingredients.isEmpty()) {
@@ -224,7 +265,7 @@ class RandomDishFragment : Fragment() {
      * in the HTML format so we will you the fromHtml to populate it in the TextView.
      */
     @Suppress("DEPRECATION")
-    private fun setDishCookingDirection(recipe: RandomDish.Recipe) {
+    private fun setDishCookingDirection(recipe: Recipe) {
         val downLine = "\\.\n"
         val dot = "\\.\\s?".toRegex()
         val instructions = recipe.instructions
@@ -238,7 +279,7 @@ class RandomDishFragment : Fragment() {
     }
 
     /*** Set lbl_estimate_cooking_time label with recipe.readyInMinutes text */
-    private fun setEstimateCookingTime(recipe: RandomDish.Recipe) {
+    private fun setEstimateCookingTime(recipe: Recipe) {
         mBinding!!.tvCookingTime.let {
             val cookTime = R.string.lbl_estimate_cooking_time
             val recipeData = recipe.readyInMinutes.toString()
@@ -251,7 +292,7 @@ class RandomDishFragment : Fragment() {
      * present the drawable image with selected after the user click
      * create the view model var with connection to room data base, for insert the MyEntityDish object with dish data
      */
-    private fun setNewDishInsertDataToDataBase(recipe: RandomDish.Recipe, dishType: String, ingredients: String) {
+    private fun setNewDishInsertDataToDataBase(recipe: Recipe, dishType: String, ingredients: String) {
         mBinding!!.ivFavoriteDish.setOnClickListener {
             /*** create the new randomDishDetails MyDishEntity */
             val randomDishDetails = MyDishEntity(

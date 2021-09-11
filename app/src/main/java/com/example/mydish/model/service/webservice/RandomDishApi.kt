@@ -10,7 +10,8 @@ import retrofit2.http.Query
 interface RandomDishApi {
 
     /**
-     * Make a GET request. pass the endpoint of the URL that is defined in the Constants.
+     * Make a GET request.
+     * pass the endpoint of the URL that is defined in the Constants.
      * Values are the key of the header the value is called from RandomDishApiService
      */
     @GET(Constants.API_ENDPOINT)
@@ -19,12 +20,9 @@ interface RandomDishApi {
         @Query(Constants.LIMIT_LICENSE) limitLicense : Boolean,
         @Query(Constants.TAGS) tags : String,
         @Query(Constants.NUMBER) number : Int
-    ): Response<RandomDish.Recipes>
+    ): Response<Recipes>
 
     /**
-     * Make a GET request. pass the endpoint of the URL that is defined in the Constants.
-     * Values are the key of the header the value is called from RandomDishApiService
-     *
      * RxJava - Single is something like an Observable,
      * but instead of emitting a series of values
      * anywhere from none at all to an infinite number
@@ -36,5 +34,5 @@ interface RandomDishApi {
         @Query(Constants.LIMIT_LICENSE) limitLicense : Boolean,
         @Query(Constants.TAGS) tags : String,
         @Query(Constants.NUMBER) number : Int,
-    ): Single<RandomDish.Recipes>
+    ): Single<Recipes>
 }

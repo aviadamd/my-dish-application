@@ -10,9 +10,7 @@ object Constants {
     const val EXTRA_DISH_DETAILS : String = "DishDetails"
 
     const val DURATION : Long = 300
-
     const val ALL_ITEMS : String = "All"
-    const val FILTER_SELECTION : String = "FilterSelection"
 
     //Notifications constants
     const val NOTIFICATION_ID = "MyDish_notification_id"
