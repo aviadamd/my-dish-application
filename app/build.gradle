@@ -4,6 +4,11 @@ plugins {
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
     id 'kotlin-parcelize'
+   // id 'dagger.hilt.android.plugin'
+}
+
+kapt {
+    correctErrorTypes true
 }
 
 android {
@@ -53,7 +58,7 @@ def multidex_version = "2.0.1"
 def lifeCycleVersions = '2.3.1'
 def retroFitVersion = '2.9.0'
 def rxJavaVersion = '3.0.0'
-def daggerVersion = '2.38.1'
+def daggerVersion = '2.14.1'
 def mockitoVersion = '2.11.0'
 def navVersion = '2.3.5'
 
@@ -105,8 +110,13 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleVersions"
 
     // Navigation
-    implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
+//    implementation "androidx.navigation:navigation-fragment-ktx:$navVersion"
+//    implementation "androidx.navigation:navigation-ui-ktx:$navVersion"
+
+    def nav_version = "2.4.0-alpha02"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retroFitVersion"
@@ -118,15 +128,13 @@ dependencies {
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
 
     //Dagger
-    implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+//    implementation 'com.google.dagger:hilt-android:2.38.1'
+  //  kapt 'com.google.dagger:hilt-compiler:2.38.1'
 
     //Mockito
-    testImplementation "org.mockito:mockito-inline:$mockitoVersion"
-    testImplementation "android.arch.core:core-testing:1.1.1"
-    kaptTest "com.google.dagger:dagger-compiler:$daggerVersion"
+    //testImplementation "org.mockito:mockito-inline:$mockitoVersion"
+    //testImplementation "android.arch.core:core-testing:1.1.1"
+    //kaptTest "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //Worker Manger
     implementation "androidx.work:work-runtime-ktx:2.5.0"

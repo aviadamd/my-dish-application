@@ -60,7 +60,7 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .centerCrop()
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
-    } catch (e : IOException) {
+    } catch (e: IOException) {
         Log.e(IMAGE_RESOURCE,"error loading image ${e.message}")
     }
 }

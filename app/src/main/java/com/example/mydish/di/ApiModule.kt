@@ -2,16 +2,14 @@ package com.example.mydish.di
 
 import com.example.mydish.model.service.webservice.RandomDishApi
 import com.example.mydish.utils.data.Constants
-import dagger.Module
-import dagger.Provides
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-@Module
+//@Module
 class ApiModule {
 
-    @Provides
+  //  @Provides
     fun provideRandomDishApi(): RandomDishApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -20,7 +18,7 @@ class ApiModule {
             .create(RandomDishApi::class.java)
     }
 
-    @Provides
+    //@Provides
     fun provideRandomDishApiRx(): RandomDishApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
@@ -29,4 +27,5 @@ class ApiModule {
             .build()
             .create(RandomDishApi::class.java)
     }
+
 }

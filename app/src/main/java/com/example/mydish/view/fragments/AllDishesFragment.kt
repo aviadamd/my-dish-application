@@ -80,10 +80,10 @@ class AllDishesFragment : Fragment() {
         mBinding.rvDishesList.adapter = mMyDishAdapter
 
         /*** set the category text list before add to the ui */
-        /*** set the rvDishesCategory to visible */
-        mBinding.rvDishesCategory.visibility = View.VISIBLE
         /*** set/init the rvDishesCategory layoutManager to Linear view as horizontal view */
         mBinding.rvDishesCategory.layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL, false)
+        /*** set the rvDishesCategory to visible */
+        mBinding.rvDishesCategory.visibility = View.VISIBLE
         /*** set/init the adapter to mBinding.rvDishesCategory.adapter */
         val adapter = CustomHorizontalListItemAdapter(requireActivity(), this@AllDishesFragment, resources.getStringArray(R.array.dishTypes))
         mBinding.rvDishesCategory.adapter = adapter

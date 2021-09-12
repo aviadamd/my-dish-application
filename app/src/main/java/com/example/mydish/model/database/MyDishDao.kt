@@ -4,11 +4,11 @@ import androidx.room.*
 import com.example.mydish.model.entities.MyDishEntity
 import kotlinx.coroutines.flow.Flow
 
-@Dao
 /**
  * Hold the data base operations @Insert,@Update,@Delete with @Dao annotations and suspend functions .
  * For the getData from data base we use coroutines with room @Query
  */
+@Dao
 interface MyDishDao {
 
     /**

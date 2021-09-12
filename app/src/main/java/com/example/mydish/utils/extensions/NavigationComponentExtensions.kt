@@ -10,9 +10,7 @@ import com.example.mydish.view.activities.MainActivity
  * Show the bottom navigation again
  */
 fun Fragment.onResumeToFragment() {
-    this.let {
-        (it.requireActivity() as MainActivity).showBottomNavigationView()
-    }
+    (requireActivity() as? MainActivity)?.showBottomNavigationView()
 }
 
 /**
@@ -25,9 +23,7 @@ fun Fragment.onResumeToFragment() {
  * Hide the bottom nav and open the dish details
  */
 fun Fragment.onNavigateBackToFragment(navDirections: NavDirections) {
-    this.let {
-        (it.requireActivity() as MainActivity).hideBottomNavigationView().also {
-            findNavController().navigate(navDirections)
-        }
+    (requireActivity() as? MainActivity)?.hideBottomNavigationView().also {
+        findNavController().navigate(navDirections)
     }
 }

@@ -13,8 +13,7 @@ import com.example.mydish.utils.data.Tags.ANIMATION
 import com.example.mydish.utils.extensions.hidingStatusBar
 import com.example.mydish.utils.extensions.startAnActivity
 
-class
-SplashActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     /*** Present splash screen with the animation of the tvAppName with application name */
     override fun onCreate(savedInstanceState: Bundle?) {

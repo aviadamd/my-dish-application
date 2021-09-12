@@ -1,15 +1,14 @@
 package com.example.mydish.viewmodel
 
 import android.app.Application
-import android.app.backup.SharedPreferencesBackupHelper
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
 import com.example.mydish.model.service.webservice.Recipes
 import com.example.mydish.utils.data.Tags.DISH_INFO
+import com.example.mydish.utils.extensions.SharedPreferenceHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
@@ -34,7 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * This class is the observable of the observer
  */
-class RandomDishViewModel : ViewModel() {
+class RandomDishViewModel(application: Application) : AndroidViewModel(application) {
 
     /** will be init with the coroutine scope and will be return to null on ViewModel clear life cycle **/
     private var job: Job? = null
@@ -56,15 +55,19 @@ class RandomDishViewModel : ViewModel() {
      */
     private val compositeDisposable = CompositeDisposable()
 
-    private var prefs = SharedPreferencesBackupHelper(AndroidViewModel(Application()).getApplication())
+    /*** shared preference savings data */
+   // private var prefs = SharedPreferenceHelper()
 
+    /*** save random dish view model state flow for observer */
     private val _randomDishState = MutableStateFlow<RandomDishState>(RandomDishState.Empty)
     fun getRandomDishState(): StateFlow<RandomDishState> { return _randomDishState }
 
+    /*** common dispatchers for coroutine scope*/
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
         Log.e(DISH_INFO,"Error info: ${throwable.localizedMessage} Job active: ${job.isActive}")
     }
 
+    /*** method to call service with coroutine or rx java options */
     fun getRandomRecipeApiCall(with: With, endPoint: EndPoint) {
         when(with) {
             With.RX -> getRandomDishesFromRecipeAPIRx(endPoint)

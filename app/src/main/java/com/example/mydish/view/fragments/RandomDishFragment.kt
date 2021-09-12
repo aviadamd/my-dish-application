@@ -210,7 +210,7 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : Recipe) {
-        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),1000)
+        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),500)
         setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
         //Set the dish title
         setRecipeTitle(recipe.title)

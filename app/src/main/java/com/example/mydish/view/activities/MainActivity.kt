@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         /** init the mBinding variable**/
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
