@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="dishTypes">
-        <item>"All</item>
-        <item>"breakfast"</item>
-        <item>"launch"</item>
-        <item>"dessert"</item>
-        <item>"snacks"</item>
-        <item>"dinner"</item>
-        <item>"salad"</item>
-        <item>"side &amp; dish"</item>
-        <item>"other"</item>
-    </string-array>
+  <string-array name="dishTypes">
+    <item>"All</item>
+    <item>"breakfast"</item>
+    <item>"launch"</item>
+    <item>"dessert"</item>
+    <item>"snacks"</item>
+    <item>"dinner"</item>
+    <item>"salad"</item>
+    <item>"side &amp; dish"</item>
+    <item>"other"</item>
+  </string-array>
 
-    <string-array name="dishCategory">
-        <item>"BBQ</item>
-        <item>"Bakery"</item>
-        <item>"Burger"</item>
-        <item>"Cafe"</item>
-        <item>"Chicken"</item>
-        <item>"Dessert"</item>
-        <item>"Drinks"</item>
-        <item>"Hot &amp; Dogs"</item>
-        <item>"Juices"</item>
-        <item>"Sandwich"</item>
-        <item>"Tea &amp; Coffee"</item>
-        <item>"Wraps"</item>
-        <item>"Other"</item>
-    </string-array>
+  <string-array name="dishCategory">
+    <item>"BBQ</item>
+    <item>"Bakery"</item>
+    <item>"Burger"</item>
+    <item>"Cafe"</item>
+    <item>"Chicken"</item>
+    <item>"Dessert"</item>
+    <item>"Drinks"</item>
+    <item>"Hot &amp; Dogs"</item>
+    <item>"Juices"</item>
+    <item>"Sandwich"</item>
+    <item>"Tea &amp; Coffee"</item>
+    <item>"Wraps"</item>
+    <item>"Other"</item>
+  </string-array>
 
-    <string-array name="dishCookingTime">
-        <item>"10</item>
-        <item>"15"</item>
-        <item>"20"</item>
-        <item>"30"</item>
-        <item>"45"</item>
-        <item>"50"</item>
-        <item>"60"</item>
-        <item>"90"</item>
-        <item>"120"</item>
-        <item>"150"</item>
-        <item>"180"</item>
-    </string-array>
+  <string-array name="dishCookingTime">
+    <item>"10</item>
+    <item>"15"</item>
+    <item>"20"</item>
+    <item>"30"</item>
+    <item>"45"</item>
+    <item>"50"</item>
+    <item>"60"</item>
+    <item>"90"</item>
+    <item>"120"</item>
+    <item>"150"</item>
+    <item>"180"</item>
+  </string-array>
 
 </resources>

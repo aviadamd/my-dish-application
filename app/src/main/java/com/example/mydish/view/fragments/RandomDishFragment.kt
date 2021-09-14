@@ -28,6 +28,7 @@ import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
 import com.example.mydish.viewmodel.RandomDishViewModel.RandomDishState
 import com.example.mydish.viewmodel.RandomDishViewModel.With
+import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 
 /**

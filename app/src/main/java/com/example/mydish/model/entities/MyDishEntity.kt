@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
  */
 @kotlinx.parcelize.Parcelize
 @Entity(tableName = "my_dish_table")
-data class MyDishEntity(
+data class  MyDishEntity(
     @ColumnInfo val image : String,
     /** Local or Online **/
     @ColumnInfo(name = "image_source") val imageSource: String,

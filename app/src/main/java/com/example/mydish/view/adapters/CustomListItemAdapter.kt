@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mydish.databinding.ItemCustomListBinding
 import com.example.mydish.view.activities.AddUpdateDishActivity
+import kotlinx.coroutines.InternalCoroutinesApi
 
 class CustomListItemAdapter (
     private val activity: Activity,
@@ -37,6 +38,7 @@ class CustomListItemAdapter (
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = listItems[position]
         holder.tvText.text = item
+
         holder.itemView.setOnClickListener {
             activity.let {
                 (it as AddUpdateDishActivity).selectedListItem(item,selection)

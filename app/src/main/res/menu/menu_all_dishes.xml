@@ -3,19 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--details>
-    <item android:id="@+id/action_filter_dish"
-        android:icon="@drawable/ic_filter_list"
-        android:title="@string/action_filter_dish"
-        android:orderInCategory="100"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
-    </details-->
+  <!--details>
+  <item android:id="@+id/action_filter_dish"
+      android:icon="@drawable/ic_filter_list"
+      android:title="@string/action_filter_dish"
+      android:orderInCategory="100"
+      app:showAsAction="always"
+      tools:ignore="AlwaysShowAction" />
+  </details-->
 
-    <item android:id="@+id/action_add_dish"
-        android:icon="@drawable/ic_add"
-        android:title="@string/action_add_dish"
-        android:orderInCategory="101"
-        app:showAsAction="always"/>
+  <item android:id="@+id/action_add_dish"
+      android:icon="@drawable/ic_add"
+      android:title="@string/action_add_dish"
+      android:orderInCategory="101"
+      app:showAsAction="always"/>
 
 </menu>

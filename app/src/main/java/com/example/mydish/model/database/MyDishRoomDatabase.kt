@@ -2,9 +2,11 @@ package com.example.mydish.model.database
 
 import android.content.Context
 import androidx.room.Database
-import androidx.room.Room
+import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import com.example.mydish.model.entities.MyDishEntity
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.internal.synchronized
 
 /**
  * This is the backend. The database. This used to be done by the OpenHelper.
@@ -27,16 +29,17 @@ abstract class MyDishRoomDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: MyDishRoomDatabase? = null
 
-        fun getDatabase(context: Context): MyDishRoomDatabase {
+        @OptIn(InternalCoroutinesApi::class)
+        internal fun getDatabase(context: Context): MyDishRoomDatabase {
             /*** if the INSTANCE is not null, then return it, if it is, then create the database */
             return INSTANCE ?: synchronized(this) {
-                val instance = Room
-                    /** context.applicationContext The context for the database. This is usually the Application context. */
-                    /** MyDishRoomDatabase         The abstract class which is annotated with Database and extends RoomDatabase. */
-                    /** my_dish_database           The name of the database file. */
-                    .databaseBuilder(context.applicationContext, MyDishRoomDatabase::class.java,"my_dish_database")
+                /** context.applicationContext The context for the database. This is usually the Application context. */
+                /** MyDishRoomDatabase         The abstract class which is annotated with Database and extends RoomDatabase. */
+                /** my_dish_database           The name of the database file. */
+                val instance = databaseBuilder(context.applicationContext, MyDishRoomDatabase::class.java,"my_dish_database")
                     .fallbackToDestructiveMigration()
                     .build()
+
                 INSTANCE = instance
                 instance
             }

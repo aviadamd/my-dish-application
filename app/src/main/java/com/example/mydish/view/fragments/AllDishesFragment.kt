@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mydish.R
@@ -13,13 +14,14 @@ import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentAllDishesBinding
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.data.Constants
-import com.example.mydish.utils.extensions.onNavigateBackToFragment
 import com.example.mydish.utils.extensions.onResumeToFragment
 import com.example.mydish.view.activities.AddUpdateDishActivity
+import com.example.mydish.view.activities.MainActivity
 import com.example.mydish.view.adapters.CustomHorizontalListItemAdapter
 import com.example.mydish.view.adapters.MyDishAdapter
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
+import kotlinx.coroutines.InternalCoroutinesApi
 
 /**
  * This class shows all dishes list from dish that the user chose from RandomDishFragment
@@ -135,9 +137,9 @@ class AllDishesFragment : Fragment() {
      * directions that describe this navigation operation
      */
     fun showDishDetails(myDishEntity: MyDishEntity) {
-        onNavigateBackToFragment(
-            navDirections = AllDishesFragmentDirections.actionAllDishesToDishDetails(myDishEntity)
-        )
+        (requireActivity() as? MainActivity)?.hideBottomNavigationView().also {
+            findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails(myDishEntity))
+        }
     }
 
     /**

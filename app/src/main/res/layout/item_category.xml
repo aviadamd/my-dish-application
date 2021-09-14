@@ -15,4 +15,6 @@
     android:paddingEnd="@dimen/_10sdp"
     android:textColor="@android:color/white"
     android:textStyle="bold"
-    tools:text="Breakfast" />
+    tools:text="Breakfast"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:layout_marginRight="@dimen/_1sdp" />

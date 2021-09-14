@@ -18,6 +18,7 @@ import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DURATION
 import com.example.mydish.utils.data.Tags
 import com.example.mydish.utils.extensions.hidingStatusBar
+import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.concurrent.TimeUnit
 
 /**

@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.example.mydish.view.activities.MainActivity
+import kotlinx.coroutines.InternalCoroutinesApi
 
 /**
  * When back to Main Activity

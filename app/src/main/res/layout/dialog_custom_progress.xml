@@ -7,16 +7,17 @@
     android:orientation="horizontal"
     android:padding="@dimen/_10sdp">
 
-    <ProgressBar
-        android:layout_width="@dimen/_50sdp"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_marginEnd="@dimen/_10sdp" />
+  <ProgressBar
+      android:layout_width="@dimen/_50sdp"
+      android:layout_height="@dimen/_50sdp"
+      android:layout_marginEnd="@dimen/_10sdp"
+      android:layout_marginRight="@dimen/_10sdp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/please_wait"
-        android:textColor="@color/grey_900"
-        android:textSize="@dimen/_16sdp"/>
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/please_wait"
+      android:textColor="@color/grey_900"
+      android:textSize="@dimen/_16sdp"/>
 
 </LinearLayout>
