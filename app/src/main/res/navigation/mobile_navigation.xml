@@ -29,7 +29,11 @@
       android:id="@+id/navigation_random_dish"
       android:name="com.example.mydish.view.fragments.RandomDishFragment"
       android:label="@string/title_random_dish"
-      tools:layout="@layout/fragment_random_dish" />
+      tools:layout="@layout/fragment_random_dish" >
+    <action
+        android:id="@+id/action_navigation_random_dish_to_navigation_all_dishes"
+        app:destination="@id/navigation_all_dishes" />
+  </fragment>
 
   <fragment
       android:id="@+id/navigation_dish_details"

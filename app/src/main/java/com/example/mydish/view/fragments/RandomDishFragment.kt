@@ -1,5 +1,6 @@
 package com.example.mydish.view.fragments
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.mydish.R
 import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
@@ -28,7 +30,6 @@ import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
 import com.example.mydish.viewmodel.RandomDishViewModel.RandomDishState
 import com.example.mydish.viewmodel.RandomDishViewModel.With
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 
 /**
@@ -70,6 +71,7 @@ class RandomDishFragment : Fragment() {
 
         /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
+
         /** Present the recipe on the view with random dish **/
         mRandomDishViewModel.getRandomRecipeApiCall(runWith, EndPoint.DESSERT)
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
@@ -102,16 +104,15 @@ class RandomDishFragment : Fragment() {
      * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
      * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
      */
-    private fun initRandomDishesViewModelObserverOne() : Boolean {
+    private fun initRandomDishesViewModelObserverOne() {
         /*** Calling the dish data from service */
-        var successes = false
         lifecycleScope.launchWhenStarted {
             mRandomDishViewModel.getRandomDishState().collect {
                 when (it) {
                     is RandomDishState.Load -> {
                         Log.i(DISH_INFO, "dish loading state: ${it.load}")
                         refreshingHandler(500)
-                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1150)
+                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
                     }
                     is RandomDishState.Service -> {
                         it.randomDishApi?.let { response ->
@@ -119,30 +120,27 @@ class RandomDishFragment : Fragment() {
                                 Log.i(DISH_INFO, "dish response: $this")
                                 setRandomResponseInUi(this)
                                 setMinimumUiPresentation(false)
-                                successes = true
                             }
                         }
                     }
                     is RandomDishState.Errors -> {
                         Log.i(DISH_INFO, "dish error state: ${it.error}")
-                        toast(requireActivity(), "Unable to load dish, try later").show()
+                        errorPopUpNavigateBackToAllDishes()
                     }
                     else -> Unit
                 }
             }
         }
-        return successes
     }
 
-    private fun initRandomDishesViewModelObserverTwo(): Boolean {
-        var successes = false
+    private fun initRandomDishesViewModelObserverTwo() {
         /*** Calling the dish data from service */
         mRandomDishViewModel.getRandomDishState().asLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 is RandomDishState.Load -> {
                     Log.i(DISH_INFO, "dish loading state: ${it.load}")
                     refreshingHandler(500)
-                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1150)
+                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
                 }
                 is RandomDishState.Service -> {
                     it.randomDishApi?.let { response ->
@@ -150,19 +148,16 @@ class RandomDishFragment : Fragment() {
                             Log.i(DISH_INFO, "dish response: $this")
                             setRandomResponseInUi(this)
                             setMinimumUiPresentation(false)
-                            successes = true
                         }
                     }
                 }
                 is RandomDishState.Errors -> {
                     Log.i(DISH_INFO, "dish error state: ${it.error}")
-                    toast(requireActivity(), "Unable to load dish, try later").show()
-                    this.requireActivity().finish()
+                    errorPopUpNavigateBackToAllDishes()
                 }
                 else -> Unit
             }
         }
-        return successes
     }
 
     /**
@@ -361,5 +356,22 @@ class RandomDishFragment : Fragment() {
                 mBinding!!.srlRandomDish.isRefreshing = false
             }
         }, timeOut)
+    }
+
+    private fun errorPopUpNavigateBackToAllDishes() {
+        val builder = AlertDialog.Builder(this.requireActivity())
+            .setTitle("DISH ERROR")
+            .setMessage("Cannot provide dish response try later")
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+                findNavController().navigate(
+                    RandomDishFragmentDirections.actionNavigationRandomDishToNavigationAllDishes()
+                )
+            }
+
+        val alertDialog: AlertDialog = builder.create()
+        alertDialog.setCancelable(false)
+        alertDialog.show()
     }
 }

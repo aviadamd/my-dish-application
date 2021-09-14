@@ -14,6 +14,7 @@ import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentAllDishesBinding
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.data.Constants
+import com.example.mydish.utils.extensions.onNavigateBackToFragment
 import com.example.mydish.utils.extensions.onResumeToFragment
 import com.example.mydish.view.activities.AddUpdateDishActivity
 import com.example.mydish.view.activities.MainActivity
@@ -137,9 +138,9 @@ class AllDishesFragment : Fragment() {
      * directions that describe this navigation operation
      */
     fun showDishDetails(myDishEntity: MyDishEntity) {
-        (requireActivity() as? MainActivity)?.hideBottomNavigationView().also {
-            findNavController().navigate(AllDishesFragmentDirections.actionAllDishesToDishDetails(myDishEntity))
-        }
+        onNavigateBackToFragment(
+            navDirections = AllDishesFragmentDirections.actionAllDishesToDishDetails(myDishEntity)
+        )
     }
 
     /**

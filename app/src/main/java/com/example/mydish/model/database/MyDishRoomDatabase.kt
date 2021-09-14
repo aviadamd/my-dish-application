@@ -13,7 +13,7 @@ import kotlinx.coroutines.internal.synchronized
  * The fact that this has very few comments emphasizes its coolness.
  * If need more then one Dao then this class is the place for it
  */
-@Database(entities = [MyDishEntity::class], version = 2)
+@Database(entities = [MyDishEntity::class], version = 2, exportSchema = false)
 abstract class MyDishRoomDatabase : RoomDatabase() {
 
     /**

@@ -8,7 +8,6 @@ import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
 import com.example.mydish.model.service.webservice.Recipes
 import com.example.mydish.utils.data.Tags.DISH_INFO
-import com.example.mydish.utils.extensions.SharedPreferenceHelper
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.observers.DisposableSingleObserver
@@ -80,25 +79,28 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
      */
     private fun getRandomDishesRecipeAPINew(endPoint: EndPoint) {
+        _randomDishState.value = RandomDishState.Load(true)
+        var statusCode = 0
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (this.isActive && dishes.isSuccessful) {
-                    _randomDishState.value = RandomDishState.Load(true)
+                    _randomDishState.value = RandomDishState.Load(false)
                     _randomDishState.value = RandomDishState.Service(dishes.body())
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
                 } else {
                     _randomDishState.value = RandomDishState.Errors(dishes.code().toString())
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
+                statusCode = dishes.code()
             }
         }
 
         job?.let { job ->
             job.invokeOnCompletion {
-                Log.i(DISH_INFO,"dish loading job finish as ${job.isCompleted}")
+                Log.i(DISH_INFO,"dish job finish as completed ${job.isCompleted} and with code http code {$statusCode}")
             }
         }
     }

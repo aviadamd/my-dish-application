@@ -92,7 +92,7 @@ class FavoriteDishesFragment : Fragment() {
      */
     fun showDishDetails(myDishEntity: MyDishEntity) {
         onNavigateBackToFragment(
-            FavoriteDishesFragmentDirections.actionFavoriteDishesToDishDetails(myDishEntity)
+            navDirections = FavoriteDishesFragmentDirections.actionFavoriteDishesToDishDetails(myDishEntity)
         )
     }
 
