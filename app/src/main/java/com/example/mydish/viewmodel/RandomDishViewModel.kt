@@ -3,6 +3,7 @@ package com.example.mydish.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
@@ -37,28 +38,23 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
     /** will be init with the coroutine scope and will be return to null on ViewModel clear life cycle **/
     private var job: Job? = null
 
-    /*** Retro fit RandomDishService val , will be used in end point url */
-    private val randomRecipeApiService = RandomDishesApiService()
-
-    /*** holding the state of loading dish processes */
-    val randomDishLoading = MutableLiveData<Boolean>()
-    /*** holding the date of dish recipes data */
-    val randomDishResponse = MutableLiveData<Recipes>()
-    /*** holding the state of error dish processes */
-    val randomDishLoadingError = MutableLiveData<Boolean>()
-
     /**
      * A disposable/one time container that can hold onto multiple other Disposables and
-     * offers time complexity for add(Disposable), remove(Disposable) and delete(Disposable)
-     * operations. -> RxJava
+     * offers time complexity for add(Disposable), remove(Disposable) and delete(Disposable) operations.
      */
     private val compositeDisposable = CompositeDisposable()
 
-    /*** shared preference savings data */
-   // private var prefs = SharedPreferenceHelper()
+    /*** Retro fit RandomDishService val , will be used in end point url */
+    private val randomRecipeApiService = RandomDishesApiService()
 
-    /*** save random dish view model state flow for observer */
+    /*** save random dish view model immutable observable state flow to the mutable observer */
+    private val _rxRandomDishState = MutableLiveData<RandomDishState>(RandomDishState.Empty)
+    /*** get the immutable state from the _randomDish state mutable observer */
+    fun getRxRandomDishState(): LiveData<RandomDishState> { return _rxRandomDishState }
+
+    /*** save random dish view model immutable observable state flow to the mutable observer */
     private val _randomDishState = MutableStateFlow<RandomDishState>(RandomDishState.Empty)
+    /*** get the immutable state from the _randomDish state mutable observer */
     fun getRandomDishState(): StateFlow<RandomDishState> { return _randomDishState }
 
     /*** common dispatchers for coroutine scope*/
@@ -100,7 +96,7 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
 
         job?.let { job ->
             job.invokeOnCompletion {
-                Log.i(DISH_INFO,"dish job finish as completed ${job.isCompleted} and with code http code {$statusCode}")
+                Log.i(DISH_INFO,"dish job finish as ${job.isCompleted}, with http code {$statusCode}")
             }
         }
     }
@@ -122,6 +118,7 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
     * SingleObserver as is.
     */
     private fun getRandomDishesFromRecipeAPIRx(endPoint: EndPoint) {
+        _rxRandomDishState.value = RandomDishState.Load(true)
         /**
          * Disposable == get reed of...
          * Adds a Disposable time to this container or disposes it if the container has been disposed.
@@ -133,15 +130,14 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(object : DisposableSingleObserver<Recipes>() {
                 override fun onSuccess(dishResponce: Recipes) {
-                    randomDishLoading.value = false
-                    randomDishResponse.value = dishResponce
+                    _rxRandomDishState.value = RandomDishState.Load(false)
+                    _rxRandomDishState.value = RandomDishState.Service(dishResponce)
                     Log.i(DISH_INFO, "dish response $dishResponce")
                 }
 
                 override fun onError(e: Throwable) {
-                    randomDishLoadingError.value = true
+                    _rxRandomDishState.value = RandomDishState.Errors(e.message.toString())
                     Log.i(DISH_INFO, "dish error response ${e.message}")
-                    e.printStackTrace()
                 }
             })
         )
@@ -154,19 +150,10 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
         compositeDisposable.clear()
     }
 
-    fun refresh(with: With) {
-        when(with) {
-            With.RX -> {
-                randomDishLoading.value = false
-                randomDishLoadingError.value = false
-                randomDishResponse.value = null
-            }
-            With.COROUTINE -> {
-                _randomDishState.value = RandomDishState.Load(true)
-                _randomDishState.value = RandomDishState.Service(null)
-                _randomDishState.value = RandomDishState.Errors("")
-            }
-        }
+    fun refresh() {
+        _randomDishState.value = RandomDishState.Load(true)
+        _randomDishState.value = RandomDishState.Service(null)
+        _randomDishState.value = RandomDishState.Errors("")
     }
 
     sealed class RandomDishState {

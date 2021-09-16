@@ -18,7 +18,6 @@ import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DURATION
 import com.example.mydish.utils.data.Tags
 import com.example.mydish.utils.extensions.hidingStatusBar
-import kotlinx.coroutines.InternalCoroutinesApi
 import java.util.concurrent.TimeUnit
 
 /**
@@ -80,7 +79,13 @@ class MainActivity : AppCompatActivity() {
      * clicks on the home back button.
      */
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(mNavController, null)
+        val homeButtonNav = NavigationUI.navigateUp(mNavController, null)
+
+        if (homeButtonNav) {
+            Log.i("NAVIGATION","Navigate back to all dishes fragment")
+        } else Log.i("NAVIGATION","Navigate back to all dishes fragment fails")
+
+        return homeButtonNav
     }
 
     /**
