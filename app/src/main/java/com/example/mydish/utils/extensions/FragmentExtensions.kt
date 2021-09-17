@@ -68,5 +68,7 @@ fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textVi
            .into(imageView)
     } catch (e : IOException) {
         Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
+    } catch (e: Exception) {
+        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
     }
 }

@@ -13,10 +13,12 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
 import java.io.IOException
@@ -61,6 +63,8 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
     } catch (e: IOException) {
+        Log.e(IMAGE_RESOURCE,"error loading image ${e.message}")
+    } catch (e: Exception) {
         Log.e(IMAGE_RESOURCE,"error loading image ${e.message}")
     }
 }
