@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
-import com.example.mydish.model.service.webservice.Recipes
 import com.example.mydish.utils.data.Tags.DISH_INFO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,9 +35,9 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
     private val randomRecipeApiService = RandomDishesApiService()
 
     /*** save random dish view model immutable observable state flow to the mutable observer */
-    private val _randomDishState = MutableStateFlow<RandomDishState>(RandomDishState.Empty)
+    private val _randomDishState = MutableStateFlow<ResourceState>(ResourceState.Empty)
     /*** get the immutable state from the _randomDish state mutable observer */
-    fun getRandomDishState(): StateFlow<RandomDishState> { return _randomDishState }
+    fun getRandomDishState(): StateFlow<ResourceState> { return _randomDishState }
 
     /*** common dispatchers for coroutine scope*/
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
@@ -50,19 +49,19 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
      * Using withContext(Dispatchers.Main) to return to the ui thread and use the live data
      */
     fun getRandomDishesRecipeAPINew(endPoint: EndPoint) {
-        _randomDishState.value = RandomDishState.Load(true)
         var statusCode = 0
+        _randomDishState.value = ResourceState.Load(true)
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (this.isActive && dishes.isSuccessful) {
-                    _randomDishState.value = RandomDishState.Load(false)
-                    _randomDishState.value = RandomDishState.Service(dishes.body())
+                    _randomDishState.value = ResourceState.Load(false)
+                    _randomDishState.value = ResourceState.Service(dishes.body())
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
                 } else {
-                    _randomDishState.value = RandomDishState.Errors(dishes.code().toString())
+                    _randomDishState.value = ResourceState.Errors(dishes.code().toString())
                     Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
                 }
                 statusCode = dishes.code()
@@ -83,15 +82,8 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun refresh() {
-        _randomDishState.value = RandomDishState.Load(true)
-        _randomDishState.value = RandomDishState.Service(null)
-        _randomDishState.value = RandomDishState.Errors("")
-    }
-
-    sealed class RandomDishState {
-        object Empty: RandomDishState()
-        data class Load(var load: Boolean): RandomDishState()
-        data class Errors(var error: String): RandomDishState()
-        data class Service(var randomDishApi: Recipes?): RandomDishState()
+        _randomDishState.value = ResourceState.Load(true)
+        _randomDishState.value = ResourceState.Service(null)
+        _randomDishState.value = ResourceState.Errors("")
     }
 }

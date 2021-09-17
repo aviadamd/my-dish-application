@@ -28,7 +28,7 @@ import com.example.mydish.utils.extensions.*
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
-import com.example.mydish.viewmodel.RandomDishViewModel.RandomDishState
+import com.example.mydish.viewmodel.ResourceState
 import kotlinx.coroutines.flow.collect
 
 /**
@@ -98,12 +98,12 @@ class RandomDishFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             mRandomDishViewModel.getRandomDishState().collect {
                 when (it) {
-                    is RandomDishState.Load -> {
+                    is ResourceState.Load -> {
                         Log.i(DISH_INFO, "dish loading state: ${it.load}")
                         refreshingHandler(500)
                         setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
                     }
-                    is RandomDishState.Service -> {
+                    is ResourceState.Service -> {
                         it.randomDishApi?.let { response ->
                             response.recipes[0].apply {
                                 Log.i(DISH_INFO, "dish response: $this")
@@ -112,7 +112,7 @@ class RandomDishFragment : Fragment() {
                             }
                         }
                     }
-                    is RandomDishState.Errors -> {
+                    is ResourceState.Errors -> {
                         Log.i(DISH_INFO, "dish error state: ${it.error}")
                         errorPopUpNavigateBackToAllDishes()
                     }
@@ -132,12 +132,12 @@ class RandomDishFragment : Fragment() {
         /*** Calling the dish data from service */
         mRandomDishViewModel.getRandomDishState().asLiveData().observe(viewLifecycleOwner) {
             when (it) {
-                is RandomDishState.Load -> {
+                is ResourceState.Load -> {
                     Log.i(DISH_INFO, "dish loading state: ${it.load}")
                     refreshingHandler(500)
                     setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
                 }
-                is RandomDishState.Service -> {
+                is ResourceState.Service -> {
                     it.randomDishApi?.let { response ->
                         response.recipes[0].apply {
                             Log.i(DISH_INFO, "dish response: $this")
@@ -146,7 +146,7 @@ class RandomDishFragment : Fragment() {
                         }
                     }
                 }
-                is RandomDishState.Errors -> {
+                is ResourceState.Errors -> {
                     Log.i(DISH_INFO, "dish error state: ${it.error}")
                     errorPopUpNavigateBackToAllDishes()
                 }
