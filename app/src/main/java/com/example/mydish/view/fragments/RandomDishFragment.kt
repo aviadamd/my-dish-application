@@ -29,7 +29,6 @@ import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
 import com.example.mydish.viewmodel.RandomDishViewModel.RandomDishState
-import com.example.mydish.viewmodel.RandomDishViewModel.With
 import kotlinx.coroutines.flow.collect
 
 /**
@@ -40,9 +39,6 @@ import kotlinx.coroutines.flow.collect
  * Use the mProgressDialog to while loading data from the service
  */
 class RandomDishFragment : Fragment() {
-
-    /*** set the call run with coroutine */
-    private val runWith = With.COROUTINE
 
     /** global variable for RandomDishDetails View **/
     private var mBinding : FragmentRandomDishBinding? = null
@@ -73,14 +69,14 @@ class RandomDishFragment : Fragment() {
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
 
         /** Present the recipe on the view with random dish **/
-        mRandomDishViewModel.getRandomRecipeApiCall(runWith, EndPoint.DESSERT)
+        mRandomDishViewModel.getRandomDishesRecipeAPINew(EndPoint.DESSERT)
         /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        getRandomDishObserver(runWith)
+        initRandomDishesViewModelObserverOne()
         /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
         mBinding!!.srlRandomDish.setOnRefreshListener {
             /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
             /** Present the recipe on the view with random dish **/
-            mRandomDishViewModel.getRandomRecipeApiCall(runWith, EndPoint.DESSERT)
+            mRandomDishViewModel.getRandomDishesRecipeAPINew(EndPoint.DESSERT)
         }
     }
 
@@ -89,13 +85,6 @@ class RandomDishFragment : Fragment() {
         super.onDestroy()
         mBinding = null
         mRandomDishViewModel.refresh()
-    }
-
-    private fun getRandomDishObserver(with: With) {
-        when(with) {
-            With.COROUTINE -> initRandomDishesViewModelObserverOne()
-            With.RX -> { initRandomDishViewModelObserverThree() }
-        }
     }
 
     /**
@@ -142,39 +131,6 @@ class RandomDishFragment : Fragment() {
     private fun initRandomDishesViewModelObserverTwo() {
         /*** Calling the dish data from service */
         mRandomDishViewModel.getRandomDishState().asLiveData().observe(viewLifecycleOwner) {
-            when (it) {
-                is RandomDishState.Load -> {
-                    Log.i(DISH_INFO, "dish loading state: ${it.load}")
-                    refreshingHandler(500)
-                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
-                }
-                is RandomDishState.Service -> {
-                    it.randomDishApi?.let { response ->
-                        response.recipes[0].apply {
-                            Log.i(DISH_INFO, "dish response: $this")
-                            setRandomResponseInUi(this)
-                            setMinimumUiPresentation(false)
-                        }
-                    }
-                }
-                is RandomDishState.Errors -> {
-                    Log.i(DISH_INFO, "dish error state: ${it.error}")
-                    errorPopUpNavigateBackToAllDishes()
-                }
-                else -> Unit
-            }
-        }
-    }
-
-    /**
-     * Service call method to dish data then
-     * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
-     * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
-     * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
-     */
-    private fun initRandomDishViewModelObserverThree() {
-        /*** Calling the dish data from service */
-        mRandomDishViewModel.getRxRandomDishState().observe(viewLifecycleOwner) {
             when (it) {
                 is RandomDishState.Load -> {
                     Log.i(DISH_INFO, "dish loading state: ${it.load}")
