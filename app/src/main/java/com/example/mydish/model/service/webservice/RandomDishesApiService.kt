@@ -24,14 +24,4 @@ class RandomDishesApiService {
         }
         return recipe
     }
-
-    fun getDishesAsRetroFitWithRx(endPoint: EndPoint): Single<Recipes> {
-        val recipe : Single<Recipes> =
-            when(endPoint) {
-                MEAL -> api.provideRandomDishApiRx().getTheDishesRx(key, license, MEAL.key, MEAL.value)
-                CUISINES -> api.provideRandomDishApiRx().getTheDishesRx(key, license, CUISINES.key, CUISINES.value)
-                DESSERT -> api.provideRandomDishApiRx().getTheDishesRx(key, license, DESSERT.key, CUISINES.value)
-        }
-        return recipe
-    }
 }

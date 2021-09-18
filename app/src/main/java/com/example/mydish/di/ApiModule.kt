@@ -17,15 +17,4 @@ class ApiModule {
             .build()
             .create(RandomDishApi::class.java)
     }
-
-    //@Provides
-    fun provideRandomDishApiRx(): RandomDishApi {
-        return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .build()
-            .create(RandomDishApi::class.java)
-    }
-
 }
