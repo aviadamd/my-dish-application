@@ -8,17 +8,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.Nullable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.Fragment
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
 import java.io.IOException
@@ -45,17 +42,15 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .load(image)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
-                    @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(IMAGE_RESOURCE, "Error loading image", e)
+                    e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    Log.e(IMAGE_RESOURCE, "Error loading image "+ if (e != null) e.message else model.toString())
                     return false
                 }
 
                 override fun onResourceReady(
                     resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                     Log.i(IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
-                    if (platte) {
-                        setPalette(fragment.view, resource, textView)
-                    }
+                    if (platte) setPalette(fragment.view, resource, textView)
                     return false
                 }
             })

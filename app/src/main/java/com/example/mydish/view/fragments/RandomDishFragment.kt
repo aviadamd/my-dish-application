@@ -269,9 +269,10 @@ class RandomDishFragment : Fragment() {
 
             var isNewDish = true
             myDishViewModel.allDishesList.observe(viewLifecycleOwner) {
-                it.forEach { item ->
+                for (item in it) {
                     if (item.title == recipe.title) {
                         isNewDish = false
+                        break
                     }
                 }
             }
@@ -283,9 +284,11 @@ class RandomDishFragment : Fragment() {
                 setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_selected)
                 /*** recipe title + the dish_is_selected label will present toast message about new dish added to favorite dishes */
                 toast(requireActivity(),recipe.title+" "+resources.getString(R.string.dish_is_selected)).show()
+                Log.i(DISH_INFO, "${recipe.title} is entered to room data base")
             } else {
                 /*** recipe title + the dish all ready label exists in the favorite dishes */
                 toast(requireActivity(),"${recipe.title} dish is all ready in your favorite dishes").show()
+                Log.i(DISH_INFO, "${recipe.title} all ready exists in room data base")
             }
         }
     }

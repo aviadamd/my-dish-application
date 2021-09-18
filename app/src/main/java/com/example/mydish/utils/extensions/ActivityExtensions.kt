@@ -14,6 +14,7 @@ import android.view.WindowManager.LayoutParams
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -57,6 +58,13 @@ fun Activity.hideSpinnerCustomProgressDialog() {
 
 fun Context.startAnActivity(clazz: Class<*>, extras: Bundle?) {
     val intent = Intent(this, clazz)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    if (extras != null) intent.putExtras(extras)
+    startActivity(intent)
+}
+
+fun Fragment.startAnActivity(clazz: Class<*>, extras: Bundle?) {
+    val intent = Intent(this.requireActivity(), clazz)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     if (extras != null) intent.putExtras(extras)
     startActivity(intent)

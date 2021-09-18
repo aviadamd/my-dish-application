@@ -1,15 +1,15 @@
 package com.example.mydish
 
+import androidx.test.platform.app.InstrumentationRegistry
+import com.google.common.truth.Truth
 import org.junit.Test
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class ExampleUnitTest {
-    @Test
-    fun addition_isCorrect() {
 
+    @Test
+    fun useAppContext() {
+        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val result = appContext.packageName.equals("com.example.mydish")
+        Truth.assertThat(result).isTrue()
     }
 }
