@@ -33,12 +33,14 @@ abstract class MyDishRoomDatabase : RoomDatabase() {
         internal fun getDatabase(context: Context): MyDishRoomDatabase {
             /*** if the INSTANCE is not null, then return it, if it is, then create the database */
             return INSTANCE ?: synchronized(this) {
+
                 /** context.applicationContext The context for the database. This is usually the Application context. */
                 /** MyDishRoomDatabase         The abstract class which is annotated with Database and extends RoomDatabase. */
                 /** my_dish_database           The name of the database file. */
-                val instance = databaseBuilder(context.applicationContext, MyDishRoomDatabase::class.java,"my_dish_database")
-                    .fallbackToDestructiveMigration()
-                    .build()
+                val instance = databaseBuilder(
+                    context.applicationContext,
+                    MyDishRoomDatabase::class.java,"my_dish_database"
+                ).fallbackToDestructiveMigration().build()
 
                 INSTANCE = instance
                 instance

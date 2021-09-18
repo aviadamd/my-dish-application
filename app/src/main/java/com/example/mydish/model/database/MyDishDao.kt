@@ -38,6 +38,9 @@ interface MyDishDao {
     @Delete
     suspend fun deleteMyDishDetails(myDishEntity: MyDishEntity)
 
+    @Delete
+    suspend fun deleteMyDishesDetails(myDishEntity: List<MyDishEntity>)
+
     /**
      * When data changes, you usually want to take some action, such as displaying the updated data in the UI.
      * This means you have to observe the data so when it changes, you can react.
@@ -49,17 +52,15 @@ interface MyDishDao {
      * like network requests, database calls, or other async code.
      * It supports coroutines throughout its API, so you can transform a flow using coroutines as well!
      */
+    //@Query(MyDishDataBaseQueries.GET_ALL_DISHES)
     @Query("SELECT * FROM MY_DISH_TABLE ORDER BY ID")
     fun getAllDishesList(): Flow<List<MyDishEntity>>
 
-    //SELECT * FROM MY_DISH_TABLE ORDER BY ID
-    //SELECT DISTINCT * FROM MY_DISH_TABLE ORDER BY ID
-    //SELECT * FROM MY_DISH_TABLE WHERE favoriteDish = 1
-    //SELECT DISTINCT * FROM MY_DISH_TABLE WHERE favoriteDish = 1
-
+    //@Query(MyDishDataBaseQueries.GET_FAVORITES_DISHES)
     @Query("SELECT * FROM MY_DISH_TABLE WHERE favoriteDish = 1")
     fun getFavoriteDishesList(): Flow<List<MyDishEntity>>
 
+    //@Query(MyDishDataBaseQueries.GET_FILTERED_DISHES)
     @Query("SELECT * FROM MY_DISH_TABLE WHERE type = :filterType")
     fun getFilteredDishesList(filterType: String): Flow<List<MyDishEntity>>
 }

@@ -63,4 +63,10 @@ class MyDishRepository(private val myDishDao: MyDishDao) {
         myDishDao.deleteMyDishDetails(myDishEntity)
     }
 
+    /** @WorkerThread make shore that using the back thread not the ui thread **/
+    @WorkerThread
+    suspend fun deleteMyDishesDetails(myDishEntity: List<MyDishEntity>) {
+        myDishDao.deleteMyDishesDetails(myDishEntity)
+    }
+
 }

@@ -75,15 +75,15 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    /*** on each time that the view model life cycle in clean the job will be cancel */
-    override fun onCleared() {
-        super.onCleared()
-        job?.cancel()
-    }
-
     fun refresh() {
         _randomDishState.value = ResourceState.Load(true)
         _randomDishState.value = ResourceState.Service(null)
         _randomDishState.value = ResourceState.Errors("")
+    }
+
+    /*** on each time that the view model life cycle in clean the job will be cancel */
+    override fun onCleared() {
+        super.onCleared()
+        job?.cancel()
     }
 }
