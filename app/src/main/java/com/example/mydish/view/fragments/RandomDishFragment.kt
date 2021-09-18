@@ -108,12 +108,12 @@ class RandomDishFragment : Fragment() {
                             response.recipes[0].apply {
                                 Log.i(DISH_INFO, "dish response: $this")
                                 setRandomResponseInUi(this)
-                                setMinimumUiPresentation(false)
                             }
                         }
                     }
                     is ResourceState.Errors -> {
                         Log.i(DISH_INFO, "dish error state: ${it.error}")
+                        setMinimumUiPresentation(it.error)
                         errorPopUpNavigateBackToAllDishes()
                     }
                     else -> Unit
@@ -142,12 +142,12 @@ class RandomDishFragment : Fragment() {
                         response.recipes[0].apply {
                             Log.i(DISH_INFO, "dish response: $this")
                             setRandomResponseInUi(this)
-                            setMinimumUiPresentation(false)
                         }
                     }
                 }
                 is ResourceState.Errors -> {
                     Log.i(DISH_INFO, "dish error state: ${it.error}")
+                    setMinimumUiPresentation(it.error)
                     errorPopUpNavigateBackToAllDishes()
                 }
                 else -> Unit
@@ -291,8 +291,8 @@ class RandomDishFragment : Fragment() {
     }
 
     @Suppress("SameParameterValue")
-    private fun setMinimumUiPresentation(isIgnoreFullUiPresentation: Boolean) {
-        if (isIgnoreFullUiPresentation) {
+    private fun setMinimumUiPresentation(isIgnoreFullUiPresentation: String) {
+        if (isIgnoreFullUiPresentation.isNotEmpty()) {
             repeat(listOf(
                 mBinding!!.tvIngredientsLabel,
                 mBinding!!.tvIngredients,
