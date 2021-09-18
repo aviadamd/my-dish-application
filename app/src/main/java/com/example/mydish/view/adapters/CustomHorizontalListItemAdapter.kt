@@ -12,7 +12,8 @@ import com.example.mydish.view.fragments.AllDishesFragment
 class CustomHorizontalListItemAdapter(
     private val activity: Activity,
     private val fragment: Fragment?,
-    private val listItems: Array<String>): RecyclerView.Adapter<CustomHorizontalListItemAdapter.ViewHolder>() {
+    private val listItems: Array<String>)
+    : RecyclerView.Adapter<CustomHorizontalListItemAdapter.ViewHolder>() {
 
     /**
      * Inflates the item views which is designed in xml layout file
