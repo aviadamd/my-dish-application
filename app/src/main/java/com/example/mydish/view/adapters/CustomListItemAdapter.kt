@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mydish.databinding.ItemCustomListBinding
 import com.example.mydish.view.activities.AddUpdateDishActivity
-import kotlinx.coroutines.InternalCoroutinesApi
 
 class CustomListItemAdapter (
     private val activity: Activity,

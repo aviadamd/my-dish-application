@@ -17,7 +17,6 @@ import com.example.mydish.utils.extensions.onNavigateBackToFragment
 import com.example.mydish.utils.extensions.onResumeToFragment
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
-import kotlinx.coroutines.InternalCoroutinesApi
 
 class FavoriteDishesFragment : Fragment() {
 

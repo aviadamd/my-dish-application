@@ -143,8 +143,7 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
                     }
                 }
                 viewToBeVisible.let { view -> view.forEach { it.visibility = View.VISIBLE } }
-            }, delay
-            )
+            }, delay)
         }
     }
 }
