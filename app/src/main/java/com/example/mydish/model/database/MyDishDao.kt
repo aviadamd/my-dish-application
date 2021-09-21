@@ -52,15 +52,18 @@ interface MyDishDao {
      * like network requests, database calls, or other async code.
      * It supports coroutines throughout its API, so you can transform a flow using coroutines as well!
      */
-    //@Query(MyDishDataBaseQueries.GET_ALL_DISHES)
-    @Query("SELECT * FROM MY_DISH_TABLE ORDER BY ID")
+    @Query(GET_ALL_DISHES)
     fun getAllDishesList(): Flow<List<MyDishEntity>>
 
-    //@Query(MyDishDataBaseQueries.GET_FAVORITES_DISHES)
-    @Query("SELECT * FROM MY_DISH_TABLE WHERE favoriteDish = 1")
+    @Query(GET_FAVORITES_DISHES)
     fun getFavoriteDishesList(): Flow<List<MyDishEntity>>
 
-    //@Query(MyDishDataBaseQueries.GET_FILTERED_DISHES)
-    @Query("SELECT * FROM MY_DISH_TABLE WHERE type = :filterType")
+    @Query(GET_FILTERED_DISHES)
     fun getFilteredDishesList(filterType: String): Flow<List<MyDishEntity>>
+
+    companion object {
+        const val GET_ALL_DISHES = "SELECT * FROM MY_DISH_TABLE ORDER BY ID"
+        const val GET_FAVORITES_DISHES = "SELECT * FROM MY_DISH_TABLE WHERE favoriteDish = 1"
+        const val GET_FILTERED_DISHES = "SELECT * FROM MY_DISH_TABLE WHERE type = :filterType"
+    }
 }
