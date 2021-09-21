@@ -25,7 +25,7 @@ import java.lang.IllegalArgumentException
  * RandomDishFragment
  *
  * allDishesList/favoriteDishes/filteredListDishes wrapped as live data
- * insert/update/delete wrapped as coroutine launched scooped
+ * observable with the insert/update/delete wrapped as coroutine launched scooped
  */
 /*** @param myDishRepository - The repository class */
 class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewModel() {
@@ -33,17 +33,17 @@ class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewMod
     /*** asLiveData() merge between LiveData [Flow] && Coroutines*/
 
     /*** Use live data to observe the cashing data from all dishes list */
-    val allDishesList : LiveData<List<MyDishEntity>> = myDishRepository.allDishesList.asLiveData()
+    val allDishesList: LiveData<List<MyDishEntity>> = myDishRepository.allDishesList.asLiveData()
 
     /*** Use live data to observe the cashing data from favorites dishes list */
-    val favoriteDishes : LiveData<List<MyDishEntity>> = myDishRepository.favoriteDishes.asLiveData()
+    val favoriteDishes: LiveData<List<MyDishEntity>> = myDishRepository.favoriteDishes.asLiveData()
 
     /*** Use live data to observe the cashing data from filter favorite dishes list */
-    fun filteredListDishes(value : String) : LiveData<List<MyDishEntity>> =
+    fun filteredListDishes(value: String) : LiveData<List<MyDishEntity>> =
         myDishRepository.filteredListDishes(value).asLiveData()
 
     /*** Launching a new coroutine to insert the data in a non-blocking way. */
-    fun insert(myDishEntity : MyDishEntity) = viewModelScope.launch {
+    fun insert(myDishEntity: MyDishEntity) = viewModelScope.launch {
         myDishRepository.insertMyDishData(myDishEntity)
     }
 

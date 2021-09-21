@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room.databaseBuilder
 import androidx.room.RoomDatabase
 import com.example.mydish.model.entities.MyDishEntity
+import com.example.mydish.utils.data.Constants.DATA_BASE_NAME
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.internal.synchronized
 
@@ -39,7 +40,7 @@ abstract class MyDishRoomDatabase : RoomDatabase() {
                 /** my_dish_database           The name of the database file. */
                 val instance = databaseBuilder(
                     context.applicationContext,
-                    MyDishRoomDatabase::class.java,"my_dish_database"
+                    MyDishRoomDatabase::class.java, DATA_BASE_NAME
                 ).fallbackToDestructiveMigration().build()
 
                 INSTANCE = instance

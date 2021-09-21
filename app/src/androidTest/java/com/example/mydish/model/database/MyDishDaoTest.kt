@@ -1,6 +1,5 @@
 package com.example.mydish.model.database
 
-import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.asLiveData
 import androidx.room.Room
@@ -46,7 +45,7 @@ class MyDishDaoTest {
     }
 
     @Test
-    fun a_insertDishItemToDataBase_verifyExistsInAllDishes() = runBlockingTest {
+    fun a_insertDishItemToDatabase_verifyExistsInAllDishes() = runBlockingTest {
         myDishRepository.insertMyDishData(entityObject1)
 
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
@@ -54,7 +53,7 @@ class MyDishDaoTest {
     }
 
     @Test
-    fun b_insertDishItemToDataBase_verifyExistsInFavoriteDishes() = runBlockingTest {
+    fun b_insertDishItemToDatabase_verifyExistsInFavoriteDishes() = runBlockingTest {
         myDishRepository.insertMyDishData(entityObject1)
 
         val favoriteDishes = myDishRepository.favoriteDishes.asLiveData().getOrAwaitValue()
@@ -62,7 +61,7 @@ class MyDishDaoTest {
     }
 
     @Test
-    fun c_deleteDishItemFromDataBase_verifyDishNotExistsInAllDishes() = runBlockingTest {
+    fun c_deleteDishItemFromDatabase_verifyDishNotExistsInAllDishes() = runBlockingTest {
         myDishRepository.insertMyDishData(entityObject1)
 
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
@@ -71,7 +70,7 @@ class MyDishDaoTest {
     }
 
     @Test
-    fun d_deleteDishItemFromDataBase_verifyDishNotExistsInFavoriteDishes() = runBlockingTest {
+    fun d_deleteDishItemFromDatabase_verifyDishNotExistsInFavoriteDishes() = runBlockingTest {
         myDishRepository.insertMyDishData(entityObject1)
 
         val allDishes = myDishRepository.favoriteDishes.asLiveData().getOrAwaitValue()
@@ -80,7 +79,7 @@ class MyDishDaoTest {
     }
 
     @Test
-    fun e_insertDishItemsFromDataBase_verifySumDishesIsCorrect() = runBlockingTest {
+    fun e_insertDishItemsFromDatabase_verifySumDishesIsCorrect() = runBlockingTest {
         myDishRepository.insertMyDishData(entityObject1)
         myDishRepository.insertMyDishData(entityObject2)
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()

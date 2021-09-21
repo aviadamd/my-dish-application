@@ -3,11 +3,13 @@ package com.example.mydish.model.application
 import android.app.Application
 import com.example.mydish.model.repository.MyDishRepository
 import com.example.mydish.model.database.MyDishRoomDatabase
+import dagger.hilt.android.HiltAndroidApp
 
 /**
  * MyDishApplication sets in the Manifest file,  <application android:name=".application.MyDishApplication"
  * This class will init the room data base with the class MyDishRoomDataBase.getDataBase()
  */
+@HiltAndroidApp
 class MyDishApplication : Application() {
 
     /**
