@@ -4,14 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.example.mydish.R
 import com.example.mydish.databinding.ActivitySplashBinding
-import com.example.mydish.utils.data.Tags.ANIMATION
 import com.example.mydish.utils.extensions.hidingStatusBar
 import com.example.mydish.utils.extensions.startAnActivity
+import timber.log.Timber
 
 class SplashActivity : AppCompatActivity() {
 
@@ -38,12 +37,12 @@ class SplashActivity : AppCompatActivity() {
         splashAnimation.let {
             it.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
-                    Log.i(ANIMATION, "animation start")
+                    Timber.d("animation start")
                     animation?.start()
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {
-                    Log.i(ANIMATION, "animation end")
+                    Timber.d("animation end")
                     Handler(Looper.getMainLooper()).postDelayed({
                         startAnActivity(MainActivity::class.java, null)
                         finish()
@@ -51,7 +50,7 @@ class SplashActivity : AppCompatActivity() {
                 }
 
                 override fun onAnimationRepeat(animation: Animation?) {
-                    Log.i(ANIMATION, "animation repeat")
+                    Timber.d("animation repeat")
                 }
             })
         }

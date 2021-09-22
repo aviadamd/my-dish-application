@@ -3,7 +3,6 @@ package com.example.mydish.utils.extensions
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,7 +16,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.example.mydish.utils.data.Tags.IMAGE_RESOURCE
+import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
@@ -43,13 +42,13 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(IMAGE_RESOURCE, "Error loading image "+ if (e != null) e.message else model.toString())
+                    Timber.e("Error loading image "+ if (e != null) e.message else model.toString())
                     return false
                 }
 
                 override fun onResourceReady(
                     resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.i(IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
+                    Timber.i("Pass loading image ${model.toString()}")
                     if (platte) setPalette(fragment.view, resource, textView)
                     return false
                 }
@@ -58,9 +57,9 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
     } catch (e: IOException) {
-        Log.e(IMAGE_RESOURCE,"error loading image ${e.message}")
+        Timber.e("error loading image ${e.message}")
     } catch (e: Exception) {
-        Log.e(IMAGE_RESOURCE,"error loading image ${e.message}")
+        Timber.e("error loading image ${e.message}")
     }
 }
 

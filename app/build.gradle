@@ -79,20 +79,21 @@ dependencies {
     //Android legacy support
     implementation "androidx.legacy:legacy-support-v4:$androidLegacySupport"
 
+    //Multidex
     implementation "androidx.multidex:multidex:$multidex_version"
 
-    // SDP - A scalable size unit library
+    //SDP - A scalable size unit library
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
 
-    // Dexter runtime permissions
+    //Dexter runtime permissions
     implementation 'com.karumi:dexter:6.2.3'
 
-    // Glide
+    //Glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation 'jp.wasabeef:glide-transformations:2.0.1'
     kapt "com.github.bumptech.glide:compiler:$glideVersion"
 
-    // GPUImage
+    //GPUImage
     implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
 
     //Palette
@@ -101,20 +102,20 @@ dependencies {
     //CardView
     implementation 'androidx.cardview:cardview:1.0.0'
 
-    // Room components
+    //Room components
     implementation "androidx.room:room-ktx:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
 
-    // Coroutines
+    //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
-    // LifeCycle and LiveData
+    //LifeCycle and LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleVersions"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifeCycleVersions"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleVersions"
 
-    // Navigation
+    //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     androidTestImplementation "androidx.navigation:navigation-testing:$navigationVersion"
@@ -124,27 +125,29 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retroFitVersion"
     implementation "com.squareup.retrofit2:adapter-rxjava3:$retroFitVersion"
 
-    // RxJava
+    //RxJava
     implementation "io.reactivex.rxjava3:rxandroid:$rxJavaVersion"
     implementation "io.reactivex.rxjava3:rxjava:$rxJavaVersion"
 
     //Logging
     implementation 'com.jakewharton.timber:timber:4.7.1'
-
+    implementation 'com.orhanobut:logger:2.2.0'
     //Worker Manger
     implementation "androidx.work:work-runtime-ktx:2.5.0"
 
+    //Gson
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    //Shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
 
     //Dagger - Hilt
     implementation "com.google.dagger:hilt-android:2.28-alpha"
     kapt "com.google.dagger:hilt-android-compiler:2.28-alpha"
-
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02"
     kapt "androidx.hilt:hilt-compiler:1.0.0-alpha02"
 
-    // Local Unit Tests
+    //Local Unit Tests
     implementation "androidx.test:core:1.2.0"
     testImplementation "junit:junit:4.13"
     testImplementation "org.hamcrest:hamcrest-all:1.3"
@@ -154,7 +157,7 @@ dependencies {
     testImplementation "com.google.truth:truth:1.0.1"
     testImplementation "org.mockito:mockito-core:2.21.0"
 
-    // Instrumented Unit Tests
+    //Instrumented Unit Tests
     androidTestImplementation "junit:junit:4.13"
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:2.12.1"
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.2.1"

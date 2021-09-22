@@ -21,18 +21,18 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 class AppModule {
 
-    @Provides
-    @Singleton
-    fun provideMyDishDatabase(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, MyDishRoomDatabase::class.java, DATA_BASE_NAME).build()
-
-    @Provides
-    @Singleton
-    fun provideMyDishDao(database: MyDishRoomDatabase) = database.myDishDao()
-
-    @Provides
-    @Singleton
-    fun provideMyDishRepository(myDishDao: MyDishDao) = MyDishRepository(myDishDao)
+//    @Provides
+//    @Singleton
+//    fun provideMyDishDatabase(@ApplicationContext context: Context) =
+//        Room.databaseBuilder(context, MyDishRoomDatabase::class.java, DATA_BASE_NAME).build()
+//
+//    @Provides
+//    @Singleton
+//    fun provideMyDishDao(database: MyDishRoomDatabase) = database.myDishDao()
+//
+//    @Provides
+//    @Singleton
+//    fun provideMyDishRepository(myDishDao: MyDishDao) = MyDishRepository(myDishDao)
 
     @Provides
     @Singleton

@@ -3,7 +3,6 @@ package com.example.mydish.utils.extensions
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -16,13 +15,14 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.example.mydish.utils.data.Tags
 import com.facebook.shimmer.ShimmerFrameLayout
+import timber.log.Timber
 import java.io.IOException
 
 /*** Set shimmer animation */
 fun Fragment.setShimmer(shimmer: List<ShimmerFrameLayout>, viewToBeVisible: List<View>, delay : Long) {
     this.let {
+        Timber.i("set shimmer started")
         Handler(Looper.getMainLooper()).postDelayed({
             shimmer.let { items ->
                 items.forEach {
@@ -50,13 +50,13 @@ fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textVi
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(Tags.IMAGE_RESOURCE, "Error loading image", e)
+                    Timber.e("Error loading image", e)
                     return false
                 }
 
                 override fun onResourceReady(
                     resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.i(Tags.IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
+                    Timber.i( "Pass loading image ${model.toString()}")
                     if (view != null) {
                         setPalette(view, resource, textView)
                     }
@@ -67,8 +67,8 @@ fun Fragment.setPicture(image: String, imageView: ImageView, view: View?, textVi
             .transition(withCrossFade())
            .into(imageView)
     } catch (e : IOException) {
-        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
+        Timber.e("error loading image ${e.message}")
     } catch (e: Exception) {
-        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
+        Timber.e("error loading image ${e.message}")
     }
 }

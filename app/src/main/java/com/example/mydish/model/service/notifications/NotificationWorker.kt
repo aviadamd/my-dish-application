@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -21,8 +20,8 @@ import androidx.work.ListenableWorker.Result.success
 import androidx.work.WorkerParameters
 import com.example.mydish.R
 import com.example.mydish.utils.data.Constants
-import com.example.mydish.utils.data.Tags.NOTIFICATIONS
 import com.example.mydish.view.activities.MainActivity
+import timber.log.Timber
 
 /**
  * Create a new package as "notification" and a class as NotifyWorker as below.
@@ -39,6 +38,7 @@ class NotificationWorker(
      */
     override suspend fun doWork(): Result {
         //Call the trigger the notification when doWork is called
+        Timber.d("notification worker started")
         sendNotification()
         return success()
     }
@@ -47,7 +47,7 @@ class NotificationWorker(
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun sendNotification() {
         if(!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-            Log.i(NOTIFICATIONS,"notifications are disabled")
+            Timber.i("notifications are disabled")
             return
         }
 

@@ -1,7 +1,6 @@
 package com.example.mydish.view.activities
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -16,8 +15,8 @@ import com.example.mydish.databinding.ActivityMainBinding
 import com.example.mydish.model.service.notifications.NotificationWorker
 import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DURATION
-import com.example.mydish.utils.data.Tags
 import com.example.mydish.utils.extensions.hidingStatusBar
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -46,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Timber.d("onCreate main activity launch")
         /** init the mBinding variable**/
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
@@ -82,8 +82,10 @@ class MainActivity : AppCompatActivity() {
         val homeButtonNav = NavigationUI.navigateUp(mNavController, null)
 
         if (homeButtonNav) {
-            Log.i("NAVIGATION","Navigate back to all dishes fragment")
-        } else Log.i("NAVIGATION","Navigate back to all dishes fragment fails")
+            Timber.i("Navigate back to all dishes fragment")
+        } else {
+            Timber.e("Navigate back to all dishes fragment fails")
+        }
 
         return homeButtonNav
     }
@@ -142,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     private fun notificationNavigationComponentToRandomDishFragment() {
         if (intent.hasExtra(Constants.NOTIFICATION_ID)) {
             val notificationId = intent.getIntExtra(Constants.NOTIFICATION_ID, 0)
-            Log.i(Tags.NOTIFICATIONS, "$notificationId")
+            Timber.d("Notifications: $notificationId")
             mBinding.navView.selectedItemId = R.id.navigation_random_dish
         }
     }

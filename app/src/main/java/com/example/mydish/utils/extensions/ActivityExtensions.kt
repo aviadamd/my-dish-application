@@ -7,7 +7,6 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager.LayoutParams
@@ -22,12 +21,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.R
-import com.example.mydish.utils.data.Tags
+import timber.log.Timber
 import java.io.IOException
 
 /*** hide the upper phone status bar */
 fun Activity.hidingStatusBar() {
     this.let{ activity ->
+        Timber.i("hiding status bar")
         activity.window.let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 it.insetsController?.hide(WindowInsets.Type.statusBars())
@@ -78,13 +78,13 @@ fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textVi
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     @Nullable e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.e(Tags.IMAGE_RESOURCE, "Error loading image", e)
+                    Timber.e("Error loading image", e)
                     return false
                 }
 
                 override fun onResourceReady(
                     resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.i(Tags.IMAGE_RESOURCE, "Pass loading image ${model.toString()}")
+                    Timber.i("Pass loading image ${model.toString()}")
                     if (view != null) {
                         setPalette(view, resource, textView)
                     }
@@ -95,8 +95,8 @@ fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textVi
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
     } catch (e: IOException) {
-        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
+        Timber.e("error loading image ${e.message}")
     } catch (e: Exception) {
-        Log.e(Tags.IMAGE_RESOURCE,"error loading image ${e.message}")
+        Timber.e("error loading image ${e.message}")
     }
 }

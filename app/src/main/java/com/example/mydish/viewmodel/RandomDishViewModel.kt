@@ -1,13 +1,12 @@
 package com.example.mydish.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
-import com.example.mydish.utils.data.Tags.DISH_INFO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import timber.log.Timber
 
 /**
  *
@@ -40,7 +39,7 @@ class RandomDishViewModel : ViewModel() {
 
     /*** common dispatchers for coroutine scope*/
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
-        Log.e(DISH_INFO,"Error info: ${throwable.localizedMessage} Job active: ${job.isActive}")
+        Timber.e("Error info: ${throwable.localizedMessage} Job active: ${job.isActive}")
     }
 
     /**
@@ -53,15 +52,16 @@ class RandomDishViewModel : ViewModel() {
         /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
+            Timber.d("get dish api call")
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (dishes.isSuccessful) {
                     _randomDishState.value = ResourceState.Load(false)
                     _randomDishState.value = ResourceState.Service(dishes.body())
-                    Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
+                    Timber.d("dish loading successes with code ${dishes.code()}")
                 } else {
                     _randomDishState.value = ResourceState.Errors(dishes.code().toString())
-                    Log.i(DISH_INFO, "dish loading fails with code ${dishes.code()} error")
+                    Timber.e("dish loading fails with code ${dishes.code()} error")
                 }
                 statusCode = dishes.code()
             }
@@ -69,7 +69,7 @@ class RandomDishViewModel : ViewModel() {
 
         job?.let { job ->
             job.invokeOnCompletion {
-                Log.i(DISH_INFO,"dish job finish as ${job.isCompleted}, with http code {$statusCode}")
+                Timber.i("dish job finish as ${job.isCompleted}, with http code {$statusCode}")
             }
         }
     }

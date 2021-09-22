@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Html
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +22,13 @@ import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.model.service.webservice.Recipe
 import com.example.mydish.utils.data.Constants
-import com.example.mydish.utils.data.Tags.DISH_INFO
 import com.example.mydish.utils.extensions.*
 import com.example.mydish.viewmodel.MyDishViewModel
 import com.example.mydish.viewmodel.MyDishViewModelFactory
 import com.example.mydish.viewmodel.RandomDishViewModel
 import com.example.mydish.viewmodel.ResourceState
 import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 
 /**
  * This class hold the random dish presentation
@@ -99,20 +98,20 @@ class RandomDishFragment : Fragment() {
             mRandomDishViewModel.getRandomDishState.collect {
                 when (it) {
                     is ResourceState.Load -> {
-                        Log.i(DISH_INFO, "dish loading state: ${it.load}")
+                        Timber.i("dish loading state: ${it.load}")
                         refreshingHandler(500)
                         setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
                     }
                     is ResourceState.Service -> {
                         it.randomDishApi?.let { response ->
                             response.recipes[0].apply {
-                                Log.i(DISH_INFO, "dish response: $this")
+                                Timber.i("dish response: $this")
                                 setRandomResponseInUi(this)
                             }
                         }
                     }
                     is ResourceState.Errors -> {
-                        Log.i(DISH_INFO, "dish error state: ${it.error}")
+                        Timber.e("dish error state: ${it.error}")
                         setMinimumUiPresentation(it.error)
                         errorPopUpNavigateBackToAllDishes()
                     }
@@ -133,20 +132,20 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel.getRandomDishState.asLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 is ResourceState.Load -> {
-                    Log.i(DISH_INFO, "dish loading state: ${it.load}")
+                    Timber.i("dish loading state: ${it.load}")
                     refreshingHandler(500)
                     setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
                 }
                 is ResourceState.Service -> {
                     it.randomDishApi?.let { response ->
                         response.recipes[0].apply {
-                            Log.i(DISH_INFO, "dish response: $this")
+                            Timber.i("dish response: $this")
                             setRandomResponseInUi(this)
                         }
                     }
                 }
                 is ResourceState.Errors -> {
-                    Log.i(DISH_INFO, "dish error state: ${it.error}")
+                    Timber.e("dish error state: ${it.error}")
                     setMinimumUiPresentation(it.error)
                     errorPopUpNavigateBackToAllDishes()
                 }
@@ -284,11 +283,11 @@ class RandomDishFragment : Fragment() {
                 setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_selected)
                 /*** recipe title + the dish_is_selected label will present toast message about new dish added to favorite dishes */
                 toast(requireActivity(),recipe.title+" "+resources.getString(R.string.dish_is_selected)).show()
-                Log.i(DISH_INFO, "${recipe.title} is entered to room data base")
+                Timber.i("${recipe.title} is entered to room data base")
             } else {
                 /*** recipe title + the dish all ready label exists in the favorite dishes */
                 toast(requireActivity(),"${recipe.title} dish is all ready in your favorite dishes").show()
-                Log.i(DISH_INFO, "${recipe.title} all ready exists in room data base")
+                Timber.i("${recipe.title} all ready exists in room data base")
             }
         }
     }

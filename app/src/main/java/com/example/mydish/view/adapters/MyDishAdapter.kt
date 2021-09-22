@@ -19,6 +19,7 @@ import com.example.mydish.view.activities.AddUpdateDishActivity
 import com.example.mydish.view.fragments.AllDishesFragment
 import com.example.mydish.view.fragments.FavoriteDishesFragment
 import com.facebook.shimmer.ShimmerFrameLayout
+import timber.log.Timber
 
 /*** will inflate theirs view wit this adapter */
 class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDishAdapter.ViewHolder>() {
@@ -133,6 +134,7 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
 
     companion object {
         fun setShimmer(shimmer: List<ShimmerFrameLayout>, viewToBeVisible: List<View>, delay : Long) {
+            Timber.i("shimmer is started")
             Handler(Looper.getMainLooper()).postDelayed({
                 shimmer.let { items ->
                     items.forEach {

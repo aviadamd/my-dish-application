@@ -5,12 +5,14 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.example.mydish.view.activities.MainActivity
 import kotlinx.coroutines.InternalCoroutinesApi
+import timber.log.Timber
 
 /**
  * When back to Main Activity
  * Show the bottom navigation again
  */
 fun Fragment.onResumeToFragment() {
+    Timber.i("on resume to fragment")
     (requireActivity() as? MainActivity)?.showBottomNavigationView()
 }
 
@@ -24,6 +26,7 @@ fun Fragment.onResumeToFragment() {
  * Hide the bottom nav and open the dish details
  */
 fun Fragment.onNavigateBackToFragment(navDirections: NavDirections) {
+    Timber.i("on navigate back to fragment")
     (requireActivity() as? MainActivity)?.hideBottomNavigationView().also {
         findNavController().navigate(navDirections)
     }

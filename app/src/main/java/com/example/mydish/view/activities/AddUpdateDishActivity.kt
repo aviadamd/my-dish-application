@@ -39,7 +39,6 @@ import com.example.mydish.utils.data.Constants
 import com.example.mydish.utils.data.Constants.DISH_CATEGORY
 import com.example.mydish.utils.data.Constants.DISH_COOKING_TIME
 import com.example.mydish.utils.data.Constants.DISH_TYPE
-import com.example.mydish.utils.data.Tags
 import com.example.mydish.view.adapters.CustomListItemAdapter
 import com.example.mydish.utils.extensions.hidingStatusBar
 import com.example.mydish.utils.extensions.setPicture
@@ -54,7 +53,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
-import kotlinx.coroutines.InternalCoroutinesApi
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -96,6 +95,8 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(R.layout.activity_add_updated_dish)
         mBinding = ActivityAddUpdatedDishBinding.inflate(layoutInflater)
         setContentView(mBinding.root)
+
+        Timber.i("onCreate add/update dish activity launch")
 
         /*** hide the status bar */
         hidingStatusBar()
@@ -211,7 +212,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .listener(object : RequestListener<Drawable> {
                                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                                    Log.e(Tags.IMAGE_RESOURCE,"Error loading image from gallery task", e)
+                                    Timber.e("Error loading image from gallery task", e)
                                     return false
                                 }
 
@@ -487,9 +488,10 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             stream.flush()
             // Close stream
             stream.close()
-            Log.i(Tags.IMAGE_RESOURCE,"save ${file.name} to storage")
+            Timber.i("save ${file.name} to storage")
+
         } catch (e : IOException) {
-            Log.e(Tags.IMAGE_RESOURCE,"error save image to storage ${e.message}")
+            Timber.e("error save image to storage ${e.message}")
         }
         // Return the saved image absolute path
         return file.absolutePath
