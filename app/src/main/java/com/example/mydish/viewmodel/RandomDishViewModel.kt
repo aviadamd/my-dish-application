@@ -56,7 +56,7 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
             val dishes = randomRecipeApiService.getDishes(endPoint)
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
-                if (this.isActive && dishes.isSuccessful) {
+                if (dishes.isSuccessful) {
                     _randomDishState.value = ResourceState.Load(false)
                     _randomDishState.value = ResourceState.Service(dishes.body())
                     Log.i(DISH_INFO, "dish loading successes with code ${dishes.code()}")
