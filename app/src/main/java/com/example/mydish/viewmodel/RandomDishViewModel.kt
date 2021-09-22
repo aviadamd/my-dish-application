@@ -1,8 +1,7 @@
 package com.example.mydish.viewmodel
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
 import com.example.mydish.utils.data.Tags.DISH_INFO
@@ -26,18 +25,18 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * This class is the observable of the observer
  */
-class RandomDishViewModel(application: Application) : AndroidViewModel(application) {
+class RandomDishViewModel : ViewModel() {
 
     /** will be init with the coroutine scope and will be return to null on ViewModel clear life cycle **/
     private var job: Job? = null
 
-    /*** Retro fit RandomDishService val , will be used in end point url */
+    /*** Retro fit RandomDishService val, will be used in end point url */
     private val randomRecipeApiService = RandomDishesApiService()
 
     /*** save random dish view model immutable observable state flow to the mutable observer */
     private val _randomDishState = MutableStateFlow<ResourceState>(ResourceState.Empty)
     /*** get the immutable state from the _randomDish state mutable observer */
-    fun getRandomDishState(): StateFlow<ResourceState> { return _randomDishState }
+    val getRandomDishState: StateFlow<ResourceState> get() = _randomDishState
 
     /*** common dispatchers for coroutine scope*/
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->

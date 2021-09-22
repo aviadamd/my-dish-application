@@ -96,7 +96,7 @@ class RandomDishFragment : Fragment() {
     private fun initRandomDishesViewModelObserverOne() {
         /*** Calling the dish data from service */
         lifecycleScope.launchWhenStarted {
-            mRandomDishViewModel.getRandomDishState().collect {
+            mRandomDishViewModel.getRandomDishState.collect {
                 when (it) {
                     is ResourceState.Load -> {
                         Log.i(DISH_INFO, "dish loading state: ${it.load}")
@@ -130,7 +130,7 @@ class RandomDishFragment : Fragment() {
      */
     private fun initRandomDishesViewModelObserverTwo() {
         /*** Calling the dish data from service */
-        mRandomDishViewModel.getRandomDishState().asLiveData().observe(viewLifecycleOwner) {
+        mRandomDishViewModel.getRandomDishState.asLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 is ResourceState.Load -> {
                     Log.i(DISH_INFO, "dish loading state: ${it.load}")
