@@ -5,10 +5,10 @@ import androidx.lifecycle.asLiveData
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import com.example.mydish.getOrAwaitValue
+import com.example.mydish.MyDishEntityObjects.entityObject1
+import com.example.mydish.MyDishEntityObjects.entityObject2
+import com.example.getOrAwaitValue
 import com.example.mydish.model.database.MyDishRoomDatabase
-import com.example.mydish.model.entities.MyDishEntity
-import com.example.mydish.utils.data.Constants
 import com.google.common.truth.Truth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -20,9 +20,7 @@ import org.junit.runners.MethodSorters
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class MyDishRepositoryTest {
 
-    @get:Rule
-    var instantTaskExecutor = InstantTaskExecutorRule()
-
+    @get:Rule var instantTaskExecutor = InstantTaskExecutorRule()
     private lateinit var myDishRepository: MyDishRepository
     private lateinit var myRoomDatabase: MyDishRoomDatabase
 
@@ -34,6 +32,12 @@ class MyDishRepositoryTest {
             .build()
 
         myDishRepository = MyDishRepository(myRoomDatabase.myDishDao())
+    }
+
+    @After
+    fun tearDownAfterEachTest() = runBlockingTest{
+        myDishRepository.deleteMyDishData(entityObject1)
+        myRoomDatabase.close()
     }
 
     @Test
@@ -77,36 +81,4 @@ class MyDishRepositoryTest {
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
         Truth.assertThat(allDishes.size).isGreaterThan(1)
     }
-
-    @After
-    fun tearDownAfterEachTest() = runBlockingTest{
-        myDishRepository.deleteMyDishData(entityObject1)
-        myRoomDatabase.close()
-    }
-
-    private val entityObject1 = MyDishEntity(
-        image = "https://spoonacular.com/recipeImages/664473-556x370.jpg",
-        imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL,
-        title = "my dish title one",
-        type = "dessert one",
-        category = "other",
-        ingredients = "no need",
-        cooking_time = "70",
-        direction_to_cook = "with love",
-        favoriteDish = true,
-        id = 1
-    )
-
-    private val entityObject2 = MyDishEntity(
-        image = "https://spoonacular.com/recipeImages/664473-556x370.jpg",
-        imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL,
-        title = "my dish title one",
-        type = "dessert one",
-        category = "other",
-        ingredients = "no need",
-        cooking_time = "70",
-        direction_to_cook = "with love",
-        favoriteDish = true,
-        id = 2
-    )
 }

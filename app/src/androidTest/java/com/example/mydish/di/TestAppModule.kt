@@ -1,4 +1,4 @@
-package com.example.di
+package com.example.mydish.di
 
 import android.content.Context
 import androidx.room.Room
