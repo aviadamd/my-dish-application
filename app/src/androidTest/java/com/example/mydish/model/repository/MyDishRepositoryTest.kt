@@ -1,14 +1,15 @@
-package com.example.mydish.model.database
+package com.example.mydish.model.repository
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.asLiveData
 import androidx.room.Room
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import com.example.mydish.getOrAwaitValue
+import com.example.mydish.model.database.MyDishRoomDatabase
 import com.example.mydish.model.entities.MyDishEntity
 import com.example.mydish.utils.data.Constants
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
@@ -17,69 +18,70 @@ import org.junit.runners.MethodSorters
 @SmallTest
 @ExperimentalCoroutinesApi
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-class MyDishDaoTest {
+class MyDishRepositoryTest {
 
     @get:Rule
     var instantTaskExecutor = InstantTaskExecutorRule()
 
-    private lateinit var myDishDao: MyDishDao
-    lateinit var myRoomDatabase: MyDishRoomDatabase
+    private lateinit var myDishRepository: MyDishRepository
+    private lateinit var myRoomDatabase: MyDishRoomDatabase
 
     @Before
     fun setup() {
         myRoomDatabase = Room
-            .inMemoryDatabaseBuilder(getApplicationContext(), MyDishRoomDatabase::class.java)
+            .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), MyDishRoomDatabase::class.java)
             .allowMainThreadQueries()
             .build()
-        myDishDao = myRoomDatabase.myDishDao()
-    }
 
-    @After
-    fun tearDownAfterEachTest() = runBlockingTest{
-        myDishDao.deleteMyDishDetails(entityObject1)
-        myRoomDatabase.close()
+        myDishRepository = MyDishRepository(myRoomDatabase.myDishDao())
     }
 
     @Test
     fun a_insertDishItemToDatabase_verifyExistsInAllDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        myDishRepository.insertMyDishData(entityObject1)
 
-        val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        assertThat(allDishes).contains(entityObject1)
+        val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
+        Truth.assertThat(allDishes).contains(entityObject1)
     }
 
     @Test
     fun b_insertDishItemToDatabase_verifyExistsInFavoriteDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        myDishRepository.insertMyDishData(entityObject1)
 
-        val favoriteDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        assertThat(favoriteDishes).contains(entityObject1)
+        val favoriteDishes = myDishRepository.favoriteDishes.asLiveData().getOrAwaitValue()
+        Truth.assertThat(favoriteDishes).contains(entityObject1)
     }
 
     @Test
     fun c_deleteDishItemFromDatabase_verifyDishNotExistsInAllDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        myDishRepository.insertMyDishData(entityObject1)
 
-        val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        myDishDao.deleteMyDishDetails(entityObject1)
-        assertThat(allDishes).isNotEqualTo(entityObject1)
+        val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
+        myDishRepository.deleteMyDishData(entityObject1)
+        Truth.assertThat(allDishes).isNotEqualTo(entityObject1)
     }
 
     @Test
     fun d_deleteDishItemFromDatabase_verifyDishNotExistsInFavoriteDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        myDishRepository.insertMyDishData(entityObject1)
 
-        val allDishes = myDishDao.getFavoriteDishesList().asLiveData().getOrAwaitValue()
-        myDishDao.deleteMyDishDetails(entityObject1)
-        assertThat(allDishes).isNotEqualTo(entityObject1)
+        val allDishes = myDishRepository.favoriteDishes.asLiveData().getOrAwaitValue()
+        myDishRepository.deleteMyDishData(entityObject1)
+        Truth.assertThat(allDishes).isNotEqualTo(entityObject1)
     }
 
     @Test
     fun e_insertDishItemsFromDatabase_verifySumDishesIsCorrect() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
-        myDishDao.insertMyDishDetails(entityObject2)
-        val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        assertThat(allDishes.size).isGreaterThan(1)
+        myDishRepository.insertMyDishData(entityObject1)
+        myDishRepository.insertMyDishData(entityObject2)
+        val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
+        Truth.assertThat(allDishes.size).isGreaterThan(1)
+    }
+
+    @After
+    fun tearDownAfterEachTest() = runBlockingTest{
+        myDishRepository.deleteMyDishData(entityObject1)
+        myRoomDatabase.close()
     }
 
     private val entityObject1 = MyDishEntity(

@@ -15,7 +15,7 @@ data class MyDishEntity(
     @ColumnInfo val image : String,
     /** Local or Online **/
     @ColumnInfo(name = "image_source") val imageSource: String,
-    @ColumnInfo val title: String,
+    @ColumnInfo var title: String,
     @ColumnInfo val type: String,
     @ColumnInfo val category: String,
     @ColumnInfo val ingredients: String,

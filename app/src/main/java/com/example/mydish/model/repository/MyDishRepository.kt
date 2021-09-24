@@ -25,14 +25,14 @@ class MyDishRepository(private val myDishDao: MyDishDao) {
      * Observed Flow (coroutines) will notify the observer when the has changed.
      * This will return from data base the dishes list
      */
-    val allDishesList : Flow<List<MyDishEntity>> = myDishDao.getAllDishesList()
+    val allDishesList: Flow<List<MyDishEntity>> = myDishDao.getAllDishesList()
 
     /**
      * Room executes all queries on separate thread
      * Observed Flow (coroutines) will notify the observer when the has changed.
      * This will return from data base the favorites dishes list
      */
-    val favoriteDishes : Flow<List<MyDishEntity>> = myDishDao.getFavoriteDishesList()
+    val favoriteDishes: Flow<List<MyDishEntity>> = myDishDao.getFavoriteDishesList()
 
     /**
      * Room executes all queries on separate thread
@@ -62,11 +62,4 @@ class MyDishRepository(private val myDishDao: MyDishDao) {
     suspend fun deleteMyDishData(myDishEntity: MyDishEntity) {
         myDishDao.deleteMyDishDetails(myDishEntity)
     }
-
-    /** @WorkerThread make shore that using the back thread not the ui thread **/
-    @WorkerThread
-    suspend fun deleteMyDishesDetails(myDishEntity: List<MyDishEntity>) {
-        myDishDao.deleteMyDishesDetails(myDishEntity)
-    }
-
 }

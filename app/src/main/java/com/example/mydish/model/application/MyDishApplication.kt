@@ -43,6 +43,7 @@ class MyDishApplication : Application() {
 
         val formatStrategy: FormatStrategy = PrettyFormatStrategy
             .newBuilder()
+            .showThreadInfo(true)
             .methodCount(1)
             .methodOffset(5)
             .tag("")

@@ -38,9 +38,6 @@ interface MyDishDao {
     @Delete
     suspend fun deleteMyDishDetails(myDishEntity: MyDishEntity)
 
-    @Delete
-    suspend fun deleteMyDishesDetails(myDishEntity: List<MyDishEntity>)
-
     /**
      * When data changes, you usually want to take some action, such as displaying the updated data in the UI.
      * This means you have to observe the data so when it changes, you can react.
