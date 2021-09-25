@@ -5,11 +5,10 @@ import androidx.lifecycle.asLiveData
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import com.example.mydish.MyDishEntityObjects.entityObject1
-import com.example.mydish.MyDishEntityObjects.entityObject2
+import com.example.mydish.MyDishEntityObjects.getDishEntity
 import com.example.mydish.getOrAwaitValue
 import com.example.mydish.model.database.MyDishRoomDatabase
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
@@ -36,49 +35,53 @@ class MyDishRepositoryTest {
 
     @After
     fun tearDownAfterEachTest() = runBlockingTest{
-        myDishRepository.deleteMyDishData(entityObject1)
+        myRoomDatabase.clearAllTables()
         myRoomDatabase.close()
     }
 
     @Test
     fun a_insertDishItemToDatabase_verifyExistsInAllDishes() = runBlockingTest {
-        myDishRepository.insertMyDishData(entityObject1)
+        val dish = getDishEntity(1)
+        myDishRepository.insertMyDishData(dish)
 
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
-        Truth.assertThat(allDishes).contains(entityObject1)
+        assertThat(allDishes).contains(dish)
     }
 
     @Test
     fun b_insertDishItemToDatabase_verifyExistsInFavoriteDishes() = runBlockingTest {
-        myDishRepository.insertMyDishData(entityObject1)
+        val dish = getDishEntity(1)
+        myDishRepository.insertMyDishData(dish)
 
         val favoriteDishes = myDishRepository.favoriteDishes.asLiveData().getOrAwaitValue()
-        Truth.assertThat(favoriteDishes).contains(entityObject1)
+        assertThat(favoriteDishes).contains(dish)
     }
 
     @Test
     fun c_deleteDishItemFromDatabase_verifyDishNotExistsInAllDishes() = runBlockingTest {
-        myDishRepository.insertMyDishData(entityObject1)
+        val dish = getDishEntity(1)
+        myDishRepository.insertMyDishData(dish)
 
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
-        myDishRepository.deleteMyDishData(entityObject1)
-        Truth.assertThat(allDishes).isNotEqualTo(entityObject1)
+        myDishRepository.deleteMyDishData(dish)
+        assertThat(allDishes).isNotEqualTo(dish)
     }
 
     @Test
     fun d_deleteDishItemFromDatabase_verifyDishNotExistsInFavoriteDishes() = runBlockingTest {
-        myDishRepository.insertMyDishData(entityObject1)
+        val dish = getDishEntity(1)
+        myDishRepository.insertMyDishData(dish)
 
         val allDishes = myDishRepository.favoriteDishes.asLiveData().getOrAwaitValue()
-        myDishRepository.deleteMyDishData(entityObject1)
-        Truth.assertThat(allDishes).isNotEqualTo(entityObject1)
+        myDishRepository.deleteMyDishData(dish)
+        assertThat(allDishes).isNotEqualTo(dish)
     }
 
     @Test
     fun e_insertDishItemsFromDatabase_verifySumDishesIsCorrect() = runBlockingTest {
-        myDishRepository.insertMyDishData(entityObject1)
-        myDishRepository.insertMyDishData(entityObject2)
+        myDishRepository.insertMyDishData(getDishEntity(1))
+        myDishRepository.insertMyDishData(getDishEntity(2))
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
-        Truth.assertThat(allDishes.size).isGreaterThan(1)
+        assertThat(allDishes.size).isGreaterThan(1)
     }
 }

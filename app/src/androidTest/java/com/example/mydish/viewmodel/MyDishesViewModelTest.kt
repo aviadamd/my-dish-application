@@ -4,13 +4,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
+import com.example.mydish.TestHelpers.asserting
 import com.example.mydish.getOrAwaitValue
-import com.example.mydish.MyDishEntityObjects.entityObject1
-import com.example.mydish.MyDishEntityObjects.entityObject2
-import com.example.mydish.MyDishEntityObjects.setDishEntity
+import com.example.mydish.MyDishEntityObjects.getDishEntity
+import com.example.mydish.TestHelpers.initTimberLogger
 import com.example.mydish.model.database.MyDishRoomDatabase
 import com.example.mydish.model.repository.MyDishRepository
-import com.google.common.truth.Truth
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
@@ -42,67 +41,75 @@ class MyDishesViewModelTest {
 
         myDishRepository = MyDishRepository(myRoomDatabase.myDishDao())
         myDishViewModel = MyDishViewModel(myDishRepository)
+        initTimberLogger()
     }
 
     @After
     fun tearDownAfterEachTest() = runBlockingTest {
+        Timber.i("closing and clear room data base")
+        myRoomDatabase.clearAllTables()
         myRoomDatabase.close()
     }
 
     @Test
     fun a_testGetAllDishesList() = runBlockingTest {
-        myDishViewModel.insert(entityObject1)
-        myDishViewModel.insert(entityObject2)
+        myDishViewModel.insert(getDishEntity(1))
+        myDishViewModel.insert(getDishEntity(2))
         val allDishes = myDishViewModel.allDishesList.getOrAwaitValue()
-        Truth.assertThat(allDishes.size).isGreaterThan(1)
+        asserting("all dishes size update").that(allDishes.size).isGreaterThan(1)
     }
 
     @Test
     fun b_testGetFavoriteDishes() = runBlockingTest {
-        myDishViewModel.insert(entityObject1)
-        myDishViewModel.insert(entityObject2)
+        myDishViewModel.insert(getDishEntity(1))
+        myDishViewModel.insert(getDishEntity(2))
         val allDishes = myDishViewModel.favoriteDishes.getOrAwaitValue()
-        Truth.assertThat(allDishes.size).isGreaterThan(1)
+        asserting("favorites dishes size update").that(allDishes.size).isGreaterThan(1)
     }
 
     @Test
     fun c_testFilteredListDishes() = runBlockingTest {
-        val setEntity = setDishEntity(3,"dessert")
+        val setEntity = getDishEntity(3,"dessert")
         myDishViewModel.insert(setEntity)
 
         val dishes = myDishViewModel.filteredListDishes(setEntity.type).getOrAwaitValue()
-        Truth.assertWithMessage("all dishes list is added new object").that(dishes.size).isEqualTo(1)
+        asserting("all dishes list is added new object").that(dishes.size).isEqualTo(1)
         dishes.forEach {
-            Truth.assertWithMessage("dish id is == 3").that(it.id).isEqualTo(3)
-            Truth.assertWithMessage("dish type is == dessert").that(it.type).isEqualTo("dessert")
+            asserting("dish id is == 3").that(it.id).isEqualTo(3)
+            asserting("dish type is == dessert").that(it.type).isEqualTo("dessert")
         }
     }
 
     @Test
     fun d_testInsert() = runBlockingTest {
-        myDishViewModel.insert(entityObject1)
-        myDishViewModel.insert(entityObject2)
+        myDishViewModel.insert(getDishEntity(1))
+        myDishViewModel.insert(getDishEntity(2))
         val allDishes = myDishViewModel.allDishesList.getOrAwaitValue()
-        Truth.assertThat(allDishes.size).isGreaterThan(1)
+        asserting("all dishes size update to be greater than one").that(allDishes.size).isGreaterThan(1)
     }
 
     @Test
     fun e_testUpdate() = runBlockingTest {
-        myDishViewModel.insert(entityObject1)
-        entityObject1.title = "other"
-        myDishViewModel.update(entityObject1)
+        val dish = getDishEntity(1)
+        myDishViewModel.insert(dish)
+        dish.title = "other"
+        myDishViewModel.update(dish)
         val allDishes = myDishViewModel.allDishesList.getOrAwaitValue()
-        Truth.assertThat(allDishes.size).isEqualTo(1)
+        asserting("all dishes title update to other").that(allDishes[0].title).isEqualTo("other")
     }
 
     @Test
     fun f_testDelete() = runBlockingTest {
-        myDishViewModel.insert(entityObject1)
-        Timber.d("all dishes list is ${myDishViewModel.allDishesList.getOrAwaitValue().size}")
-        Truth.assertThat(myDishViewModel.allDishesList.getOrAwaitValue().size).isEqualTo(1)
+        val dish = getDishEntity(1)
 
-        myDishViewModel.delete(entityObject1)
-        Timber.d("all dishes list is ${myDishViewModel.allDishesList.getOrAwaitValue().size}")
-        Truth.assertThat(myDishViewModel.allDishesList.getOrAwaitValue().size).isEqualTo(0)
+        myDishViewModel.insert(dish)
+        asserting("all dishes size update to be 1")
+            .that(myDishViewModel.allDishesList.getOrAwaitValue().size)
+            .isEqualTo(1)
+
+        myDishViewModel.delete(dish)
+        asserting("all dishes size update to be empty")
+            .that(myDishViewModel.allDishesList.getOrAwaitValue().size)
+            .isEqualTo(0)
     }
 }

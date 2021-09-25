@@ -3,8 +3,9 @@ package com.example.mydish.model.database
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.asLiveData
 import androidx.test.filters.SmallTest
-import com.example.mydish.MyDishEntityObjects.entityObject1
-import com.example.mydish.MyDishEntityObjects.entityObject2
+import com.example.mydish.TestHelpers.asserting
+import com.example.mydish.MyDishEntityObjects.getDishEntity
+import com.example.mydish.TestHelpers.initTimberLogger
 import com.example.mydish.getOrAwaitValue
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -34,52 +35,57 @@ class MyDishDaoTest {
     fun setup() {
         hiltRule.inject()
         myDishDao = myRoomDatabase.myDishDao()
+        initTimberLogger()
     }
 
     @After
     fun tearDownAfterEachTest() = runBlockingTest {
-        myDishDao.deleteMyDishDetails(entityObject1)
+        myRoomDatabase.clearAllTables()
         myRoomDatabase.close()
     }
 
     @Test
     fun a_insertDishItemToDatabase_verifyExistsInAllDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        val dish = getDishEntity(1)
+        myDishDao.insertMyDishDetails(dish)
 
         val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        assertThat(allDishes).contains(entityObject1)
+        asserting("all dishes dish dao contains", allDishes[0]).isEqualTo(dish)
     }
 
     @Test
     fun b_insertDishItemToDatabase_verifyExistsInFavoriteDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        val dish = getDishEntity(1)
+        myDishDao.insertMyDishDetails(dish)
 
         val favoriteDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        assertThat(favoriteDishes).contains(entityObject1)
+        asserting("favorite dishes dish dao contains", favoriteDishes[0]).isEqualTo(dish)
     }
 
     @Test
     fun c_deleteDishItemFromDatabase_verifyDishNotExistsInAllDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        val dish = getDishEntity(1)
+        myDishDao.insertMyDishDetails(dish)
 
+        myDishDao.deleteMyDishDetails(dish)
         val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
-        myDishDao.deleteMyDishDetails(entityObject1)
-        assertThat(allDishes).isNotEqualTo(entityObject1)
+        assertThat(allDishes).isEmpty()
     }
 
     @Test
     fun d_deleteDishItemFromDatabase_verifyDishNotExistsInFavoriteDishes() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
+        val dish = getDishEntity(1)
+        myDishDao.insertMyDishDetails(dish)
 
+        myDishDao.deleteMyDishDetails(dish)
         val allDishes = myDishDao.getFavoriteDishesList().asLiveData().getOrAwaitValue()
-        myDishDao.deleteMyDishDetails(entityObject1)
-        assertThat(allDishes).isNotEqualTo(entityObject1)
+        assertThat(allDishes).isEmpty()
     }
 
     @Test
     fun e_insertDishItemsFromDatabase_verifySumDishesIsCorrect() = runBlockingTest {
-        myDishDao.insertMyDishDetails(entityObject1)
-        myDishDao.insertMyDishDetails(entityObject2)
+        myDishDao.insertMyDishDetails(getDishEntity(1))
+        myDishDao.insertMyDishDetails(getDishEntity(2))
         val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
         assertThat(allDishes.size).isGreaterThan(1)
     }

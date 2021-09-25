@@ -37,7 +37,6 @@ class NotificationWorker(
      * This function will be executed when the work scheduler is triggered.
      */
     override suspend fun doWork(): Result {
-        //Call the trigger the notification when doWork is called
         Timber.d("notification worker started")
         sendNotification()
         return success()
