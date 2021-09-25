@@ -1,4 +1,4 @@
-package com.example
+package com.example.mydish
 
 import android.content.ComponentName
 import android.content.Intent
@@ -9,8 +9,6 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import com.example.mydish.R
-import com.example.mydish.HiltTestActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi
@@ -28,13 +26,14 @@ inline fun <reified T : Fragment> launchFragmentInHiltContainer(
     ).putExtra(FragmentScenario.EmptyFragmentActivity.THEME_EXTRAS_BUNDLE_KEY, themeResId)
 
     ActivityScenario.launch<HiltTestActivity>(mainActivityIntent).onActivity { activity ->
-        fragmentFactory?.let {
-            activity.supportFragmentManager.fragmentFactory = it
-        }
+
+        fragmentFactory?.let { activity.supportFragmentManager.fragmentFactory = it }
+
         val fragment = activity.supportFragmentManager.fragmentFactory.instantiate(
             Preconditions.checkNotNull(T::class.java.classLoader),
             T::class.java.name
         )
+
         fragment.arguments = fragmentArgs
 
         activity.supportFragmentManager.beginTransaction()

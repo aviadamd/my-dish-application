@@ -5,7 +5,7 @@ import androidx.lifecycle.asLiveData
 import androidx.test.filters.SmallTest
 import com.example.mydish.MyDishEntityObjects.entityObject1
 import com.example.mydish.MyDishEntityObjects.entityObject2
-import com.example.getOrAwaitValue
+import com.example.mydish.getOrAwaitValue
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

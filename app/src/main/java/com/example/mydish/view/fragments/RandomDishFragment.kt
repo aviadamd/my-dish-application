@@ -159,7 +159,8 @@ class RandomDishFragment : Fragment() {
      * using the RandomDish.Recipe to have bind with the ui presentation
      * finally set the dish to data base room storage
      */
-    private fun setRandomResponseInUi(recipe : Recipe) {
+    private fun setRandomResponseInUi(recipe : Recipe): Boolean {
+        var error = false
         setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),500)
         setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
         //Set the dish title
@@ -178,6 +179,7 @@ class RandomDishFragment : Fragment() {
         setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_unselected)
         //Insert the data to the data base
         setNewDishInsertDataToDataBase(recipe, dishType, ingredients)
+        return error
     }
 
     /**
@@ -267,14 +269,13 @@ class RandomDishFragment : Fragment() {
             )
 
             var isNewDish = true
+            val titles = arrayListOf<String>()
+
             myDishViewModel.allDishesList.observe(viewLifecycleOwner) {
-                for (item in it) {
-                    if (item.title == recipe.title) {
-                        isNewDish = false
-                        break
-                    }
-                }
+                it.forEach { item -> titles.add(item.title) }
             }
+
+            if (titles.contains(recipe.title)) isNewDish = false
 
             if (isNewDish) {
                 /*** insert the new randomDishDetails MyDishEntity object to room data base */

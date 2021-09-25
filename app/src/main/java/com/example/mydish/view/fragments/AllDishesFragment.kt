@@ -85,7 +85,11 @@ class AllDishesFragment : Fragment() {
         /*** set the rvDishesCategory to visible */
         mBinding.rvDishesCategory.visibility = View.VISIBLE
         /*** set/init the adapter to mBinding.rvDishesCategory.adapter */
-        val adapter = CustomHorizontalListItemAdapter(requireActivity(), this@AllDishesFragment, resources.getStringArray(R.array.dishTypes))
+        val adapter = CustomHorizontalListItemAdapter(
+            requireActivity(),
+            this@AllDishesFragment,
+            resources.getStringArray(R.array.dishTypes)
+        )
         mBinding.rvDishesCategory.adapter = adapter
 
         /*** observer on the LiveData returned by getAllDishesList.

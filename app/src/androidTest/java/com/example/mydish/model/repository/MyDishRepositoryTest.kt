@@ -7,7 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import com.example.mydish.MyDishEntityObjects.entityObject1
 import com.example.mydish.MyDishEntityObjects.entityObject2
-import com.example.getOrAwaitValue
+import com.example.mydish.getOrAwaitValue
 import com.example.mydish.model.database.MyDishRoomDatabase
 import com.google.common.truth.Truth
 import kotlinx.coroutines.ExperimentalCoroutinesApi

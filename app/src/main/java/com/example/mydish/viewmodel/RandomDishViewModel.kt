@@ -3,9 +3,11 @@ package com.example.mydish.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
+import com.example.mydish.model.service.webservice.Recipes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -55,7 +57,7 @@ class RandomDishViewModel : ViewModel() {
             Timber.d("get dish api call")
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful) {
+                if (dishes.isSuccessful && dishes.body() != null) {
                     _randomDishState.value = ResourceState.Load(false)
                     _randomDishState.value = ResourceState.Service(dishes.body())
                     Timber.d("dish loading successes with code ${dishes.code()}")

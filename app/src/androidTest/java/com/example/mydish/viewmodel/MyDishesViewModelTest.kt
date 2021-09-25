@@ -4,12 +4,12 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import com.example.getOrAwaitValue
+import com.example.mydish.getOrAwaitValue
 import com.example.mydish.MyDishEntityObjects.entityObject1
 import com.example.mydish.MyDishEntityObjects.entityObject2
+import com.example.mydish.MyDishEntityObjects.setDishEntity
 import com.example.mydish.model.database.MyDishRoomDatabase
 import com.example.mydish.model.repository.MyDishRepository
-import com.example.mydish.utils.data.Constants
 import com.google.common.truth.Truth
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -67,10 +67,15 @@ class MyDishesViewModelTest {
 
     @Test
     fun c_testFilteredListDishes() = runBlockingTest {
-        myDishViewModel.insert(entityObject1)
-        myDishViewModel.insert(entityObject2)
-        val allDishes = myDishViewModel.filteredListDishes(Constants.ALL_ITEMS).getOrAwaitValue()
-        Truth.assertThat(allDishes.size).isGreaterThan(1)
+        val setEntity = setDishEntity(3,"dessert")
+        myDishViewModel.insert(setEntity)
+
+        val dishes = myDishViewModel.filteredListDishes(setEntity.type).getOrAwaitValue()
+        Truth.assertWithMessage("all dishes list is added new object").that(dishes.size).isEqualTo(1)
+        dishes.forEach {
+            Truth.assertWithMessage("dish id is == 3").that(it.id).isEqualTo(3)
+            Truth.assertWithMessage("dish type is == dessert").that(it.type).isEqualTo("dessert")
+        }
     }
 
     @Test
@@ -100,5 +105,4 @@ class MyDishesViewModelTest {
         Timber.d("all dishes list is ${myDishViewModel.allDishesList.getOrAwaitValue().size}")
         Truth.assertThat(myDishViewModel.allDishesList.getOrAwaitValue().size).isEqualTo(0)
     }
-
 }
