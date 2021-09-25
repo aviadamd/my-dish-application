@@ -34,17 +34,17 @@ object MyDishEntityObjects {
         )
     }
 
-    fun getDishEntity(image: String, id: Int, type: String): MyDishEntity {
+    fun getDishEntity(id: Int, favoriteDish: Boolean): MyDishEntity {
         return MyDishEntity(
-            image = image,
+            image = "https://spoonacular.com/recipeImages/664473-556x370.jpg",
             imageSource = Constants.DISH_IMAGE_SOURCE_LOCAL,
             title = "my dish title one",
-            type = type,
+            type = "dessert",
             category = "other",
             ingredients = "no need",
             cooking_time = "70",
             direction_to_cook = "with love",
-            favoriteDish = true,
+            favoriteDish = favoriteDish,
             id = id
         )
     }

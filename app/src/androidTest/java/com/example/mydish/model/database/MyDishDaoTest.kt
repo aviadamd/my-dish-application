@@ -80,13 +80,23 @@ class MyDishDaoTest {
         myDishDao.deleteMyDishDetails(dish)
         val allDishes = myDishDao.getFavoriteDishesList().asLiveData().getOrAwaitValue()
         assertThat(allDishes).isEmpty()
+
+        val dish1 = getDishEntity(2,false)
+        myDishDao.insertMyDishDetails(dish1)
+        val allDishes1 = myDishDao.getFavoriteDishesList().asLiveData().getOrAwaitValue()
+        assertThat(allDishes1).isEmpty()
     }
 
     @Test
     fun e_insertDishItemsFromDatabase_verifySumDishesIsCorrect() = runBlockingTest {
-        myDishDao.insertMyDishDetails(getDishEntity(1))
-        myDishDao.insertMyDishDetails(getDishEntity(2))
+        myDishDao.insertMyDishDetails(getDishEntity(1,true))
+        myDishDao.insertMyDishDetails(getDishEntity(2,true))
         val allDishes = myDishDao.getAllDishesList().asLiveData().getOrAwaitValue()
         assertThat(allDishes.size).isGreaterThan(1)
+
+        myDishDao.insertMyDishDetails(getDishEntity(3,true))
+        myDishDao.insertMyDishDetails(getDishEntity(4,false))
+        val allDishes1 = myDishDao.getFavoriteDishesList().asLiveData().getOrAwaitValue()
+        assertThat(allDishes1.size).isEqualTo(3)
     }
 }
