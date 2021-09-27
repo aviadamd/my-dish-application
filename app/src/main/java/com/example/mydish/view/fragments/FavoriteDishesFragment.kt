@@ -48,17 +48,15 @@ class FavoriteDishesFragment : Fragment() {
         mBinding!!.rvFavoriteDishesLists.adapter = myDishAdapter
 
         mMyDishViewModel.favoriteDishes.observe(viewLifecycleOwner) {
-            it.let {
-                val views = setDishViews()
-                /*** if the the view model favorite dishes is not empty */
-                if (it.isNotEmpty()) {
-                    views.first.visibility = View.VISIBLE
-                    views.second.visibility = View.GONE
-                    myDishAdapter.dishesList(it)
-                } else {
-                    views.first.visibility = View.GONE
-                    views.second.visibility = View.VISIBLE
-                }
+            val views = setDishViews()
+            /*** if the the view model favorite dishes is not empty */
+            if (it.isNotEmpty()) {
+                views.first.visibility = View.VISIBLE
+                views.second.visibility = View.GONE
+                myDishAdapter.dishesList(it)
+            } else {
+                views.first.visibility = View.GONE
+                views.second.visibility = View.VISIBLE
             }
         }
     }

@@ -21,19 +21,23 @@ import com.example.mydish.view.fragments.FavoriteDishesFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import timber.log.Timber
 
-/*** will inflate theirs view wit this adapter */
-class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDishAdapter.ViewHolder>() {
+/**
+ * inflated in
+ * AllDishesFragment
+ * FavoriteDishFragment
+ */
+class MyDishAdapter(private val fragment: Fragment)
+    : RecyclerView.Adapter<MyDishAdapter.DishViewHolder>() {
 
     /** create list instance from MyDishEntity **/
     private var dishes: List<MyDishEntity> = listOf()
 
     /**
      * Inflates the item views which is designed in xml layout file
-     * create a new
      * {@link ViewHolder} and initializes some private fields to be used by RecyclerView.
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(ItemDishLayoutBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DishViewHolder {
+        return DishViewHolder(ItemDishLayoutBinding.inflate(
             LayoutInflater.from(fragment.context),
             parent,
             false
@@ -50,17 +54,23 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
      * of the given type. You can either create a new View manually or inflate it from an XML
      * layout file.
      */
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DishViewHolder, position: Int) {
         val dish = dishes[position]
         //Load the dish image in the ImageView with glide
 
-        setShimmer(listOf(holder.shimmerImage, holder.shimmerTitle), listOf(holder.ivDishImage, holder.tvTitle),800)
-        setPicture(fragment, dish.image,holder. ivDishImage, false,null)
+        setShimmer(listOf(holder.shimmerImage,holder.shimmerTitle), listOf(holder.ivDishImage, holder.tvTitle),800)
+        setPicture(fragment, dish.image, holder. ivDishImage, true,null)
         holder.tvTitle.text = dish.title
 
-        //Navigation component section
+        //Set AllDishesFragment the ibMore EDIT DISH/DELETE DISH option to visible
+        //Set FavoriteDishesFragment the ibMore EDIT DISH/DELETE DISH option to invisible
+        when(fragment) {
+            is AllDishesFragment -> holder.ibMore.visibility = View.VISIBLE
+            is FavoriteDishesFragment -> holder.ibMore.visibility = View.GONE
+        }
+
+        //Navigation fragment component section
         holder.itemView.setOnClickListener {
-            //Navigation to all dishes fragment
             when(fragment) {
                 is AllDishesFragment -> fragment.showDishDetails(dish)
                 is FavoriteDishesFragment -> fragment.showDishDetails(dish)
@@ -72,16 +82,6 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
             holder.ibMore.setOnClickListener {
                 setPopUpPresentation(holder, dish)
             }
-        }
-
-        //Set AllDishesFragment the ibMore - EDIT DISH/DELETE DISH option to visible
-        if (fragment is AllDishesFragment) {
-            holder.ibMore.visibility = View.VISIBLE
-        }
-
-        //Set FavoriteDishesFragment the ibMore - to Invisible
-        if (fragment is FavoriteDishesFragment) {
-            holder.ibMore.visibility = View.GONE
         }
     }
 
@@ -98,7 +98,7 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
         notifyDataSetChanged()
     }
 
-    private fun setPopUpPresentation(holder: ViewHolder, dish: MyDishEntity) {
+    private fun setPopUpPresentation(holder: DishViewHolder, dish: MyDishEntity) {
         val popup = PopupMenu(fragment.context, holder.ibMore)
         popup.menuInflater.inflate(R.menu.menu_adapter, popup.menu)
 
@@ -112,7 +112,9 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
                     fragment.requireActivity().startActivity(intent)
                 }
                 /*** delete dish using AllDishesFragment with mMyDishViewModel */
-                R.id.action_delete_list -> (fragment as AllDishesFragment).deleteDish(dish)
+                R.id.action_delete_list -> {
+                    (fragment as AllDishesFragment).deleteDish(dish)
+                }
             }
             true
         }
@@ -124,7 +126,7 @@ class MyDishAdapter(private val fragment: Fragment) : RecyclerView.Adapter<MyDis
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      * Holds the views that will be add each item to
      */
-    class ViewHolder(view : ItemDishLayoutBinding) : RecyclerView.ViewHolder(view.root) {
+    class DishViewHolder(view : ItemDishLayoutBinding) : RecyclerView.ViewHolder(view.root) {
         val ivDishImage = view.ivDishImage
         val tvTitle = view.tvDishTitle
         val ibMore = view.ibMore

@@ -38,7 +38,6 @@ class SplashActivity : AppCompatActivity() {
             it.setAnimationListener(object : Animation.AnimationListener {
                 override fun onAnimationStart(animation: Animation?) {
                     Timber.d("animation start")
-                    animation?.start()
                 }
 
                 override fun onAnimationEnd(animation: Animation?) {

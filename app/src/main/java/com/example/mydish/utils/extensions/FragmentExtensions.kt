@@ -22,7 +22,6 @@ import java.io.IOException
 /*** Set shimmer animation */
 fun Fragment.setShimmer(shimmer: List<ShimmerFrameLayout>, viewToBeVisible: List<View>, delay : Long) {
     this.let {
-        Timber.i("set shimmer started")
         Handler(Looper.getMainLooper()).postDelayed({
             shimmer.let { items ->
                 items.forEach {

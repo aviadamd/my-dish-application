@@ -36,35 +36,28 @@ fun replaceFirstCharToLocalRoot(string: String): String {
     }
 }
 
-val requestOptions = RequestOptions().error(R.drawable.ic_more)
-
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: Boolean, textView: TextView?) {
     try {
-        Glide.with(fragment).apply {
-            if (image.isEmpty()) {
-                requestOptions
-            } else {
-                this.load(image)
-                    .listener(object: RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            Timber.e("Error loading image "+ if (e != null) e.message else model.toString())
-                            return false
-                        }
+        Glide.with(fragment)
+            .load(image)
+            .listener(object: RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                    Timber.e("loading image "+ if (e != null) e.message else model.toString())
+                    return false
+                }
 
-                        override fun onResourceReady(
-                            resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            Timber.i("Pass loading image ${model.toString()}")
-                            if (platte) setPalette(fragment.view, resource, textView)
-                            return false
-                        }
-                    })
-                    .centerCrop()
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(imageView)
-            }
-        }
+                override fun onResourceReady(
+                    resource: Drawable, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                    Timber.i("loading image ${model.toString()}")
+                    if (platte) setPalette(fragment.view, resource, textView)
+                    return false
+                }
+            })
+            .centerCrop()
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(imageView)
     } catch (e: IOException) {
         Timber.e("error loading image ${e.message}")
     } catch (e: Exception) {

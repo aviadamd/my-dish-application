@@ -3,11 +3,9 @@ package com.example.mydish.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
-import com.example.mydish.model.service.webservice.Recipes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -37,7 +35,7 @@ class RandomDishViewModel : ViewModel() {
     /*** save random dish view model immutable observable state flow to the mutable observer */
     private val _randomDishState = MutableStateFlow<ResourceState>(ResourceState.Empty)
     /*** get the immutable state from the _randomDish state mutable observer */
-    val getRandomDishState: StateFlow<ResourceState> get() = _randomDishState
+    val getRandomDishState: StateFlow<ResourceState> = _randomDishState
 
     /*** common dispatchers for coroutine scope*/
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
@@ -57,7 +55,7 @@ class RandomDishViewModel : ViewModel() {
             Timber.d("get dish api call")
             /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful && dishes.body() != null) {
+                if (dishes.isSuccessful) {
                     _randomDishState.value = ResourceState.Load(false)
                     _randomDishState.value = ResourceState.Service(dishes.body())
                     Timber.d("dish loading successes with code ${dishes.code()}")

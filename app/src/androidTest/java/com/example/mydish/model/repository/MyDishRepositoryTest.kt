@@ -8,11 +8,14 @@ import androidx.test.filters.SmallTest
 import com.example.mydish.MyDishEntityObjects.getDishEntity
 import com.example.mydish.getOrAwaitValue
 import com.example.mydish.model.database.MyDishRoomDatabase
+import com.example.mydish.model.entities.MyDishEntity
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
 import org.junit.runners.MethodSorters
+import timber.log.Timber
+import java.util.stream.Stream
 
 @SmallTest
 @ExperimentalCoroutinesApi
@@ -34,7 +37,8 @@ class MyDishRepositoryTest {
     }
 
     @After
-    fun tearDownAfterEachTest() = runBlockingTest{
+    fun tearDownAfterEachTest() = runBlockingTest {
+        Timber.i("closing and clear room data base")
         myRoomDatabase.clearAllTables()
         myRoomDatabase.close()
     }
@@ -83,5 +87,15 @@ class MyDishRepositoryTest {
         myDishRepository.insertMyDishData(getDishEntity(2))
         val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
         assertThat(allDishes.size).isGreaterThan(1)
+    }
+
+    @Test
+    fun f_insertDishItemsFromDatabase_verifySumDishesIsCorrect() = runBlockingTest {
+        myDishRepository.insertMyDishData(getDishEntity(1,true))
+        myDishRepository.insertMyDishData(getDishEntity(2,true))
+        val allDishes = myDishRepository.allDishesList.asLiveData().getOrAwaitValue()
+        assertThat(allDishes).hasSize(2)
+        val numberOfDishes = allDishes.stream().filter { it.favoriteDish }.count().toInt()
+        assertThat(numberOfDishes).isEqualTo(2)
     }
 }

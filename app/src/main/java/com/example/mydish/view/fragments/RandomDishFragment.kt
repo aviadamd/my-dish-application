@@ -100,9 +100,10 @@ class RandomDishFragment : Fragment() {
                     is ResourceState.Load -> {
                         Timber.i("dish loading state: ${it.load}")
                         refreshingHandler(500)
-                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
+                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
                     }
                     is ResourceState.Service -> {
+                        Timber.i("dish service call")
                         it.randomDishApi?.let { response ->
                             response.recipes[0].apply {
                                 Timber.i("dish response: $this")
@@ -134,7 +135,7 @@ class RandomDishFragment : Fragment() {
                 is ResourceState.Load -> {
                     Timber.i("dish loading state: ${it.load}")
                     refreshingHandler(500)
-                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), if (it.load) 1000 else 1500)
+                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
                 }
                 is ResourceState.Service -> {
                     it.randomDishApi?.let { response ->
@@ -159,8 +160,7 @@ class RandomDishFragment : Fragment() {
      * using the RandomDish.Recipe to have bind with the ui presentation
      * finally set the dish to data base room storage
      */
-    private fun setRandomResponseInUi(recipe : Recipe): Boolean {
-        var error = false
+    private fun setRandomResponseInUi(recipe : Recipe) {
         setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),500)
         setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
         //Set the dish title
@@ -179,7 +179,6 @@ class RandomDishFragment : Fragment() {
         setImageDrawable(mBinding!!.ivFavoriteDish, R.drawable.ic_favorite_unselected)
         //Insert the data to the data base
         setNewDishInsertDataToDataBase(recipe, dishType, ingredients)
-        return error
     }
 
     /**

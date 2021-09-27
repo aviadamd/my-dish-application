@@ -17,6 +17,7 @@
         android:orientation="vertical">
 
         <FrameLayout
+            android:id="@+id/card_view_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -51,7 +52,8 @@
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/image_contentDescription"
                 android:foreground="?attr/selectableItemBackground"
-                android:src="@drawable/ic_more"/>
+                android:src="@drawable/ic_more"
+                tools:ignore="UnusedAttribute" />
         </FrameLayout>
 
         <TextView

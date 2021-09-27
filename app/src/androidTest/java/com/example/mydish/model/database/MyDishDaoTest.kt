@@ -14,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
 import org.junit.runners.MethodSorters
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -40,6 +41,7 @@ class MyDishDaoTest {
 
     @After
     fun tearDownAfterEachTest() = runBlockingTest {
+        Timber.i("closing and clear room data base")
         myRoomDatabase.clearAllTables()
         myRoomDatabase.close()
     }
