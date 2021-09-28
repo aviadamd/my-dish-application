@@ -4,10 +4,10 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import com.example.mydish.TestHelpers.asserting
-import com.example.mydish.getOrAwaitValue
-import com.example.mydish.MyDishEntityObjects.getDishEntity
-import com.example.mydish.TestHelpers.initTimberLogger
+import com.example.mydish.shared.TestHelpers.asserting
+import com.example.mydish.shared.getOrAwaitValue
+import com.example.mydish.shared.MyDishEntityObjects.getDishEntity
+import com.example.mydish.shared.TestHelpers.initTimberLogger
 import com.example.mydish.model.database.MyDishRoomDatabase
 import com.example.mydish.model.repository.MyDishRepository
 import dagger.hilt.android.testing.HiltAndroidTest

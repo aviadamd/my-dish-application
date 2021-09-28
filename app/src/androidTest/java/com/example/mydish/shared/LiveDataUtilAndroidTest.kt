@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.mydish
+package com.example.mydish.shared
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData

@@ -8,7 +8,7 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
 import com.example.mydish.R
-import com.example.mydish.launchFragmentInHiltContainer
+import com.example.mydish.shared.launchFragmentInHiltContainer
 import com.example.mydish.view.fragments.*
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

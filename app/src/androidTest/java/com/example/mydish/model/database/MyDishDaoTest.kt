@@ -3,10 +3,10 @@ package com.example.mydish.model.database
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.asLiveData
 import androidx.test.filters.SmallTest
-import com.example.mydish.TestHelpers.asserting
-import com.example.mydish.MyDishEntityObjects.getDishEntity
-import com.example.mydish.TestHelpers.initTimberLogger
-import com.example.mydish.getOrAwaitValue
+import com.example.mydish.shared.TestHelpers.asserting
+import com.example.mydish.shared.MyDishEntityObjects.getDishEntity
+import com.example.mydish.shared.TestHelpers.initTimberLogger
+import com.example.mydish.shared.getOrAwaitValue
 import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

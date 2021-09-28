@@ -5,17 +5,17 @@ import androidx.lifecycle.asLiveData
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
-import com.example.mydish.MyDishEntityObjects.getDishEntity
-import com.example.mydish.getOrAwaitValue
+import com.example.mydish.shared.MyDishEntityObjects.getDishEntity
+import com.example.mydish.shared.getOrAwaitValue
 import com.example.mydish.model.database.MyDishRoomDatabase
-import com.example.mydish.model.entities.MyDishEntity
+import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.*
 import org.junit.runners.MethodSorters
 import timber.log.Timber
-import java.util.stream.Stream
+import kotlin.streams.toList
 
 @SmallTest
 @ExperimentalCoroutinesApi
@@ -97,5 +97,18 @@ class MyDishRepositoryTest {
         assertThat(allDishes).hasSize(2)
         val numberOfDishes = allDishes.stream().filter { it.favoriteDish }.count().toInt()
         assertThat(numberOfDishes).isEqualTo(2)
+    }
+
+    @Test
+    fun g_insertDishItemsFromDatabase_verifyDishUpdated() = runBlockingTest {
+        val dish = getDishEntity("50","my dish","dessert",1,true)
+        myDishRepository.insertMyDishData(dish)
+        myDishRepository.allDishesList.asLiveData().getOrAwaitValue().forEach {
+            assertThat(it.id).isEqualTo(dish.id)
+            assertThat(it.title).isEqualTo(dish.title)
+            assertThat(it.type).isEqualTo(dish.type)
+            assertThat(it.cooking_time).isEqualTo(dish.cooking_time)
+            assertThat(it.favoriteDish).isEqualTo(dish.favoriteDish)
+        }
     }
 }

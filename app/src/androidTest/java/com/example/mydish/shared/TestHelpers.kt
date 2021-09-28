@@ -1,4 +1,4 @@
-package com.example.mydish
+package com.example.mydish.shared
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider

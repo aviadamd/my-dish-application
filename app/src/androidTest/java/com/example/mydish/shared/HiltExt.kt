@@ -1,4 +1,4 @@
-package com.example.mydish
+package com.example.mydish.shared
 
 import android.content.ComponentName
 import android.content.Intent
@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentFactory
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import com.example.mydish.HiltTestActivity
+import com.example.mydish.R
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @ExperimentalCoroutinesApi

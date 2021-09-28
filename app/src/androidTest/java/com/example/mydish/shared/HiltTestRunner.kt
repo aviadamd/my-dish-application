@@ -1,4 +1,4 @@
-package com.example.mydish
+package com.example.mydish.shared
 
 import android.app.Application
 import android.content.Context
