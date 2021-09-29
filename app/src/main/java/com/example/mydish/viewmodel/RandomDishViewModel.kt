@@ -1,6 +1,7 @@
 package com.example.mydish.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import com.example.mydish.model.service.webservice.EndPoint
 import com.example.mydish.model.service.webservice.RandomDishesApiService
 import kotlinx.coroutines.*
@@ -24,7 +25,7 @@ import timber.log.Timber
  *
  * This class is the observable of the observer
  */
-class RandomDishViewModel : ViewModel() {
+class RandomDishViewModel(application: Application) : AndroidViewModel(application) {
 
     /** will be init with the coroutine scope and will be return to null on ViewModel clear life cycle **/
     private var job: Job? = null
@@ -35,7 +36,7 @@ class RandomDishViewModel : ViewModel() {
     /*** save random dish view model immutable observable state flow to the mutable observer */
     private val _randomDishState = MutableStateFlow<ResourceState>(ResourceState.Empty)
     /*** get the immutable state from the _randomDish state mutable observer */
-    val getRandomDishState: StateFlow<ResourceState> = _randomDishState
+    fun getRandomDishState(): StateFlow<ResourceState> { return _randomDishState }
 
     /*** common dispatchers for coroutine scope*/
     private val dispatchersIO = Dispatchers.IO + CoroutineExceptionHandler { job,throwable ->
@@ -49,11 +50,8 @@ class RandomDishViewModel : ViewModel() {
     fun getRandomDishesRecipeAPINew(endPoint: EndPoint) {
         var statusCode = 0
         _randomDishState.value = ResourceState.Load(true)
-        /*** add the focus to the back thread dish api CoroutineScope(Dispatchers.IO + exceptionHandler) */
         job = CoroutineScope(dispatchersIO).launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
-            Timber.d("get dish api call")
-            /*** add the focus to the main thread dish api withContext(Dispatchers.Main) */
             withContext(Dispatchers.Main) {
                 if (dishes.isSuccessful) {
                     _randomDishState.value = ResourceState.Load(false)

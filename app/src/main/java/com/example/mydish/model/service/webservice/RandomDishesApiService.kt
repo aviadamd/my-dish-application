@@ -7,10 +7,9 @@ import retrofit2.Response
 
 class RandomDishesApiService {
 
-    private val appModule = AppModule()
-
     /*** implement method to get dishes api call */
     suspend fun getDishes(endPoint: EndPoint): Response<Recipes> {
+        val appModule = AppModule()
         val key = Constants.API_KEY_VALUE
         val license = Constants.LIMIT_LICENSE_VALUE
         val recipe: Response<Recipes> = when(endPoint) {

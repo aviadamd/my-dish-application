@@ -95,24 +95,22 @@ class RandomDishFragment : Fragment() {
     private fun initRandomDishesViewModelObserverOne() {
         /*** Calling the dish data from service */
         lifecycleScope.launchWhenStarted {
-            mRandomDishViewModel.getRandomDishState.collect {
+            mRandomDishViewModel.getRandomDishState().collect {
                 when (it) {
                     is ResourceState.Load -> {
-                        Timber.i("dish loading state: ${it.load}")
-                        refreshingHandler(500)
-                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+                        Timber.d("dish loading state: ${it.load}")
+                        refreshingHandler(1000)
+                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),1500)
                     }
                     is ResourceState.Service -> {
-                        Timber.i("dish service call")
+                        Timber.d("dish service call")
                         it.randomDishApi?.let { response ->
-                            response.recipes[0].apply {
-                                Timber.i("dish response: $this")
-                                setRandomResponseInUi(this)
-                            }
+                            Timber.i("dish response: ${response.recipes[0]}")
+                            setRandomResponseInUi(response.recipes[0])
                         }
                     }
                     is ResourceState.Errors -> {
-                        Timber.e("dish error state: ${it.error}")
+                        Timber.d("dish error state: ${it.error}")
                         setMinimumUiPresentation(it.error)
                         errorPopUpNavigateBackToAllDishes()
                     }
@@ -130,7 +128,7 @@ class RandomDishFragment : Fragment() {
      */
     private fun initRandomDishesViewModelObserverTwo() {
         /*** Calling the dish data from service */
-        mRandomDishViewModel.getRandomDishState.asLiveData().observe(viewLifecycleOwner) {
+        mRandomDishViewModel.getRandomDishState().asLiveData().observe(viewLifecycleOwner) {
             when (it) {
                 is ResourceState.Load -> {
                     Timber.i("dish loading state: ${it.load}")
@@ -161,7 +159,6 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : Recipe) {
-        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),500)
         setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
         //Set the dish title
         setRecipeTitle(recipe.title)
