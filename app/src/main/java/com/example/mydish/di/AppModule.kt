@@ -29,7 +29,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    suspend fun provideRandomDishApi(): RandomDishApi {
+    fun provideRandomDishApi(): RandomDishApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
