@@ -34,7 +34,7 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
     private val randomRecipeApiService = RandomDishesApiService()
 
     /*** save random dish view model immutable observable state flow to the mutable observer */
-    private val _randomDishState = MutableStateFlow<ResourceState>(ResourceState.Empty)
+    private var _randomDishState = MutableStateFlow<ResourceState>(ResourceState.Empty)
     /*** get the immutable state from the _randomDish state mutable observer */
     fun getRandomDishState(): StateFlow<ResourceState> { return _randomDishState }
 
@@ -53,13 +53,13 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
         job = CoroutineScope(dispatchersIO).launch {
             val dishes = randomRecipeApiService.getDishes(endPoint)
             withContext(Dispatchers.Main) {
-                if (dishes.isSuccessful) {
+                if (this.isActive && dishes.isSuccessful) {
                     _randomDishState.value = ResourceState.Load(false)
                     _randomDishState.value = ResourceState.Service(dishes.body())
                     Timber.d("dish loading successes with code ${dishes.code()}")
                 } else {
                     _randomDishState.value = ResourceState.Errors(dishes.code().toString())
-                    Timber.e("dish loading fails with code ${dishes.code()} error")
+                    Timber.d("dish loading fails with code ${dishes.code()} error")
                 }
                 statusCode = dishes.code()
             }
@@ -73,9 +73,9 @@ class RandomDishViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun refresh() {
-        _randomDishState.value = ResourceState.Load(true)
-        _randomDishState.value = ResourceState.Service(null)
-        _randomDishState.value = ResourceState.Errors("")
+         _randomDishState.value = ResourceState.Load(true)
+         _randomDishState.value = ResourceState.Service(null)
+         _randomDishState.value = ResourceState.Errors("")
     }
 
     /*** on each time that the view model life cycle in clean the job will be cancel */

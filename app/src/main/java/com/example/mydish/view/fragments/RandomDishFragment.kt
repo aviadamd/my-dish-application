@@ -100,13 +100,19 @@ class RandomDishFragment : Fragment() {
                     is ResourceState.Load -> {
                         Timber.d("dish loading state: ${it.load}")
                         refreshingHandler(1000)
-                        setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage),1500)
+                        setShimmer(
+                            listOf(mBinding!!.shimmerImage, mBinding!!.tvTitleShimmer),
+                            listOf(mBinding!!.ivDishImage, mBinding!!.tvTitle),
+                            if(it.load) 1000 else 1500
+                        )
                     }
                     is ResourceState.Service -> {
                         Timber.d("dish service call")
                         it.randomDishApi?.let { response ->
-                            Timber.i("dish response: ${response.recipes[0]}")
-                            setRandomResponseInUi(response.recipes[0])
+                            response.recipes[0].apply {
+                                Timber.i("dish response: $this")
+                                setRandomResponseInUi(this)
+                            }
                         }
                     }
                     is ResourceState.Errors -> {
@@ -159,10 +165,9 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : Recipe) {
-        setPicture(this@RandomDishFragment, recipe.image, mBinding!!.ivDishImage, true, mBinding!!.tvTitle)
+        setPicture(this, recipe.image, mBinding!!.ivDishImage,true,mBinding!!.tvTitle)
         //Set the dish title
-        setRecipeTitle(recipe.title)
-        //Default Dish Type
+        mBinding!!.tvTitle.text = recipe.title
         val dishType = setDishType(recipe)
         //There is not category params present in the response so we will define it as Other.
         setDishCategory(resources.getString(R.string.other_dish))
@@ -178,16 +183,8 @@ class RandomDishFragment : Fragment() {
         setNewDishInsertDataToDataBase(recipe, dishType, ingredients)
     }
 
-    /**
-     * Set the recipe title get xml mBinding
-     * mBinding!!.tvTitle.text = title
-     */
-    private fun setRecipeTitle(title : String) {
-        mBinding!!.tvTitle.text = title
-    }
-
     /*** Default Dish Type if the dish types are empty */
-    private fun setDishType(recipe: Recipe) : String {
+    private fun setDishType(recipe: Recipe): String {
         var dishType = "empty"
         if (recipe.dishTypes.isNotEmpty()) {
             dishType = recipe.dishTypes[0]

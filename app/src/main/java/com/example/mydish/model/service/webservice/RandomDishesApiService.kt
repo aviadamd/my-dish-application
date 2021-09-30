@@ -4,6 +4,7 @@ import com.example.mydish.di.AppModule
 import com.example.mydish.model.service.webservice.EndPoint.*
 import com.example.mydish.utils.data.Constants
 import retrofit2.Response
+import timber.log.Timber
 
 class RandomDishesApiService {
 

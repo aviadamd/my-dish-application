@@ -28,7 +28,7 @@
                     android:id="@+id/iv_dish_image"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_200sdp"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     android:background="@color/dish_image_background"
                     android:contentDescription="@string/image_contentDescription"
                     android:scaleType="fitXY" />
@@ -57,12 +57,22 @@
                 </LinearLayout>
             </FrameLayout>
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/tv_title_shimmer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/fl_dish_image"
+                android:layout_margin="@dimen/_10sdp">
+                <include layout="@layout/shimmer_random_dish_title" />
+            </com.facebook.shimmer.ShimmerFrameLayout>
+
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/fl_dish_image"
                 android:layout_margin="@dimen/_10sdp"
+                android:visibility="invisible"
                 android:textColor="@color/blue_grey_900"
                 android:textSize="@dimen/_20sdp"
                 android:textStyle="bold"
