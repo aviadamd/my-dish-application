@@ -72,4 +72,6 @@
     <string name="please_wait">Please Wait</string>
     <string name="action_share_dish">Share Dish</string>
 
+    <string name="dish_error_pop_up_title">DISH ERROR</string>
+    <string name="dish_error_pop_up_message">Cannot provide dish response try later</string>
 </resources>

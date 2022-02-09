@@ -40,7 +40,7 @@ class CustomListItemAdapter (
 
         holder.itemView.setOnClickListener {
             activity.let {
-                (it as AddUpdateDishActivity).selectedListItem(item,selection)
+                (it as AddUpdateDishActivity).selectedListItem(item, selection)
             }
         }
     }

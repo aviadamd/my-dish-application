@@ -2,6 +2,7 @@ package com.example.mydish.view.fragments
 
 import android.app.AlertDialog
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -10,11 +11,18 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.mydish.R
 import com.example.mydish.model.application.MyDishApplication
 import com.example.mydish.databinding.FragmentRandomDishBinding
@@ -29,6 +37,7 @@ import com.example.mydish.viewmodel.RandomDishViewModel
 import com.example.mydish.viewmodel.ResourceState
 import kotlinx.coroutines.flow.collect
 import timber.log.Timber
+import java.io.IOException
 
 /**
  * This class hold the random dish presentation
@@ -63,20 +72,13 @@ class RandomDishFragment : Fragment() {
     /** init view model with ViewModelProvider and call the getRandomDishFromRecipeAPI from service **/
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        /** Initialize the mRandomDishViewModel variable to fragment life cycle. **/
         //mRandomDishViewModel = ViewModelProvider(this).get(RandomDishViewModel::class.java)
-
-        /** Present the recipe on the view with random dish **/
+        /** call random dish api **/
         mRandomDishViewModel.getRandomDishesRecipeAPINew(EndPoint.DESSERT)
-        /** Observe data after the getRandomDishFromRecipeAPI activate **/
-        initRandomDishesViewModelObserverOne()
-        /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
-        mBinding!!.srlRandomDish.setOnRefreshListener {
-            /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
-            /** Present the recipe on the view with random dish **/
-            mRandomDishViewModel.getRandomDishesRecipeAPINew(EndPoint.DESSERT)
-        }
+        /** Observe data after the getRandomDishFromRecipeAPI activate and ui presentation **/
+        initRandomDishesViewModelObserver()
+        /*** on refresh listener create another api call */
+        callRandomDishOnRefreshListener()
     }
 
     /*** return the view instance to null and refresh the view model */
@@ -86,13 +88,26 @@ class RandomDishFragment : Fragment() {
         mRandomDishViewModel.refresh()
     }
 
+    /** SwipeRefreshLayout.OnRefreshListener that is invoked when the user performs a swipe gesture. */
+    private fun callRandomDishOnRefreshListener() {
+        mBinding!!.srlRandomDish.setOnRefreshListener {
+            /** method performs the actual data-refresh operation ,calls setRefreshing(false) when it's finished.**/
+            /** Present the recipe on the view with random dish **/
+            val status = mRandomDishViewModel.getRandomDishesRecipeAPINew(EndPoint.DESSERT)
+            if (status == 0) {
+                Timber.i("call dish service again to back up")
+                mRandomDishViewModel.getRandomDishesRecipeAPINew(EndPoint.DESSERT)
+            }
+        }
+    }
+
     /**
-     * Service call method to dish data then
-     * mRandomDishViewModel.randomDishResponse.observe - will take care to set the ui with the new dish
-     * mRandomDishViewModel.randomDishLoadingError.observe - take card on the error service response
-     * mRandomDishViewModel.loadRandomDish.observe - take care of loading dish only from the service
+     * Service call method with observer
+     * ResourceState.Service - will take care to set the ui with the new dish
+     * ResourceState.Error - take card on the error service response
+     * ResourceState.Load - take care of loading dish status
      */
-    private fun initRandomDishesViewModelObserverOne() {
+    private fun initRandomDishesViewModelObserver() {
         /*** Calling the dish data from service */
         lifecycleScope.launchWhenStarted {
             mRandomDishViewModel.getRandomDishState().collect {
@@ -139,7 +154,7 @@ class RandomDishFragment : Fragment() {
                 is ResourceState.Load -> {
                     Timber.i("dish loading state: ${it.load}")
                     refreshingHandler(500)
-                    setShimmer(listOf(mBinding!!.shimmerImage), listOf(mBinding!!.ivDishImage), 1500)
+                    setShimmer(mBinding!!.shimmerImage,mBinding!!.ivDishImage, 1500)
                 }
                 is ResourceState.Service -> {
                     it.randomDishApi?.let { response ->
@@ -165,7 +180,7 @@ class RandomDishFragment : Fragment() {
      * finally set the dish to data base room storage
      */
     private fun setRandomResponseInUi(recipe : Recipe) {
-        setPicture(this, recipe.image, mBinding!!.ivDishImage,true,mBinding!!.tvTitle)
+        setPicture(recipe.image)
         //Set the dish title
         mBinding!!.tvTitle.text = recipe.title
         val dishType = setDishType(recipe)
@@ -185,11 +200,10 @@ class RandomDishFragment : Fragment() {
 
     /*** Default Dish Type if the dish types are empty */
     private fun setDishType(recipe: Recipe): String {
-        var dishType = "empty"
-        if (recipe.dishTypes.isNotEmpty()) {
-            dishType = recipe.dishTypes[0]
-            mBinding!!.tvType.text = dishType
-        }
+        val dishType = if (recipe.dishTypes.isNotEmpty()) {
+            recipe.dishTypes[0]
+        } else "empty"
+        mBinding!!.tvType.text = dishType
         return dishType
     }
 
@@ -205,11 +219,13 @@ class RandomDishFragment : Fragment() {
      */
     private fun setDishIngredients(recipe: Recipe) : String {
         var ingredients = ""
-        for (it in recipe.extendedIngredients) {
+
+        recipe.extendedIngredients.forEach {
             ingredients = if (ingredients.isEmpty()) {
                 it.original
             } else ingredients + ", \n" + it.original
         }
+
         mBinding!!.tvIngredients.text = ingredients
         return ingredients
     }
@@ -261,14 +277,13 @@ class RandomDishFragment : Fragment() {
                 true
             )
 
+            /*** validate and updated the indications for the dish status new/exists */
             var isNewDish = true
             val titles = arrayListOf<String>()
-
             myDishViewModel.allDishesList.observe(viewLifecycleOwner) {
                 it.forEach { item -> titles.add(item.title) }
+                if (titles.contains(recipe.title)) isNewDish = false
             }
-
-            if (titles.contains(recipe.title)) isNewDish = false
 
             if (isNewDish) {
                 /*** insert the new randomDishDetails MyDishEntity object to room data base */
@@ -311,18 +326,56 @@ class RandomDishFragment : Fragment() {
 
     private fun errorPopUpNavigateBackToAllDishes() {
         val builder = AlertDialog.Builder(this.requireActivity())
-            .setTitle("DISH ERROR")
-            .setMessage("Cannot provide dish response try later")
+            .setTitle(resources.getString(R.string.dish_error_pop_up_title))
+            .setMessage(resources.getString(R.string.dish_error_pop_up_message))
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
-                findNavController().navigate(
-                    RandomDishFragmentDirections.actionNavigationRandomDishToNavigationAllDishes()
-                )
+                val navDirection = RandomDishFragmentDirections.actionNavigationRandomDishToNavigationAllDishes()
+                findNavController().navigate(directions = navDirection)
             }
 
-        val alertDialog: AlertDialog = builder.create()
-        alertDialog.setCancelable(false)
-        alertDialog.show()
+        builder.create().let {
+            it.setCancelable(false)
+            it.show()
+        }
+
+//        val alertDialog: AlertDialog = builder.create()
+//        alertDialog.setCancelable(false)
+//        alertDialog.show()
+    }
+
+    /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
+    private fun setPicture(image: String) {
+        try {
+            Glide.with(this@RandomDishFragment)
+                .load(image)
+                .listener(object: RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?, model: Any?, target: Target<Drawable>?,
+                        isFirstResource: Boolean): Boolean {
+                        Timber.e("loading image "+ if (e != null) e.message else model.toString())
+                        errorPopUpNavigateBackToAllDishes()
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable, model: Any?, target: Target<Drawable>?,
+                        dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        Timber.i("loading image ${model.toString()}")
+                        setPalette(mBinding!!.rlDishDetailMain, resource, mBinding!!.tvTitle)
+                        return false
+                    }
+                })
+                .centerCrop()
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(mBinding!!.ivDishImage)
+        } catch (e: Exception) {
+            when(e) {
+                is IOException -> Timber.e("io exception loading image ${e.message}")
+                is NullPointerException -> Timber.e("null exception loading image ${e.message}")
+                else -> Timber.e("exception loading image ${e.message}")
+            }
+        }
     }
 }

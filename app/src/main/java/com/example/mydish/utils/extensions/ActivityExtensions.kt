@@ -26,15 +26,13 @@ import java.io.IOException
 
 /*** hide the upper phone status bar */
 fun Activity.hidingStatusBar() {
-    this.let{ activity ->
+    this.window.let {
         Timber.i("hiding status bar")
-        activity.window.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                it.insetsController?.hide(WindowInsets.Type.statusBars())
-            } else {
-                @Suppress("DEPRECATION")
-                it.setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            it.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            @Suppress("DEPRECATION")
+            it.setFlags(LayoutParams.FLAG_FULLSCREEN, LayoutParams.FLAG_FULLSCREEN)
         }
     }
 }
@@ -69,6 +67,7 @@ fun Fragment.startAnActivity(clazz: Class<*>, extras: Bundle?) {
     if (extras != null) intent.putExtras(extras)
     startActivity(intent)
 }
+
 
 /** Implement the listeners to get the bitmap. Load the dish image in the image view **/
 fun Activity.setPicture(image: String, imageView: ImageView, view: View?, textView: TextView?) {

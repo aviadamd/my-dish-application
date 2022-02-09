@@ -14,7 +14,7 @@ class RandomDishesApiService {
         val key = Constants.API_KEY_VALUE
         val license = Constants.LIMIT_LICENSE_VALUE
         val recipe: Response<Recipes> = when(endPoint) {
-            MEAL ->  appModule.provideRandomDishApi().getTheDishes(key, license, MEAL.key, MEAL.value)
+            MEAL -> appModule.provideRandomDishApi().getTheDishes(key, license, MEAL.key, MEAL.value)
             CUISINES -> appModule.provideRandomDishApi().getTheDishes(key, license, CUISINES.key, CUISINES.value)
             DESSERT -> appModule.provideRandomDishApi().getTheDishes(key, license, DESSERT.key, CUISINES.value)
         }

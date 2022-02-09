@@ -18,7 +18,6 @@ object Constants {
     const val NOTIFICATION_NAME = "MyDish"
     const val NOTIFICATION_CHANNEL = "MyDish_channel_01"
 
-
     //Api constants
     const val BASE_URL: String = "https://api.spoonacular.com/"
     const val API_ENDPOINT: String = "recipes/random"

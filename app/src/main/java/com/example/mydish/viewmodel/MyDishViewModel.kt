@@ -5,24 +5,25 @@ import com.example.mydish.model.repository.MyDishRepository
 import com.example.mydish.model.entities.MyDishEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.IllegalArgumentException
 
 /**
  * The ViewModel's role is to provide data to the UI and survive configuration changes.
  * A ViewModel acts as a communication center between the Repository and the UI.
- * You can also use a ViewModel to share data between fragments.
- * The ViewModel is part of the lifecycle library.
+ * You can also use a ViewModel to share data between fragments also.
+ * The ViewModel is part of the androidx lifecycle library.
  *
  * The UI no longer needs to worry about the origin of the data.
  * ViewModel instances survive Activity/Fragment recreation.
- * Classes that use MyDishViewModel
  *
+ * Classes that use MyDishViewModel
  * This view model is responsible for the room data in/out operations
- * AddUpdateDishActivity
- * AllDishesFragment
- * DishDetailsFragment
- * FavoriteDishFragment
- * RandomDishFragment
+ * AddUpdateDishActivity...
+ * AllDishesFragment...
+ * DishDetailsFragment...
+ * FavoriteDishFragment...
+ * RandomDishFragment...
  *
  * allDishesList/favoriteDishes/filteredListDishes wrapped as live data
  * observable with the insert/update/delete wrapped as coroutine launched scooped
@@ -31,7 +32,6 @@ import java.lang.IllegalArgumentException
 class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewModel() {
 
     /*** asLiveData() merge between LiveData [Flow] && Coroutines*/
-
     /*** Use live data to observe the cashing data from all dishes list */
     val allDishesList: LiveData<List<MyDishEntity>> = myDishRepository.allDishesList.asLiveData()
 
@@ -39,22 +39,27 @@ class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewMod
     val favoriteDishes: LiveData<List<MyDishEntity>> = myDishRepository.favoriteDishes.asLiveData()
 
     /*** Use live data to observe the cashing data from filter favorite dishes list */
-    fun filteredListDishes(value: String) : LiveData<List<MyDishEntity>> =
-        myDishRepository.filteredListDishes(value).asLiveData()
+    fun filteredListDishes(value: String) : LiveData<List<MyDishEntity>> {
+        Timber.i("filter list dish $value")
+        return myDishRepository.filteredListDishes(value).asLiveData()
+    }
 
     /*** Launching a new coroutine to insert the data in a non-blocking way. */
     fun insert(myDishEntity: MyDishEntity) = viewModelScope.launch {
         myDishRepository.insertMyDishData(myDishEntity)
+        Timber.i("insert $myDishEntity")
     }
 
     /*** Launching a new coroutine to update the data in a non-blocking way. */
     fun update(myDishEntity: MyDishEntity) = viewModelScope.launch {
         myDishRepository.updateMyDishData(myDishEntity)
+        Timber.i("update $myDishEntity")
     }
 
     /*** Launching a new coroutine to delete the data in a non-blocking way. */
     fun delete(myDishEntity: MyDishEntity) = viewModelScope.launch {
         myDishRepository.deleteMyDishData(myDishEntity)
+        Timber.i("delete $myDishEntity")
     }
 }
 
@@ -67,8 +72,8 @@ class MyDishViewModel(private val myDishRepository : MyDishRepository) : ViewMod
  * This class called every time that need to init MyDishViewModel
  */
 @Suppress("UNCHECKED_CAST")
-class MyDishViewModelFactory(private val myDishRepository : MyDishRepository) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+class MyDishViewModelFactory(private val myDishRepository : MyDishRepository): ViewModelProvider.Factory {
+    override fun <T: ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MyDishViewModel::class.java)) {
             return MyDishViewModel(myDishRepository) as T
         }

@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mydish.databinding.ItemCategoryBinding
 import com.example.mydish.view.fragments.AllDishesFragment
 
-class CustomHorizontalListItemAdapter(
+class
+CustomHorizontalListItemAdapter(
     private val activity: Activity,
     private val fragment: Fragment?,
     private val listItems: Array<String>)

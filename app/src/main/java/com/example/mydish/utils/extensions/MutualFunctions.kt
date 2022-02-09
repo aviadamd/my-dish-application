@@ -15,7 +15,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.example.mydish.R
 import timber.log.Timber
@@ -58,19 +57,19 @@ fun setPicture(fragment: Fragment, image: String, imageView: ImageView, platte: 
             .centerCrop()
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(imageView)
-    } catch (e: IOException) {
-        Timber.e("error loading image ${e.message}")
     } catch (e: Exception) {
-        Timber.e("error loading image ${e.message}")
-    } catch (e: NullPointerException) {
-        Timber.e("error loading image ${e.message}")
+        when(e) {
+            is IOException -> Timber.e("io exception loading image ${e.message}")
+            is NullPointerException -> Timber.e("null exception loading image ${e.message}")
+            else -> Timber.e("exception loading image ${e.message}")
+        }
     }
 }
 
 fun setPalette(view: View?, resource: Drawable, textView: TextView?) {
-    if (view != null) {
-        Palette.from(resource.toBitmap()).generate { p ->
-            view.setBackgroundColor(p?.lightVibrantSwatch?.rgb ?: 0)
+    view.let { getView ->
+        Palette.from(resource.toBitmap()).generate { plate ->
+            getView?.setBackgroundColor(plate?.lightVibrantSwatch?.rgb ?: 0)
         }
     }
     textView?.setTextColor(Color.BLACK)

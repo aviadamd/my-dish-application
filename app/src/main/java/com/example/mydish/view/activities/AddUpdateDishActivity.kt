@@ -101,11 +101,9 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
         /*** hide the status bar */
         hidingStatusBar()
         /*** verify if the activity as extra carry string data from MyDishAdapter */
-        getExtraDishDetails()
-        /** Set up the action bar with back button **/
-        setUpActionBar()
-        /*** If the entity is not empty and the dish id is populated then init the image presentation with the dish data */
-        presentDataDishInTheUi()
+        /** set up the action bar with back button **/
+        /*** if the entity is not empty and the dish id is populated then init the image presentation with the dish data */
+        presentDataDishInTheUiWithDishDetails()
         /*** on click logic on each click event in the page */
         mBinding.ivAddDishImage.setOnClickListener(this)
         mBinding.etType.setOnClickListener(this)
@@ -131,7 +129,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.et_category -> {
                 customItemListDialog(
-                    resources.getString(R.string.title_select_dish_category),
+                     resources.getString(R.string.title_select_dish_category),
                     resources.getStringArray(R.array.dishCategory).toList(),
                     DISH_CATEGORY
                 )
@@ -170,7 +168,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                         /*** if all edit text are full, update or insert new data to room data base */
                         enterDishDataToRoom(title, type, category, ingredients, cookingTimeInMinutes, cookingDirection)
                         /*** this will close the activity and navigate to main activity with all dishes fragment */
-                        finish()
+                        this.finish()
                     }
                 }
             }
@@ -280,7 +278,10 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
             toast(this@AddUpdateDishActivity, "${dishEntity.title} is added to yours dishes").show()
         } else {
             mMyDishEntity?.let {
-                if(it.title == title && it.type == type && it.category == category && it.cooking_time == cookingTimeInMinutes) {
+                if(it.title == title
+                    && it.type == type
+                    && it.category == category
+                    && it.cooking_time == cookingTimeInMinutes) {
                     toast(this@AddUpdateDishActivity, "${it.title} didn't have changes").show()
                 } else {
                     mMyDishViewModel.update(dishEntity)
@@ -298,11 +299,16 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /*** If the entity is not empty and the dish id is populated then init the image presentation with the dish data */
-    private fun presentDataDishInTheUi() {
+    private fun presentDataDishInTheUiWithDishDetails() {
+        /*** verify if the activity as extra carry string data from MyDishAdapter */
+        getExtraDishDetails()
+        /** Set up the action bar with back button **/
+        setUpActionBar()
+
         mMyDishEntity?.let { it ->
             if (it.id != 0) {
                 mImagePath = it.image
-                setPicture(mImagePath,mBinding.ivDishImage, mBinding.flSelectImage,null)
+                setPicture(mImagePath, mBinding.ivDishImage, mBinding.flSelectImage,null)
                 //Set the dish presentation data to page
                 listOf(
                     Pair(mBinding.etTitle, it.title),
@@ -503,7 +509,7 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
      * @param itemsList - List of items to be selected.
      * @param selection - By passing this param you can identify the list item selection.
      */
-    private fun customItemListDialog(title: String, itemsList : List<String>, selection : String) {
+    private fun customItemListDialog(title: String, itemsList: List<String>, selection: String) {
         mCustomListDialog = Dialog(this@AddUpdateDishActivity)
         val binding : DialodCustomListBinding = DialodCustomListBinding.inflate(layoutInflater)
         // Set the screen content from a layout resource.

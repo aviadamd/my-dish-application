@@ -28,7 +28,9 @@ class MyDishApplication : Application() {
      * Do not synchronize from external code on the returned instance as it may cause accidental deadlock.
      * Also this behavior can be changed in the future.
      */
-    private val myDishRoomDatabase by lazy { MyDishRoomDatabase.getDatabase((this@MyDishApplication)) }
+    private val myDishRoomDatabase by lazy {
+        MyDishRoomDatabase.getDatabase((this@MyDishApplication))
+    }
 
     /**
      * Get the repository variable instance , this is called from MyDishApplication
@@ -36,7 +38,11 @@ class MyDishApplication : Application() {
      * And each Fragment or Activity will delegate the instance from the ViewModel classes that need
      * the data for presentation IN THE VIEWS off the application
      **/
-    val myDishRepository by lazy { MyDishRepository(myDishRoomDatabase.myDishDao()) }
+    val myDishRepository by lazy {
+        val database by lazy { MyDishRoomDatabase.getDatabase(this@MyDishApplication) }
+        MyDishRepository(database.myDishDao())
+        //MyDishRepository(myDishRoomDatabase.myDishDao())
+    }
 
     override fun onCreate() {
         super.onCreate()
